@@ -8,31 +8,34 @@ internal class HardwareMonitor
 
     public static string usageString = " ";
 
-    public static HardwareMonitor instance;
+    public static HardwareMonitor? instance;
 
     public HardwareMonitor()
     {
         instance = this;
-
-        timer = new System.Timers.Timer();
-        timer.Interval = 1000;
-        timer.Elapsed += Timer_Elapsed;
-
-        timer.Start();
-    }
-
-    private Computer computer;
-    private float lastCpu = 0;
-    private string lastRam = "";
-
-    private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
-    {
         computer = new Computer()
         {
             IsMemoryEnabled = true,
             IsCpuEnabled = true // Enable CPU monitoring
         };
         computer.Open();
+
+        timer = new System.Timers.Timer
+        {
+            Interval = 1000
+        };
+        timer.Elapsed += Timer_Elapsed;
+
+        timer.Start();
+    }
+
+    private Computer computer;
+    private float lastCpu;
+    private string lastRam = string.Empty;
+
+    private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        
 
         foreach (var hardware in computer.Hardware)
         {
@@ -77,11 +80,5 @@ internal class HardwareMonitor
         instance.computer.Close();
     }
 
-    public static void Stop()
-    {
-        if (instance.computer != null)
-        {
-            instance.computer.Close();
-        }
-    }
+    public static void Stop() => instance.computer?.Close();
 }

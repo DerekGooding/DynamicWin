@@ -7,7 +7,7 @@ public class ErrorForm : Window
 {
     public ErrorForm()
     {
-        var result = MessageBox.Show("Only one instance of DynamicWin can run at a time.", "An error occured.");
+        var result = MessageBox.Show("Only one instance of DynamicWin can run at a time.", "An error occurred.");
         Process.GetCurrentProcess().Kill();
     }
 }
