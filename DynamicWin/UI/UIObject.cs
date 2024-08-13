@@ -1,16 +1,9 @@
 ﻿using DynamicWin.Main;
-using DynamicWin.UI.UIElements;
 using DynamicWin.Utils;
 using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace DynamicWin.UI
 {
@@ -58,7 +51,7 @@ namespace DynamicWin.UI
         private float pAlpha = 1f;
         private float oAlpha = 1f;
 
-        public float Alpha { get => (float) Math.Min(pAlpha, oAlpha); set => oAlpha = value; }
+        public float Alpha { get => (float)Math.Min(pAlpha, oAlpha); set => oAlpha = value; }
 
         protected void AddLocalObject(UIObject obj)
         {
@@ -87,7 +80,7 @@ namespace DynamicWin.UI
 
         void CtxOpen(object sender, RoutedEventArgs e)
         {
-            if(RendererMain.Instance.ContextMenu != null)
+            if (RendererMain.Instance.ContextMenu != null)
                 canInteract = false;
         }
 
@@ -111,27 +104,35 @@ namespace DynamicWin.UI
                     case UIAlignment.TopLeft:
                         return new Vec2(position.X - (Size.X * Anchor.X),
                             position.Y - (Size.Y * Anchor.Y));
+
                     case UIAlignment.TopCenter:
                         return new Vec2(position.X + screenDim.X / 2 - (Size.X * Anchor.X),
                             position.Y - (Size.Y * Anchor.Y));
+
                     case UIAlignment.TopRight:
                         return new Vec2(position.X + screenDim.X - (Size.X * Anchor.X),
                             position.Y - (Size.Y * Anchor.Y));
+
                     case UIAlignment.MiddleLeft:
                         return new Vec2(position.X - (Size.X * Anchor.X),
                             position.Y + screenDim.Y / 2 - (Size.Y * Anchor.Y));
+
                     case UIAlignment.Center:
                         return new Vec2(position.X + screenDim.X / 2 - (Size.X * Anchor.X),
                             position.Y + screenDim.Y / 2 - (Size.Y * Anchor.Y));
+
                     case UIAlignment.MiddleRight:
                         return new Vec2(position.X + screenDim.X - (Size.X * Anchor.X),
                             position.Y + screenDim.Y / 2 - (Size.Y * Anchor.Y));
+
                     case UIAlignment.BottomLeft:
                         return new Vec2(position.X - (Size.X * Anchor.X),
                             position.Y + screenDim.Y - (Size.Y * Anchor.Y));
+
                     case UIAlignment.BottomCenter:
                         return new Vec2(position.X + screenDim.X / 2 - (Size.X * Anchor.X),
                             position.Y + screenDim.Y - (Size.Y * Anchor.Y));
+
                     case UIAlignment.BottomRight:
                         return new Vec2(position.X + screenDim.X - (Size.X * Anchor.X),
                             position.Y + screenDim.Y - (Size.Y * Anchor.Y));
@@ -147,27 +148,35 @@ namespace DynamicWin.UI
                     case UIAlignment.TopLeft:
                         return new Vec2(parentPos.X + position.X - (Size.X * Anchor.X),
                             parentPos.Y + position.Y - (Size.Y * Anchor.Y));
+
                     case UIAlignment.TopCenter:
                         return new Vec2(parentPos.X + position.X + parentDim.X / 2 - (Size.X * Anchor.X),
                             parentPos.Y + position.Y - (Size.Y * Anchor.Y));
+
                     case UIAlignment.TopRight:
                         return new Vec2(parentPos.X + position.X + parentDim.X - (Size.X * Anchor.X),
                             parentPos.Y + position.Y - (Size.Y * Anchor.Y));
+
                     case UIAlignment.MiddleLeft:
                         return new Vec2(parentPos.X + position.X - (Size.X * Anchor.X),
                             parentPos.Y + position.Y + parentDim.Y / 2 - (Size.Y * Anchor.Y));
+
                     case UIAlignment.Center:
                         return new Vec2(parentPos.X + position.X + parentDim.X / 2 - (Size.X * Anchor.X),
                             parentPos.Y + position.Y + parentDim.Y / 2 - (Size.Y * Anchor.Y));
+
                     case UIAlignment.MiddleRight:
                         return new Vec2(parentPos.X + position.X + parentDim.X - (Size.X * Anchor.X),
                             parentPos.Y + position.Y + parentDim.Y / 2 - (Size.Y * Anchor.Y));
+
                     case UIAlignment.BottomLeft:
                         return new Vec2(parentPos.X + position.X - (Size.X * Anchor.X),
                             parentPos.Y + position.Y + parentDim.Y - (Size.Y * Anchor.Y));
+
                     case UIAlignment.BottomCenter:
                         return new Vec2(parentPos.X + position.X + parentDim.X / 2 - (Size.X * Anchor.X),
                             parentPos.Y + position.Y + parentDim.Y - (Size.Y * Anchor.Y));
+
                     case UIAlignment.BottomRight:
                         return new Vec2(parentPos.X + position.X + parentDim.X - (Size.X * Anchor.X),
                             parentPos.Y + position.Y + parentDim.Y - (Size.Y * Anchor.Y));
@@ -179,7 +188,7 @@ namespace DynamicWin.UI
 
         protected virtual Vec2 GetPosition()
         {
-            if(parent == null)
+            if (parent == null)
             {
                 Vec2 screenDim = RendererMain.ScreenDimensions;
                 switch (alignment)
@@ -187,27 +196,35 @@ namespace DynamicWin.UI
                     case UIAlignment.TopLeft:
                         return new Vec2(position.X - (Size.X * Anchor.X),
                             position.Y - (Size.Y * Anchor.Y));
+
                     case UIAlignment.TopCenter:
                         return new Vec2(position.X + screenDim.X / 2 - (Size.X * Anchor.X),
                             position.Y - (Size.Y * Anchor.Y));
+
                     case UIAlignment.TopRight:
                         return new Vec2(position.X + screenDim.X - (Size.X * Anchor.X),
                             position.Y - (Size.Y * Anchor.Y));
+
                     case UIAlignment.MiddleLeft:
                         return new Vec2(position.X - (Size.X * Anchor.X),
                             position.Y + screenDim.Y / 2 - (Size.Y * Anchor.Y));
+
                     case UIAlignment.Center:
                         return new Vec2(position.X + screenDim.X / 2 - (Size.X * Anchor.X),
                             position.Y + screenDim.Y / 2 - (Size.Y * Anchor.Y));
+
                     case UIAlignment.MiddleRight:
                         return new Vec2(position.X + screenDim.X - (Size.X * Anchor.X),
                             position.Y + screenDim.Y / 2 - (Size.Y * Anchor.Y));
+
                     case UIAlignment.BottomLeft:
                         return new Vec2(position.X - (Size.X * Anchor.X),
                             position.Y + screenDim.Y - (Size.Y * Anchor.Y));
+
                     case UIAlignment.BottomCenter:
                         return new Vec2(position.X + screenDim.X / 2 - (Size.X * Anchor.X),
                             position.Y + screenDim.Y - (Size.Y * Anchor.Y));
+
                     case UIAlignment.BottomRight:
                         return new Vec2(position.X + screenDim.X - (Size.X * Anchor.X),
                             position.Y + screenDim.Y - (Size.Y * Anchor.Y));
@@ -223,27 +240,35 @@ namespace DynamicWin.UI
                     case UIAlignment.TopLeft:
                         return new Vec2(parentPos.X + position.X - (Size.X * Anchor.X),
                             parentPos.Y + position.Y - (Size.Y * Anchor.Y));
+
                     case UIAlignment.TopCenter:
                         return new Vec2(parentPos.X + position.X + parentDim.X / 2 - (Size.X * Anchor.X),
                             parentPos.Y + position.Y - (Size.Y * Anchor.Y));
+
                     case UIAlignment.TopRight:
                         return new Vec2(parentPos.X + position.X + parentDim.X - (Size.X * Anchor.X),
                             parentPos.Y + position.Y - (Size.Y * Anchor.Y));
+
                     case UIAlignment.MiddleLeft:
                         return new Vec2(parentPos.X + position.X - (Size.X * Anchor.X),
                             parentPos.Y + position.Y + parentDim.Y / 2 - (Size.Y * Anchor.Y));
+
                     case UIAlignment.Center:
                         return new Vec2(parentPos.X + position.X + parentDim.X / 2 - (Size.X * Anchor.X),
                             parentPos.Y + position.Y + parentDim.Y / 2 - (Size.Y * Anchor.Y));
+
                     case UIAlignment.MiddleRight:
                         return new Vec2(parentPos.X + position.X + parentDim.X - (Size.X * Anchor.X),
                             parentPos.Y + position.Y + parentDim.Y / 2 - (Size.Y * Anchor.Y));
+
                     case UIAlignment.BottomLeft:
                         return new Vec2(parentPos.X + position.X - (Size.X * Anchor.X),
                             parentPos.Y + position.Y + parentDim.Y - (Size.Y * Anchor.Y));
+
                     case UIAlignment.BottomCenter:
                         return new Vec2(parentPos.X + position.X + parentDim.X / 2 - (Size.X * Anchor.X),
                             parentPos.Y + position.Y + parentDim.Y - (Size.Y * Anchor.Y));
+
                     case UIAlignment.BottomRight:
                         return new Vec2(parentPos.X + position.X + parentDim.X - (Size.X * Anchor.X),
                             parentPos.Y + position.Y + parentDim.Y - (Size.Y * Anchor.Y));
@@ -260,7 +285,7 @@ namespace DynamicWin.UI
         }
 
         bool canInteract = true;
-        
+
         public void UpdateCall(float deltaTime)
         {
             if (!isEnabled) return;
@@ -353,7 +378,7 @@ namespace DynamicWin.UI
                 IsLinearText = true
             };
 
-            if(GetBlur() != 0f)
+            if (GetBlur() != 0f)
             {
                 var blur = SKImageFilter.CreateBlur(GetBlur(), GetBlur());
                 paint.ImageFilter = blur;
@@ -367,7 +392,7 @@ namespace DynamicWin.UI
             return new Col(col.r, col.g, col.b, col.a * Alpha);
         }
 
-        public void DestroyCall() 
+        public void DestroyCall()
         {
             localObjects.ForEach((UIObject obj) =>
             {
@@ -394,16 +419,16 @@ namespace DynamicWin.UI
 
         public void SetActive(bool isEnabled)
         {
-            if(this.isEnabled == isEnabled) return;
+            if (this.isEnabled == isEnabled) return;
             if (toggleAnim != null && toggleAnim.IsRunning) toggleAnim.Stop();
 
-            if(isEnabled)
+            if (isEnabled)
                 this.isEnabled = isEnabled;
 
             toggleAnim = new Animator(250, 1);
             toggleAnim.onAnimationUpdate += (t) =>
             {
-                if(t >= 0.5f) this.isEnabled = isEnabled;
+                if (t >= 0.5f) this.isEnabled = isEnabled;
 
                 if (isEnabled)
                 {

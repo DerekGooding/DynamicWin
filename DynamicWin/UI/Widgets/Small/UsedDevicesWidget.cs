@@ -2,15 +2,8 @@
 using DynamicWin.UI.UIElements;
 using DynamicWin.UI.UIElements.Custom;
 using DynamicWin.Utils;
-using NAudio.CoreAudioApi;
-using NAudio.Wave;
 using Newtonsoft.Json;
 using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicWin.UI.Widgets.Small
 {
@@ -90,7 +83,7 @@ namespace DynamicWin.UI.Widgets.Small
             objects.Add(thresholdText);
             objects.Add(loudnessMeter);
             objects.Add(thresholdSlider);
-            
+
             return objects;
         }
     }
@@ -125,7 +118,6 @@ namespace DynamicWin.UI.Widgets.Small
     {
         public UsedDevicesWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, alignment)
         {
-
         }
 
         public override void OnDestroy()
@@ -166,7 +158,7 @@ namespace DynamicWin.UI.Widgets.Small
             camDotSizeCurrent = Mathf.Lerp(camDotSizeCurrent, isCamActive ? camDotSize : 0f, 5f * deltaTime);
             micDotSizeCurrent = Mathf.Lerp(micDotSizeCurrent, isMicActive ? micDotSize : 0f, 5f * deltaTime);
 
-            if(isCamActive && isMicActive)
+            if (isCamActive && isMicActive)
             {
                 camDotPositionX = Mathf.Lerp(camDotPositionX, seperation, 5f * deltaTime);
                 micDotPositionX = Mathf.Lerp(micDotPositionX, -seperation, 5f * deltaTime);

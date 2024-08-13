@@ -1,26 +1,23 @@
 ﻿using DynamicWin.Utils;
 using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicWin.UI.UIElements
 {
     public class DWTextImageButton : DWButton
     {
-        DWText text;
+        private DWText text;
 
-        public DWText Text { get { return text; } set => text = value; }
+        public DWText Text
+        { get { return text; } set => text = value; }
 
         public float normalTextSize = 10;
         public float textSizeSmoothSpeed = 15f;
 
-        DWImage image;
+        private DWImage image;
         public float imageScale = 0.85f;
 
-        public DWImage Image { get { return image; } private set => image = value; }
+        public DWImage Image
+        { get { return image; } private set => image = value; }
 
         public DWTextImageButton(UIObject? parent, SKBitmap image, string buttonText, Vec2 position, Vec2 size, Action clickCallback, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, size, clickCallback, alignment)
         {

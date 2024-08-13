@@ -15,14 +15,16 @@ namespace DynamicWin.UI.UIElements
         public Vec2 secondOrderValuesContract = new Vec2(3f, 0.9f);
 
         public bool hidden = false;
-        
+
         public Vec2 currSize;
 
-        public enum IslandMode { Island, Notch };
+        public enum IslandMode
+        { Island, Notch };
+
         public IslandMode mode = Settings.IslandMode;
 
-        float dropShadowStrength = 0f;
-        float dropShadowSize = 0f;
+        private float dropShadowStrength = 0f;
+        private float dropShadowSize = 0f;
 
         public IslandObject() : base(null, Vec2.zero, new Vec2(250, 50), UIAlignment.TopCenter)
         {
@@ -107,7 +109,6 @@ namespace DynamicWin.UI.UIElements
                 var y = 5;
 
                 { // Left notch curve
-
                     var x = Position.X - awidth;
 
                     path.MoveTo(x - awidth, y);
@@ -120,7 +121,6 @@ namespace DynamicWin.UI.UIElements
                 }
 
                 { // Right notch curve
-
                     var x = Position.X + Size.X + awidth;
 
                     path.MoveTo(x + awidth, y);
@@ -143,7 +143,7 @@ namespace DynamicWin.UI.UIElements
         {
             var rect = SKRect.Create(Position.X, Position.Y, Size.X, Size.Y);
 
-            if(IsHovering)
+            if (IsHovering)
                 rect.Inflate(expandInteractionRect + 5, expandInteractionRect + 5);
 
             rect.Inflate(expandInteractionRect, expandInteractionRect);

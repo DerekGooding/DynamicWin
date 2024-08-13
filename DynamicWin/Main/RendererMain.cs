@@ -1,21 +1,16 @@
-﻿using System;
-using System.Diagnostics;
-using System.Drawing;
-using System.Windows;
-using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Threading;
-using DynamicWin.Resources;
+﻿using DynamicWin.Resources;
 using DynamicWin.UI;
 using DynamicWin.UI.Menu;
 using DynamicWin.UI.Menu.Menus;
 using DynamicWin.UI.UIElements;
 using DynamicWin.Utils;
-using OpenTK.Graphics;
-using OpenTK;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 using SkiaSharp.Views.WPF;
+using System.Diagnostics;
+using System.Windows.Forms;
+using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace DynamicWin.Main
 {
@@ -32,7 +27,8 @@ namespace DynamicWin.Main
         public static Vec2 CursorPosition { get => new Vec2(Mouse.GetPosition(MainForm.Instance).X, Mouse.GetPosition(MainForm.Instance).Y); }
 
         private static RendererMain instance;
-        public static RendererMain Instance { get { return instance; } }
+        public static RendererMain Instance
+        { get { return instance; } }
 
         public Vec2 renderOffset = Vec2.zero;
 
@@ -102,7 +98,7 @@ namespace DynamicWin.Main
             instance = null;
         }
 
-        void OnKeyRegistered(Keys key, KeyModifier modifier)
+        private void OnKeyRegistered(Keys key, KeyModifier modifier)
         {
             if (key == Keys.LWin && modifier.isCtrlDown)
             {
@@ -122,7 +118,7 @@ namespace DynamicWin.Main
                 }
             }
 
-            if(key == Keys.MediaNextTrack || key == Keys.MediaPreviousTrack)
+            if (key == Keys.MediaNextTrack || key == Keys.MediaPreviousTrack)
             {
                 if (MenuManager.Instance.ActiveMenu is HomeMenu)
                 {
@@ -131,12 +127,13 @@ namespace DynamicWin.Main
             }
         }
 
-        float deltaTime = 0f;
-        public float DeltaTime { get { return deltaTime; } private set => deltaTime = value; }
+        private float deltaTime = 0f;
+        public float DeltaTime
+        { get { return deltaTime; } private set => deltaTime = value; }
 
-        Stopwatch? updateStopwatch;
+        private Stopwatch? updateStopwatch;
 
-        int initialScreenBrightness = 0;
+        private int initialScreenBrightness = 0;
 
         // Called once every frame to update values
 
@@ -155,7 +152,7 @@ namespace DynamicWin.Main
 
             onUpdate?.Invoke(DeltaTime);
 
-            if(BrightnessAdjustMenu.GetBrightness() != initialScreenBrightness)
+            if (BrightnessAdjustMenu.GetBrightness() != initialScreenBrightness)
             {
                 initialScreenBrightness = BrightnessAdjustMenu.GetBrightness();
                 if (MenuManager.Instance.ActiveMenu is HomeMenu)
@@ -205,21 +202,21 @@ namespace DynamicWin.Main
         }
 
         public int canvasWithoutClip;
-        bool isInitialized = false;
+        private bool isInitialized = false;
 
-        GRContext Context;
+        private GRContext Context;
 
-/*        public SKSurface GetOpenGlSurface(int width, int height)
-        {
-            if (Context == null)
-            {
-                GLControl control = new GLControl(new GraphicsMode(32, 24, 8, 4));
-                control.MakeCurrent();
-                Context = GRContext.CreateGl();
-            }
-            var gpuSurface = SKSurface.Create(Context, true, new SKImageInfo(width, height));
-            return gpuSurface;
-        }*/
+        /*        public SKSurface GetOpenGlSurface(int width, int height)
+                {
+                    if (Context == null)
+                    {
+                        GLControl control = new GLControl(new GraphicsMode(32, 24, 8, 4));
+                        control.MakeCurrent();
+                        Context = GRContext.CreateGl();
+                    }
+                    var gpuSurface = SKSurface.Create(Context, true, new SKImageInfo(width, height));
+                    return gpuSurface;
+                }*/
 
         protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)
         {
@@ -241,7 +238,7 @@ namespace DynamicWin.Main
 
             canvasWithoutClip = canvas.Save();
 
-            if(islandObject.maskInToIsland) Mask(canvas);
+            if (islandObject.maskInToIsland) Mask(canvas);
             islandObject.DrawCall(canvas);
 
             if (MainIsland.hidden) return;
@@ -252,7 +249,7 @@ namespace DynamicWin.Main
                 canvas.RestoreToCount(canvasWithoutClip);
                 canvasWithoutClip = canvas.Save();
 
-                if(uiObject.IsHovering && uiObject.GetContextMenu() != null)
+                if (uiObject.IsHovering && uiObject.GetContextMenu() != null)
                 {
                     hasContextMenu = true;
 
@@ -263,7 +260,7 @@ namespace DynamicWin.Main
                     ContextMenu = contextMenu;
                 }
 
-                foreach(UIObject obj in uiObject.LocalObjects)
+                foreach (UIObject obj in uiObject.LocalObjects)
                 {
                     if (obj.IsHovering && obj.GetContextMenu() != null)
                     {
@@ -293,7 +290,7 @@ namespace DynamicWin.Main
             canvas.Flush();
         }
 
-        void Mask(SKCanvas canvas)
+        private void Mask(SKCanvas canvas)
         {
             var islandMask = GetMask();
             canvas.ClipRoundRect(islandMask);
@@ -306,5 +303,4 @@ namespace DynamicWin.Main
             return islandMask;
         }
     }
-
 }

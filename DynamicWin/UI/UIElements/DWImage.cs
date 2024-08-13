@@ -1,13 +1,5 @@
-﻿using DynamicWin.Resources;
-using DynamicWin.Utils;
+﻿using DynamicWin.Utils;
 using SkiaSharp;
-using SkiaSharp.Views.Desktop;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicWin.UI.UIElements
 {
@@ -15,7 +7,8 @@ namespace DynamicWin.UI.UIElements
     {
         private SKBitmap image;
 
-        public SKBitmap Image { get { return image; } set => image = value; }
+        public SKBitmap Image
+        { get { return image; } set => image = value; }
 
         public bool maskOwnRect = false;
         public bool allowIconThemeColor = true;

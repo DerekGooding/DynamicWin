@@ -3,12 +3,8 @@ using DynamicWin.Resources;
 using DynamicWin.UI.UIElements;
 using DynamicWin.UI.UIElements.Custom;
 using DynamicWin.UI.Widgets;
-using DynamicWin.UI.Widgets.Big;
 using DynamicWin.UI.Widgets.Small;
 using DynamicWin.Utils;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows.Forms;
 
 namespace DynamicWin.UI.Menu.Menus
 {
@@ -20,8 +16,8 @@ namespace DynamicWin.UI.Menu.Menus
 
         public List<WidgetBase> bigWidgets = new List<WidgetBase>();
 
-        float songSizeAddition = 0f;
-        float songLocalPosXAddition = 0f;
+        private float songSizeAddition = 0f;
+        private float songLocalPosXAddition = 0f;
 
         public void NextSong()
         {
@@ -98,17 +94,17 @@ namespace DynamicWin.UI.Menu.Menus
             return size;
         }
 
-        UIObject smallWidgetsContainer;
-        UIObject bigWidgetsContainer;
+        private UIObject smallWidgetsContainer;
+        private UIObject bigWidgetsContainer;
 
-        List<UIObject> bigMenuItems = new List<UIObject>();
+        private List<UIObject> bigMenuItems = new List<UIObject>();
 
-        UIObject topContainer;
+        private UIObject topContainer;
 
-        DWTextImageButton widgetButton;
-        DWTextImageButton trayButton;
+        private DWTextImageButton widgetButton;
+        private DWTextImageButton trayButton;
 
-        Tray tray;
+        private Tray tray;
 
         public override List<UIObject> InitializeMenu(IslandObject island)
         {
@@ -222,19 +218,23 @@ namespace DynamicWin.UI.Menu.Menus
                 bigWidgets.Add((WidgetBase)widget.CreateWidgetInstance(bigWidgetsContainer, Vec2.zero, UIAlignment.BottomCenter));
             }
 
-            smallLeftWidgets.ForEach(x => {
+            smallLeftWidgets.ForEach(x =>
+            {
                 objects.Add(x);
             });
 
-            smallRightWidgets.ForEach(x => {
+            smallRightWidgets.ForEach(x =>
+            {
                 objects.Add(x);
             });
 
-            smallCenterWidgets.ForEach(x => {
+            smallCenterWidgets.ForEach(x =>
+            {
                 objects.Add(x);
             });
 
-            bigWidgets.ForEach(x => {
+            bigWidgets.ForEach(x =>
+            {
                 objects.Add(x);
                 x.SilentSetActive(false);
             });
@@ -245,7 +245,7 @@ namespace DynamicWin.UI.Menu.Menus
             {
                 objects.Add(x);
                 x.SilentSetActive(false);
-                });
+            });
 
             next = new DWImage(island, Res.Next, new Vec2(-7.5f, 0), new Vec2(15, 15), UIAlignment.MiddleRight)
             {
@@ -266,23 +266,23 @@ namespace DynamicWin.UI.Menu.Menus
             return objects;
         }
 
-        DWImage next;
-        DWImage previous;
+        private DWImage next;
+        private DWImage previous;
 
         public float topSpacing = 20;
         public float bigWidgetsSpacing = 15;
-        int maxBigWidgetInOneRow = 2;
+        private int maxBigWidgetInOneRow = 2;
 
         public float smallWidgetsSpacing = 10;
         public float middleWidgetsSpacing = 35;
 
-        bool wasHovering = false;
+        private bool wasHovering = false;
 
-        float sCD = 35;
-        float bCD = 50;
+        private float sCD = 35;
+        private float bCD = 50;
 
         public bool isWidgetMode = true;
-        bool wasWidgetMode = false;
+        private bool wasWidgetMode = false;
 
         public override void Update()
         {
@@ -299,9 +299,9 @@ namespace DynamicWin.UI.Menu.Menus
             songLocalPosXAddition = Mathf.Lerp(songLocalPosXAddition, 0f, 10 * RendererMain.Instance.DeltaTime);
             songSizeAddition = Mathf.Lerp(songSizeAddition, 0f, 10 * RendererMain.Instance.DeltaTime);
 
-            if(Math.Abs(songLocalPosXAddition) < 5f)
+            if (Math.Abs(songLocalPosXAddition) < 5f)
             {
-                if(next.IsEnabled)
+                if (next.IsEnabled)
                     next.SetActive(false);
                 if (previous.IsEnabled)
                     previous.SetActive(false);
@@ -365,7 +365,7 @@ namespace DynamicWin.UI.Menu.Menus
                     bigWidgets.ForEach(x => x.SetActive(false));
                     bigMenuItems.ForEach(x => x.SetActive(false));
                 }
-                
+
                 wasHovering = false;
             }
             else if (RendererMain.Instance.MainIsland.IsHovering)
@@ -377,12 +377,11 @@ namespace DynamicWin.UI.Menu.Menus
                 bigWidgetsContainer.Size = bigContainerSize;
 
                 { // Big Widgets
-
                     List<WidgetBase> widgetsInOneLine = new List<WidgetBase>();
 
                     float lastBiggestY = 0f;
 
-                    for(int i = 0; i < bigWidgets.Count; i++)
+                    for (int i = 0; i < bigWidgets.Count; i++)
                     {
                         int line = i / maxBigWidgetInOneRow; // Correct line calculation
 

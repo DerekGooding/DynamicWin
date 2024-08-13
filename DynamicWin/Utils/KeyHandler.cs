@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -53,7 +52,7 @@ namespace DynamicWin.Utils
 
                 onKeyDown?.Invoke((Keys)vkCode, keyModi);
             }
-            else if(nCode >= 0 && wParam == (IntPtr)WM_KEYUP && keyDown.Contains((Keys)vkCode))
+            else if (nCode >= 0 && wParam == (IntPtr)WM_KEYUP && keyDown.Contains((Keys)vkCode))
             {
                 keyDown.Remove((Keys)vkCode);
             }

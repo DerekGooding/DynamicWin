@@ -1,23 +1,18 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicWin.Utils
 {
     internal class SaveManager
     {
         private static Dictionary<string, object> data = new Dictionary<string, object>();
-        public static Dictionary<string, object> SaveData { get { return data; } set => data = value; }
+        public static Dictionary<string, object> SaveData
+        { get { return data; } set => data = value; }
 
         public static string SavePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DynamicWin");
-        static string fileName = "Settings.json";
+        private static string fileName = "Settings.json";
 
-        static string cachedJsonSave = "";
+        private static string cachedJsonSave = "";
 
         public static void LoadData()
         {

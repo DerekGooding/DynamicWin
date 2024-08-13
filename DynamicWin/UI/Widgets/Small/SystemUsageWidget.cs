@@ -1,17 +1,10 @@
 ﻿using DynamicWin.UI.UIElements;
-using DynamicWin.UI.Widgets.Big;
 using DynamicWin.Utils;
 using LibreHardwareMonitor.Hardware;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Threading;
 
 namespace DynamicWin.UI.Widgets.Small
 {
-    class RegisterSystemUsageWidget : IRegisterableWidget
+    internal class RegisterSystemUsageWidget : IRegisterableWidget
     {
         public bool IsSmallWidget => true;
 
@@ -25,9 +18,9 @@ namespace DynamicWin.UI.Widgets.Small
 
     public class SystemUsageWidget : SmallWidgetBase
     {
-        DWText text;
+        private DWText text;
 
-        Computer computer;
+        private Computer computer;
 
         public SystemUsageWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, alignment)
         {
@@ -43,16 +36,16 @@ namespace DynamicWin.UI.Widgets.Small
 
             updateCycle += deltaTime;
 
-            if(updateCycle > 1.5f)
+            if (updateCycle > 1.5f)
             {
                 text.SilentSetText(GetUsage());
                 updateCycle = 0f;
             }
         }
 
-        float updateCycle = 0f;
+        private float updateCycle = 0f;
 
-        string GetUsage()
+        private string GetUsage()
         {
             return HardwareMonitor.usageString;
         }

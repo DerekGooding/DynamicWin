@@ -1,11 +1,6 @@
 ﻿using DynamicWin.UI.UIElements;
 using DynamicWin.UI.UIElements.Custom;
 using DynamicWin.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace DynamicWin.UI.Menu.Menus
@@ -41,7 +36,7 @@ namespace DynamicWin.UI.Menu.Menus
         public override List<UIObject> InitializeMenu(IslandObject island)
         {
             var objects = base.InitializeMenu(island);
-            
+
             var dropObj = new DropFileElement(island, Vec2.zero, new Vec2(400, 150), alignment: UIAlignment.Center);
             objects.Add(dropObj);
 

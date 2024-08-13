@@ -1,39 +1,31 @@
-﻿using DynamicWin.Main;
-using DynamicWin.Utils;
+﻿using DynamicWin.Utils;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using ThumbnailGenerator;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DynamicWin.UI.UIElements.Custom
 {
     internal class TrayFile : UIObject
     {
-        string file;
-        Bitmap thumbnail;
+        private string file;
+        private Bitmap thumbnail;
 
         public string FileName { get => file; }
 
-        DWImage fileIconImage;
-        DWText fileTitle;
+        private DWImage fileIconImage;
+        private DWText fileTitle;
 
-        bool isSelected = false;
+        private bool isSelected = false;
         public bool IsSelected { get => isSelected; }
 
         public static TrayFile lastSelected;
 
-        Tray tray;
+        private Tray tray;
 
-        public TrayFile(UIObject? parent, string file, Vec2 position, Tray tray, UIAlignment alignment = UIAlignment.TopCenter):
+        public TrayFile(UIObject? parent, string file, Vec2 position, Tray tray, UIAlignment alignment = UIAlignment.TopCenter) :
             base(parent, position, new Vec2(60, 75), alignment)
         {
             this.file = file;
@@ -98,15 +90,16 @@ namespace DynamicWin.UI.UIElements.Custom
                         try
                         {
                             Thread.Sleep(1500);
-                        }catch(ThreadInterruptedException e)
+                        }
+                        catch (ThreadInterruptedException e)
                         {
                             return;
                         }
 
                         RefreshIcon();
                     }).Start();
-
-                }catch(FileNotFoundException fnfE)
+                }
+                catch (FileNotFoundException fnfE)
                 {
                     return;
                 }
@@ -118,7 +111,7 @@ namespace DynamicWin.UI.UIElements.Custom
 
                     fileIconImage.Image = bMap;
 
-                    if(thumbnail != null)
+                    if (thumbnail != null)
                         thumbnail.Dispose();
                 }
 
@@ -126,8 +119,8 @@ namespace DynamicWin.UI.UIElements.Custom
             });
         }
 
-        float cycle = 0f;
-        float speed = 5f;
+        private float cycle = 0f;
+        private float speed = 5f;
 
         public override void Update(float deltaTime)
         {
@@ -176,7 +169,7 @@ namespace DynamicWin.UI.UIElements.Custom
             }
         }
 
-        bool wasSelected = false;
+        private bool wasSelected = false;
 
         public override void OnMouseUp()
         {
@@ -195,7 +188,7 @@ namespace DynamicWin.UI.UIElements.Custom
         {
             if (!IsHovering)
             {
-                if(!(KeyHandler.keyDown.Contains(Keys.LControlKey) || KeyHandler.keyDown.Contains(Keys.RControlKey)
+                if (!(KeyHandler.keyDown.Contains(Keys.LControlKey) || KeyHandler.keyDown.Contains(Keys.RControlKey)
                     || KeyHandler.keyDown.Contains(Keys.LShiftKey) || KeyHandler.keyDown.Contains(Keys.RShiftKey)))
                     isSelected = false;
             }

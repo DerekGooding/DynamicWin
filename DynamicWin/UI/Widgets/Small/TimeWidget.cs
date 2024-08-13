@@ -1,14 +1,9 @@
 ﻿using DynamicWin.UI.UIElements;
 using DynamicWin.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicWin.UI.Widgets.Small
 {
-    class RegisterTimeWidget : IRegisterableWidget
+    internal class RegisterTimeWidget : IRegisterableWidget
     {
         public bool IsSmallWidget => true;
 
@@ -22,7 +17,7 @@ namespace DynamicWin.UI.Widgets.Small
 
     public class TimeWidget : SmallWidgetBase
     {
-        DWText timeText;
+        private DWText timeText;
 
         public TimeWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, alignment)
         {
@@ -38,7 +33,7 @@ namespace DynamicWin.UI.Widgets.Small
             timeText.Text = GetTime();
         }
 
-        string GetTime()
+        private string GetTime()
         {
             return DateTime.Now.ToString("HH:mm");
         }

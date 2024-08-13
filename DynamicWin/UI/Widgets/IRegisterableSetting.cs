@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DynamicWin.UI.Widgets
+﻿namespace DynamicWin.UI.Widgets
 {
     public interface IRegisterableSetting
     {
@@ -12,6 +6,7 @@ namespace DynamicWin.UI.Widgets
         /// The ID the settings get saved at.
         /// </summary>
         public string SettingID { get; }
+
         public string SettingTitle { get; }
 
         /// <summary>

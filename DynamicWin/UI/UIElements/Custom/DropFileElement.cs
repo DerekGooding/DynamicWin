@@ -1,10 +1,5 @@
 ﻿using DynamicWin.Utils;
 using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicWin.UI.UIElements.Custom
 {
@@ -17,7 +12,7 @@ namespace DynamicWin.UI.UIElements.Custom
             AddLocalObject(new DWText(null, displayText, Vec2.zero, UIAlignment.Center) { Font = Resources.Res.InterBold, TextSize = tSize });
         }
 
-        Col currentCol = Theme.Secondary;
+        private Col currentCol = Theme.Secondary;
 
         public override void Update(float deltaTime)
         {

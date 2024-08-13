@@ -3,14 +3,7 @@ using DynamicWin.Resources;
 using DynamicWin.UI.UIElements;
 using DynamicWin.UI.UIElements.Custom;
 using DynamicWin.Utils;
-using NAudio.CoreAudioApi;
-using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicWin.UI.Menu.Menus
 {
@@ -20,28 +13,28 @@ namespace DynamicWin.UI.Menu.Menus
         [DllImport("winmm.dll", CharSet = CharSet.Auto)]
         private static extern int waveOutGetVolume(IntPtr hwo, out uint dwVolume);
 
-        double GetVolumePercent()
+        private double GetVolumePercent()
         {
             var volume = DynamicWinMain.defaultDevice.AudioEndpointVolume;
 
             return volume.MasterVolumeLevelScalar * 100;
         }
 
-        bool IsMuted()
+        private bool IsMuted()
         {
             return DynamicWinMain.defaultDevice.AudioEndpointVolume.Mute;
         }
 
-        DWImage volumeImage;
-        UIObject mutedBg;
-        DWText muteText;
-        DWProgressBar volume;
+        private DWImage volumeImage;
+        private UIObject mutedBg;
+        private DWText muteText;
+        private DWProgressBar volume;
 
-        static VolumeAdjustMenu instance;
+        private static VolumeAdjustMenu instance;
 
-        float shakeStrength = 0f;
+        private float shakeStrength = 0f;
 
-        float islandScale = 1.25f;
+        private float islandScale = 1.25f;
 
         public VolumeAdjustMenu()
         {
@@ -81,10 +74,10 @@ namespace DynamicWin.UI.Menu.Menus
 
         public static float timerUntilClose = 0f;
 
-        float timer = 0;
-        float shakeSpeed = 35;
+        private float timer = 0;
+        private float shakeSpeed = 35;
 
-        float Func(float x)
+        private float Func(float x)
         {
             //double result = -Math.Pow(x, 3f) + (-Math.Pow(x - 1, 6f * 4)) + 1;
             //double result = -Math.Pow((x / 0.5) - 1, 2) + 1;
@@ -93,8 +86,8 @@ namespace DynamicWin.UI.Menu.Menus
             return (float)result;
         }
 
-        float seconds = 0f;
-        bool mute = false;
+        private float seconds = 0f;
+        private bool mute = false;
 
         public override void Update()
         {
@@ -158,7 +151,7 @@ namespace DynamicWin.UI.Menu.Menus
             var volXOffset = KeyHandler.keyDown.Contains(System.Windows.Forms.Keys.VolumeUp) ? 2f :
                 KeyHandler.keyDown.Contains(System.Windows.Forms.Keys.VolumeDown) ? -2f : 0;
 
-            this.volume.LocalPosition.X = Mathf.Lerp(this.volume.LocalPosition.X, volXOffset, 
+            this.volume.LocalPosition.X = Mathf.Lerp(this.volume.LocalPosition.X, volXOffset,
                 (Math.Abs(volXOffset) > Math.Abs(this.volume.LocalPosition.X) ? 4.5f : 2.5f) * RendererMain.Instance.DeltaTime);
         }
 

@@ -1,17 +1,13 @@
 ﻿using DynamicWin.Utils;
 using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicWin.UI.UIElements
 {
     public class DWText : UIObject
     {
         private string text = "";
-        public string Text { get { return text; } set { SetText(value); } }
+        public string Text
+        { get { return text; } set { SetText(value); } }
 
         private float textSize = 24;
         public float TextSize { get => textSize; set => textSize = value; }
@@ -71,7 +67,7 @@ namespace DynamicWin.UI.UIElements
             return new Vec2(blob.Bounds.Width, blob.Bounds.Height);
         }
 
-        Animator changeTextAnim;
+        private Animator changeTextAnim;
 
         public void SilentSetText(string text)
         {
@@ -89,7 +85,7 @@ namespace DynamicWin.UI.UIElements
 
             changeTextAnim.onAnimationUpdate += (x) =>
             {
-                if(x <= 0.5f)
+                if (x <= 0.5f)
                 {
                     float t = Easings.EaseInQuint(x * 2);
 

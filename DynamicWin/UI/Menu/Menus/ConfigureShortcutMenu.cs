@@ -3,26 +3,17 @@ using DynamicWin.UI.UIElements;
 using DynamicWin.UI.UIElements.Custom;
 using DynamicWin.UI.Widgets.Big;
 using DynamicWin.Utils;
-using Mono.Unix.Native;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls.Primitives;
 
 namespace DynamicWin.UI.Menu.Menus
 {
     internal class ConfigureShortcutMenu : BaseMenu
     {
-        ShortcutButton _shortcutButtonToConfigure;
-        ShortcutButton.ShortcutSave save;
+        private ShortcutButton _shortcutButtonToConfigure;
+        private ShortcutButton.ShortcutSave save;
 
-        static ConfigureShortcutMenu instance;
+        private static ConfigureShortcutMenu instance;
 
         public static void DropData(System.Windows.DragEventArgs e)
         {
@@ -51,7 +42,6 @@ namespace DynamicWin.UI.Menu.Menus
                 elementText.SetText(DWText.Truncate(fileList[0], 60));
                 elementTitle.SetText(DWText.Truncate(name, 25));
             }
-
         }
 
         public ConfigureShortcutMenu(ShortcutButton shortcutButton)
@@ -61,9 +51,9 @@ namespace DynamicWin.UI.Menu.Menus
             this.save = shortcutButton.savedShortcut;
         }
 
-        DropFileElement dropFileElement;
-        DWText elementText;
-        DWText elementTitle;
+        private DropFileElement dropFileElement;
+        private DWText elementText;
+        private DWText elementTitle;
 
         public override List<UIObject> InitializeMenu(IslandObject island)
         {
@@ -105,7 +95,7 @@ namespace DynamicWin.UI.Menu.Menus
             HandleDropAreaActive();
         }
 
-        void HandleDropAreaActive()
+        private void HandleDropAreaActive()
         {
             if (string.IsNullOrEmpty(save.path))
             {

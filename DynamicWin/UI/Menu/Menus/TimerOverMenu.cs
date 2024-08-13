@@ -2,22 +2,15 @@
 using DynamicWin.UI.UIElements;
 using DynamicWin.Utils;
 using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Converters;
 
 namespace DynamicWin.UI.Menu.Menus
 {
     public class TimerOverMenu : BaseMenu
     {
-        DWText overText;
-        System.Media.SoundPlayer player;
+        private DWText overText;
+        private System.Media.SoundPlayer player;
 
-        DWWave wave;
+        private DWWave wave;
 
         public override List<UIObject> InitializeMenu(IslandObject island)
         {
@@ -46,10 +39,10 @@ namespace DynamicWin.UI.Menu.Menus
             player.Stop();
         }
 
-        float sinCycle = -0.65f;
-        float speed = 3.5f;
+        private float sinCycle = -0.65f;
+        private float speed = 3.5f;
 
-        float islandSizeMulti = 1f;
+        private float islandSizeMulti = 1f;
 
         public override void Update()
         {
@@ -60,10 +53,10 @@ namespace DynamicWin.UI.Menu.Menus
 
             overText.TextSize = Mathf.Remap((float)Math.Sin(sinCycle), -1, 1, 20, 25);
 
-            if(Mathf.LimitDecimalPoints((float)Math.Sin(sinCycle + 0.1f), 1) == 1f)
+            if (Mathf.LimitDecimalPoints((float)Math.Sin(sinCycle + 0.1f), 1) == 1f)
             {
                 islandSizeMulti = 1.2f;
-                if(wave.waveSize > 45)
+                if (wave.waveSize > 45)
                 {
                     wave.waveSize = 0f;
                 }

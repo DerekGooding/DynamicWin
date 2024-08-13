@@ -3,14 +3,8 @@ using DynamicWin.UI.UIElements;
 using DynamicWin.Utils;
 using Newtonsoft.Json;
 using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Xml;
 
 namespace DynamicWin.UI.Widgets.Big
@@ -25,7 +19,6 @@ namespace DynamicWin.UI.Widgets.Big
             return new WeatherWidget(parent, position, alignment);
         }
     }
-
 
     public class WeatherWidget : WidgetBase
     {
@@ -80,7 +73,6 @@ namespace DynamicWin.UI.Widgets.Big
             };
             AddLocalObject(weatherText);
 
-
             temperatureText = new DWText(this, "--", new Vec2(15, -27.5f), UIAlignment.BottomLeft)
             {
                 TextSize = 34,
@@ -95,7 +87,7 @@ namespace DynamicWin.UI.Widgets.Big
                 allowIconThemeColor = true
             };
 
-            if(weatherFetcher == null)
+            if (weatherFetcher == null)
                 weatherFetcher = new WeatherFetcher();
 
             weatherFetcher.onWeatherDataReceived += OnWeatherDataReceived;

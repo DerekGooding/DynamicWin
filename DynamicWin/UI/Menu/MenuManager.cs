@@ -1,12 +1,5 @@
 ﻿using DynamicWin.Main;
-using DynamicWin.UI.Menu.Menus;
 using DynamicWin.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace DynamicWin.UI.Menu
 {
@@ -47,7 +40,7 @@ namespace DynamicWin.UI.Menu
             Instance.OpenOverlay(newActiveMenu, time);
         }
 
-        static Thread overlayThread;
+        private static Thread overlayThread;
 
         public static void CloseOverlay()
         {
@@ -67,7 +60,7 @@ namespace DynamicWin.UI.Menu
                 {
                     Thread.Sleep(timeMillis);
                 }
-                catch(ThreadInterruptedException e)
+                catch (ThreadInterruptedException e)
                 {
                     QueueOpenMenu(lastMenu);
                     return;
@@ -75,15 +68,14 @@ namespace DynamicWin.UI.Menu
 
                 if (lastMenu == null) throw new NullReferenceException();
                 QueueOpenMenu(lastMenu);
-
             });
             overlayThread.Start();
         }
 
-        List<BaseMenu> menuLoadQueue = new List<BaseMenu>();
+        private List<BaseMenu> menuLoadQueue = new List<BaseMenu>();
 
-        Animator menuAnimatorIn;
-        Animator menuAnimatorOut;
+        private Animator menuAnimatorIn;
+        private Animator menuAnimatorOut;
 
         public void Update(float deltaTime)
         {
@@ -153,7 +145,7 @@ namespace DynamicWin.UI.Menu
                         }
                     });
 
-                    if(RendererMain.Instance != null)
+                    if (RendererMain.Instance != null)
                         RendererMain.Instance.renderOffset.Y = Mathf.Lerp(0, yOffset, tEased);
                 };
 
@@ -178,8 +170,8 @@ namespace DynamicWin.UI.Menu
                             obj.blurAmount = 35;
                         }
                     });
-                    
-                    if(menuAnimatorOut == null)
+
+                    if (menuAnimatorOut == null)
                     {
                         LoadMenuEnd();
                         return;
@@ -192,11 +184,11 @@ namespace DynamicWin.UI.Menu
             }
 
             if (menuAnimatorIn == null) menuAnimatorOut.Start();
-            else 
+            else
                 menuAnimatorIn.Start();
         }
 
-        void LoadMenuEnd()
+        private void LoadMenuEnd()
         {
             onMenuChangeEnd?.Invoke(activeMenu);
 

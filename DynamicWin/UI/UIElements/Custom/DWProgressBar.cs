@@ -1,10 +1,5 @@
 ﻿using DynamicWin.Utils;
 using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicWin.UI.UIElements.Custom
 {
@@ -25,7 +20,7 @@ namespace DynamicWin.UI.UIElements.Custom
             displayValue = value;
         }
 
-        float displayValue = 1f;
+        private float displayValue = 1f;
 
         public override void Update(float deltaTime)
         {
@@ -40,7 +35,7 @@ namespace DynamicWin.UI.UIElements.Custom
 
             var bgSize = Size;
             var bgP = RawPosition + LocalPosition;
-                bgP.X += bgSize.X * (displayValue) + 3f;
+            bgP.X += bgSize.X * (displayValue) + 3f;
             var bgRectPos = GetScreenPosFromRawPosition(bgP, bgSize);
             var bgRect = SKRect.Create(bgRectPos.X, bgRectPos.Y, bgSize.X * (1f - displayValue), bgSize.Y);
             var rBgRect = new SKRoundRect(bgRect, roundRadius);

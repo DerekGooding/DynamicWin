@@ -1,11 +1,4 @@
-﻿using DynamicWin.Main;
-using DynamicWin.Utils;
-using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DynamicWin.Utils;
 
 namespace DynamicWin.UI.Widgets.Small
 {
@@ -17,7 +10,10 @@ namespace DynamicWin.UI.Widgets.Small
             isSmallWidget = true;
         }
 
-        protected override float GetWidgetHeight() { return 15; }
-        protected override float GetWidgetWidth() { return 35; }
+        protected override float GetWidgetHeight()
+        { return 15; }
+
+        protected override float GetWidgetWidth()
+        { return 35; }
     }
 }

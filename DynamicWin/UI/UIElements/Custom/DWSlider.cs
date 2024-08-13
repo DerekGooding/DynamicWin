@@ -1,10 +1,5 @@
 ﻿using DynamicWin.Main;
 using DynamicWin.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicWin.UI.UIElements.Custom
 {
@@ -14,10 +9,9 @@ namespace DynamicWin.UI.UIElements.Custom
 
         public DWSlider(UIObject? parent, Vec2 position, Vec2 size, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, size, alignment)
         {
-
         }
 
-        float valueBefore = 0f;
+        private float valueBefore = 0f;
 
         public override void OnMouseDown()
         {
@@ -30,7 +24,7 @@ namespace DynamicWin.UI.UIElements.Custom
         {
             base.OnGlobalMouseUp();
 
-            if(valueBefore != value)
+            if (valueBefore != value)
                 clickCallback?.Invoke(this.value);
         }
 

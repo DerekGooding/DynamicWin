@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace DynamicWin.Utils
 {
@@ -39,7 +34,8 @@ namespace DynamicWin.Utils
             try
             {
                 len = new FileInfo(filename).Length;
-            }catch(FileNotFoundException e)
+            }
+            catch (FileNotFoundException e)
             {
                 return "File not found!";
             }

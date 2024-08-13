@@ -1,9 +1,6 @@
 ﻿using DynamicWin.Main;
 using Newtonsoft.Json;
-using System.Globalization;
 using System.IO;
-using System.Reflection;
-using System.Windows;
 
 namespace DynamicWin.Utils
 {
@@ -17,7 +14,7 @@ namespace DynamicWin.Utils
 
             UpdateTheme();
         }
-        
+
         public void ApplyTheme(ThemeHolder theme)
         {
             TextMain = GetColor(theme.TextMain);
@@ -76,17 +73,21 @@ namespace DynamicWin.Utils
                 switch (Settings.Theme)
                 {
                     case 0:
-                    ApplyTheme(darkTheme);
+                        ApplyTheme(darkTheme);
                         break;
+
                     case 1:
                         ApplyTheme(lightTheme);
                         break;
+
                     case 2:
                         ApplyTheme(candyTheme);
                         break;
+
                     case 3:
                         ApplyTheme(forestDawnTheme);
                         break;
+
                     case 4:
                         ApplyTheme(sunsetGlow);
                         break;
@@ -130,7 +131,7 @@ namespace DynamicWin.Utils
                 customTheme = darkTheme;
             }
 
-            if(Settings.Theme == -1)
+            if (Settings.Theme == -1)
             {
                 ApplyTheme(customTheme);
             }
@@ -139,7 +140,7 @@ namespace DynamicWin.Utils
                 MainForm.Instance.AddRenderer();
         }
 
-        ThemeHolder GetTheme(string json)
+        private ThemeHolder GetTheme(string json)
         {
             var customTheme = new ThemeHolder();
             customTheme = JsonConvert.DeserializeObject<ThemeHolder>(json);

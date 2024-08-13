@@ -1,13 +1,6 @@
 ﻿using DynamicWin.Main;
-using DynamicWin.Resources;
-using DynamicWin.UI.UIElements;
 using DynamicWin.Utils;
 using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace DynamicWin.UI.Widgets
@@ -17,7 +10,8 @@ namespace DynamicWin.UI.Widgets
         public bool isEditMode = false;
 
         protected bool isSmallWidget = false;
-        public bool IsSmallWidget { get { return isSmallWidget; } }
+        public bool IsSmallWidget
+        { get { return isSmallWidget; } }
 
         //DWText widgetName;
 
@@ -37,10 +31,14 @@ namespace DynamicWin.UI.Widgets
             };*/
         }
 
-        public Vec2 GetWidgetSize() { return new Vec2(GetWidgetWidth(), GetWidgetHeight()); }
+        public Vec2 GetWidgetSize()
+        { return new Vec2(GetWidgetWidth(), GetWidgetHeight()); }
 
-        protected virtual float GetWidgetHeight() { return 100; }
-        protected virtual float GetWidgetWidth() { return 200; }
+        protected virtual float GetWidgetHeight()
+        { return 100; }
+
+        protected virtual float GetWidgetWidth()
+        { return 200; }
 
         public List<UIObject> InitializeWidget()
         {
@@ -65,7 +63,7 @@ namespace DynamicWin.UI.Widgets
 
             MenuItem pR = new MenuItem() { Header = "Push Right ->" };
             pR.Click += (x, y) => onEditMoveWidgetRight?.Invoke();
-            
+
             ctx.Items.Add(remove);
             ctx.Items.Add(pL);
             ctx.Items.Add(pR);
@@ -73,7 +71,7 @@ namespace DynamicWin.UI.Widgets
             return ctx;
         }
 
-        float hoverProgress = 0f;
+        private float hoverProgress = 0f;
 
         public override void Draw(SKCanvas canvas)
         {
@@ -81,7 +79,7 @@ namespace DynamicWin.UI.Widgets
 
             hoverProgress = Mathf.Lerp(hoverProgress, IsHovering ? 1f : 0f, 10f * RendererMain.Instance.DeltaTime);
 
-            if(hoverProgress > 0.025f)
+            if (hoverProgress > 0.025f)
             {
                 var paint = GetPaint();
                 paint.ImageFilter = SKImageFilter.CreateDropShadowOnly(0, 0, hoverProgress * 10, hoverProgress * 10, Theme.WidgetBackground.Override(a: hoverProgress / 10).Value());
@@ -97,7 +95,6 @@ namespace DynamicWin.UI.Widgets
                 canvas.RestoreToCount(sc);
             }
 
-
             /*if (!isEditMode || isSmallWidget)
             {
                 drawLocalObjects = true; */
@@ -109,7 +106,6 @@ namespace DynamicWin.UI.Widgets
                             widgetName.DrawCall(canvas);
                             drawLocalObjects = false;
                         }*/
-
 
             /*if (!IsSmallWidget)
             {
@@ -152,6 +148,7 @@ namespace DynamicWin.UI.Widgets
             //canvas.RestoreToCount(ogC);
         }
 
-        public virtual void DrawWidget(SKCanvas canvas) { }
+        public virtual void DrawWidget(SKCanvas canvas)
+        { }
     }
 }

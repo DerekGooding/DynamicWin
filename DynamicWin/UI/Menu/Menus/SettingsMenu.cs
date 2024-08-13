@@ -1,42 +1,30 @@
 ﻿using DynamicWin.Main;
 using DynamicWin.Resources;
 using DynamicWin.UI.UIElements;
-using DynamicWin.UI.UIElements.Custom;
 using DynamicWin.UI.Widgets;
 using DynamicWin.UI.Widgets.Small;
 using DynamicWin.Utils;
-using Newtonsoft.Json.Linq;
 using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Navigation;
-using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace DynamicWin.UI.Menu.Menus
 {
     public class SettingsMenu : BaseMenu
     {
-
         public SettingsMenu()
         {
-            MainForm.onScrollEvent += (MouseWheelEventArgs x) => 
+            MainForm.onScrollEvent += (MouseWheelEventArgs x) =>
             {
                 yScrollOffset += x.Delta * 0.25f;
             };
         }
 
-        bool changedTheme = false;
+        private bool changedTheme = false;
 
-        void SaveAndBack()
+        private void SaveAndBack()
         {
             Settings.AllowBlur = allowBlur.IsChecked;
             Settings.AllowAnimation = allowAnimation.IsChecked;
@@ -58,16 +46,16 @@ namespace DynamicWin.UI.Menu.Menus
             Settings.Save();
         }
 
-        Checkbox allowBlur;
-        Checkbox allowAnimation;
-        Checkbox antiAliasing;
+        private Checkbox allowBlur;
+        private Checkbox allowAnimation;
+        private Checkbox antiAliasing;
 
         public override List<UIObject> InitializeMenu(IslandObject island)
         {
             var objects = base.InitializeMenu(island);
             LoadCustomOptions();
 
-            foreach(var item in customOptions)
+            foreach (var item in customOptions)
             {
                 item.LoadSettings();
             }
@@ -76,7 +64,6 @@ namespace DynamicWin.UI.Menu.Menus
             generalTitle.Font = Res.InterBold;
             generalTitle.Anchor.X = 0;
             objects.Add(generalTitle);
-
 
             {
                 var islandModesTitle = new DWText(island, "Island Mode", new Vec2(25, 0), UIAlignment.TopLeft);
@@ -182,7 +169,7 @@ namespace DynamicWin.UI.Menu.Menus
             objects.Add(widgetOptionsTitle);
 
             {
-                foreach(var option in customOptions)
+                foreach (var option in customOptions)
                 {
                     var wTitle = new DWText(island, option.SettingTitle, new Vec2(25, 0), UIAlignment.TopLeft);
                     wTitle.Font = Res.InterRegular;
@@ -191,11 +178,11 @@ namespace DynamicWin.UI.Menu.Menus
                     wTitle.Anchor.X = 0;
                     objects.Add(wTitle);
 
-                    foreach(var optionItem in option.SettingsObjects())
+                    foreach (var optionItem in option.SettingsObjects())
                     {
                         optionItem.Parent = island;
 
-                        if(optionItem.alignment == UIAlignment.TopLeft)
+                        if (optionItem.alignment == UIAlignment.TopLeft)
                         {
                             optionItem.Position = new Vec2(25, 0);
                             optionItem.Anchor.X = 0;
@@ -206,7 +193,8 @@ namespace DynamicWin.UI.Menu.Menus
                             ((DWText)optionItem).Color = Theme.TextThird;
                             ((DWText)optionItem).Font = Res.InterRegular;
                             ((DWText)optionItem).TextSize = 13;
-                        }else if(optionItem is Checkbox)
+                        }
+                        else if (optionItem is Checkbox)
                         {
                             optionItem.Size = new Vec2(25, 25);
                         }
@@ -254,12 +242,12 @@ namespace DynamicWin.UI.Menu.Menus
             return objects;
         }
 
-        UIObject bottomMask;
-        SmallWidgetAdder smallWidgetAdder;
-        BigWidgetAdder bigWidgetAdder;
+        private UIObject bottomMask;
+        private SmallWidgetAdder smallWidgetAdder;
+        private BigWidgetAdder bigWidgetAdder;
 
-        float yScrollOffset = 0f;
-        float ySmoothScroll = 0f;
+        private float yScrollOffset = 0f;
+        private float ySmoothScroll = 0f;
 
         public override void Update()
         {
@@ -274,7 +262,7 @@ namespace DynamicWin.UI.Menu.Menus
             var yPos = 35f;
             var spacing = 15f;
 
-            for(int i = 0; i < UiObjects.Count - 2; i++)
+            for (int i = 0; i < UiObjects.Count - 2; i++)
             {
                 var uiObject = UiObjects[i];
                 if (!uiObject.IsEnabled) continue;
@@ -293,7 +281,7 @@ namespace DynamicWin.UI.Menu.Menus
         {
             var vec = new Vec2(525, 475);
 
-            if(smallWidgetAdder != null)
+            if (smallWidgetAdder != null)
             {
                 vec.X = Math.Max(vec.X, smallWidgetAdder.Size.X + 50);
             }
@@ -306,9 +294,9 @@ namespace DynamicWin.UI.Menu.Menus
             return IslandSize() + 5;
         }
 
-        static List<IRegisterableSetting> customOptions;
+        private static List<IRegisterableSetting> customOptions;
 
-        void LoadCustomOptions()
+        private void LoadCustomOptions()
         {
             customOptions = new List<IRegisterableSetting>();
 
@@ -356,7 +344,7 @@ namespace DynamicWin.UI.Menu.Menus
 
     internal class BigWidgetAdder : UIObject
     {
-        AddNew addNew;
+        private AddNew addNew;
 
         public BigWidgetAdder(UIObject? parent, Vec2 position, Vec2 size, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, size, alignment)
         {
@@ -378,29 +366,28 @@ namespace DynamicWin.UI.Menu.Menus
 
             int line = (int)(Math.Floor(displays.Count / maxE));
 
-            addNew.LocalPosition.Y  = Mathf.Lerp(addNew.LocalPosition.Y, -line * 45 - 45, 15f * deltaTime);
-            addNew.LocalPosition.X  = Mathf.Lerp(addNew.LocalPosition.X, isDisplayEven() ? Size.X / 2f : Size.X / 1.3333333f, 15f * deltaTime);
-            addNew.Size.X           = Mathf.Lerp(addNew.Size.X, isDisplayEven() ? Size.X : Size.X / 2, 15f * deltaTime);
+            addNew.LocalPosition.Y = Mathf.Lerp(addNew.LocalPosition.Y, -line * 45 - 45, 15f * deltaTime);
+            addNew.LocalPosition.X = Mathf.Lerp(addNew.LocalPosition.X, isDisplayEven() ? Size.X / 2f : Size.X / 1.3333333f, 15f * deltaTime);
+            addNew.Size.X = Mathf.Lerp(addNew.Size.X, isDisplayEven() ? Size.X : Size.X / 2, 15f * deltaTime);
 
             var lines2 = (int)Math.Max(1, (displays.Count / maxE + 1));
             Size.Y = Mathf.Lerp(Size.Y, lines2 * 45, 15f * RendererMain.Instance.DeltaTime);
         }
 
-        bool isDisplayEven()
+        private bool isDisplayEven()
         {
             return displays.Count % 2 == 0;
         }
 
-        List<BigWidgetAdderDisplay> displays = new List<BigWidgetAdderDisplay>();
-        float maxE = 2;
+        private List<BigWidgetAdderDisplay> displays = new List<BigWidgetAdderDisplay>();
+        private float maxE = 2;
 
-        void UpdateWidgetDisplay()
+        private void UpdateWidgetDisplay()
         {
             displays.ForEach((x) => DestroyLocalObject(x));
             displays.Clear();
 
             Dictionary<string, IRegisterableWidget> bigWidgets = new Dictionary<string, IRegisterableWidget>();
-
 
             foreach (var widget in Res.availableBigWidgets)
             {
@@ -418,12 +405,14 @@ namespace DynamicWin.UI.Menu.Menus
 
                 var display = new BigWidgetAdderDisplay(this, widget.WidgetName, UIAlignment.BottomLeft);
 
-                display.onEditRemoveWidget += () => {
+                display.onEditRemoveWidget += () =>
+                {
                     Settings.bigWidgets.Remove(bigWidget);
                     UpdateWidgetDisplay();
                 };
 
-                display.onEditMoveWidgetRight += () => {
+                display.onEditMoveWidgetRight += () =>
+                {
                     int index = Math.Clamp(Settings.bigWidgets.IndexOf(bigWidget) + 1, 0, Settings.bigWidgets.Count - 1);
                     Settings.bigWidgets.Remove(bigWidget);
 
@@ -431,7 +420,8 @@ namespace DynamicWin.UI.Menu.Menus
                     UpdateWidgetDisplay();
                 };
 
-                display.onEditMoveWidgetLeft += () => {
+                display.onEditMoveWidgetLeft += () =>
+                {
                     int index = Math.Clamp(Settings.bigWidgets.IndexOf(bigWidget) - 1, 0, Settings.bigWidgets.Count - 1);
                     Settings.bigWidgets.Remove(bigWidget);
 
@@ -561,8 +551,8 @@ namespace DynamicWin.UI.Menu.Menus
             canvas.RestoreToCount(canvasRestore);
         }
 
-        Col color;
-        float s = 1;
+        private Col color;
+        private float s = 1;
 
         public override void Update(float deltaTime)
         {
@@ -611,13 +601,13 @@ namespace DynamicWin.UI.Menu.Menus
             UpdateWidgetDisplay();
         }
 
-        UIObject container;
+        private UIObject container;
 
         public List<SmallWidgetBase> smallLeftWidgets = new List<SmallWidgetBase>();
         public List<SmallWidgetBase> smallRightWidgets = new List<SmallWidgetBase>();
         public List<SmallWidgetBase> smallCenterWidgets = new List<SmallWidgetBase>();
 
-        void UpdateWidgetDisplay()
+        private void UpdateWidgetDisplay()
         {
             smallRightWidgets.ForEach((x) => DestroyLocalObject(x));
             smallLeftWidgets.ForEach((x) => DestroyLocalObject(x));
@@ -628,7 +618,6 @@ namespace DynamicWin.UI.Menu.Menus
             smallCenterWidgets.Clear();
 
             Dictionary<string, IRegisterableWidget> smallWidgets = new Dictionary<string, IRegisterableWidget>();
-
 
             foreach (var widget in Res.availableSmallWidgets)
             {
@@ -645,12 +634,14 @@ namespace DynamicWin.UI.Menu.Menus
                 var instance = (SmallWidgetBase)widget.CreateWidgetInstance(container, Vec2.zero, UIAlignment.Center);
                 instance.isEditMode = true;
 
-                instance.onEditRemoveWidget += () => {
+                instance.onEditRemoveWidget += () =>
+                {
                     Settings.smallWidgetsMiddle.Remove(smallWidget);
                     UpdateWidgetDisplay();
                 };
 
-                instance.onEditMoveWidgetLeft += () => {
+                instance.onEditMoveWidgetLeft += () =>
+                {
                     int index = Math.Clamp(Settings.smallWidgetsMiddle.IndexOf(smallWidget) + 1, 0, Settings.smallWidgetsMiddle.Count - 1);
                     Settings.smallWidgetsMiddle.Remove(smallWidget);
 
@@ -658,7 +649,8 @@ namespace DynamicWin.UI.Menu.Menus
                     UpdateWidgetDisplay();
                 };
 
-                instance.onEditMoveWidgetRight += () => {
+                instance.onEditMoveWidgetRight += () =>
+                {
                     int index = Math.Clamp(Settings.smallWidgetsMiddle.IndexOf(smallWidget) - 1, 0, Settings.smallWidgetsMiddle.Count - 1);
                     Settings.smallWidgetsMiddle.Remove(smallWidget);
 
@@ -678,12 +670,14 @@ namespace DynamicWin.UI.Menu.Menus
                 var instance = (SmallWidgetBase)widget.CreateWidgetInstance(container, Vec2.zero, UIAlignment.MiddleLeft);
                 instance.isEditMode = true;
 
-                instance.onEditRemoveWidget += () => {
+                instance.onEditRemoveWidget += () =>
+                {
                     Settings.smallWidgetsLeft.Remove(smallWidget);
                     UpdateWidgetDisplay();
                 };
 
-                instance.onEditMoveWidgetLeft += () => {
+                instance.onEditMoveWidgetLeft += () =>
+                {
                     int index = Math.Clamp(Settings.smallWidgetsLeft.IndexOf(smallWidget) + 1, 0, Settings.smallWidgetsLeft.Count - 1);
                     Settings.smallWidgetsLeft.Remove(smallWidget);
 
@@ -691,7 +685,8 @@ namespace DynamicWin.UI.Menu.Menus
                     UpdateWidgetDisplay();
                 };
 
-                instance.onEditMoveWidgetRight += () => {
+                instance.onEditMoveWidgetRight += () =>
+                {
                     int index = Math.Clamp(Settings.smallWidgetsLeft.IndexOf(smallWidget) - 1, 0, Settings.smallWidgetsLeft.Count - 1);
                     Settings.smallWidgetsLeft.Remove(smallWidget);
 
@@ -711,12 +706,14 @@ namespace DynamicWin.UI.Menu.Menus
                 var instance = (SmallWidgetBase)widget.CreateWidgetInstance(container, Vec2.zero, UIAlignment.MiddleRight);
                 instance.isEditMode = true;
 
-                instance.onEditRemoveWidget += () => {
+                instance.onEditRemoveWidget += () =>
+                {
                     Settings.smallWidgetsRight.Remove(smallWidget);
                     UpdateWidgetDisplay();
                 };
 
-                instance.onEditMoveWidgetLeft += () => {
+                instance.onEditMoveWidgetLeft += () =>
+                {
                     int index = Math.Clamp(Settings.smallWidgetsRight.IndexOf(smallWidget) + 1, 0, Settings.smallWidgetsRight.Count - 1);
                     Settings.smallWidgetsRight.Remove(smallWidget);
 
@@ -724,7 +721,8 @@ namespace DynamicWin.UI.Menu.Menus
                     UpdateWidgetDisplay();
                 };
 
-                instance.onEditMoveWidgetRight += () => {
+                instance.onEditMoveWidgetRight += () =>
+                {
                     int index = Math.Clamp(Settings.smallWidgetsRight.IndexOf(smallWidget) - 1, 0, Settings.smallWidgetsRight.Count - 1);
                     Settings.smallWidgetsRight.Remove(smallWidget);
 
@@ -861,10 +859,11 @@ namespace DynamicWin.UI.Menu.Menus
 
     public class Checkbox : DWImageButton
     {
-        bool isChecked = false;
-        public bool IsChecked { get { return isChecked; } set => SetChecked(value); }
+        private bool isChecked = false;
+        public bool IsChecked
+        { get { return isChecked; } set => SetChecked(value); }
 
-        void SetChecked(bool isChecked)
+        private void SetChecked(bool isChecked)
         {
             this.isChecked = isChecked;
             Image.Image = isChecked ? Res.Check : null;
@@ -893,12 +892,12 @@ namespace DynamicWin.UI.Menu.Menus
 
     public class MultiSelectionButton : UIObject
     {
-        string[] options;
-        DWTextButton[] buttons;
+        private string[] options;
+        private DWTextButton[] buttons;
 
         public Action<int> onClick;
 
-        int selectedIndex = 0;
+        private int selectedIndex = 0;
         public int SelectedIndex { get => selectedIndex; set => SetSelected(value); }
 
         public MultiSelectionButton(UIObject? parent, string[] options, Vec2 position, Vec2 size, UIAlignment alignment = UIAlignment.TopCenter, int maxInOneRow = 4) : base(parent, position, size, alignment)
@@ -910,7 +909,7 @@ namespace DynamicWin.UI.Menu.Menus
             float yPos = 0;
             int counter = 0;
 
-            for(int i = 0; i < options.Length; i++)
+            for (int i = 0; i < options.Length; i++)
             {
                 var lambdaIndex = i; // Either I'm going insane or I don't understand lambdas, but it seems like only the pointer given in to the OnClick() method. This is why this line is needed!
                 var action = () => { OnClick(lambdaIndex); }; // For some it just outputs the length of options if there is no seperate variable for it.
@@ -926,7 +925,7 @@ namespace DynamicWin.UI.Menu.Menus
                 btn.Text.Color = Theme.TextSecond;
                 btn.Anchor.X = 0;
                 buttons[i] = btn;
-                
+
                 AddLocalObject(btn);
 
                 xPos += btn.Size.X + 15;
@@ -942,7 +941,7 @@ namespace DynamicWin.UI.Menu.Menus
         {
         }
 
-        void SetSelected(int index)
+        private void SetSelected(int index)
         {
             selectedIndex = index;
 
@@ -954,7 +953,7 @@ namespace DynamicWin.UI.Menu.Menus
             buttons[index].normalColor = (Theme.Primary * 0.65f).Override(a: 0.75f);
         }
 
-        void OnClick(int index)
+        private void OnClick(int index)
         {
             SelectedIndex = index;
 

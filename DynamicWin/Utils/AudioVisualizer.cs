@@ -1,11 +1,6 @@
 ﻿using DynamicWin.UI;
-using NAudio.CoreAudioApi;
 using NAudio.Wave;
-using System;
-using System.Linq;
 using SkiaSharp;
-using NAudio.Dsp;
-using FftSharp;
 
 namespace DynamicWin.Utils
 {
@@ -22,7 +17,7 @@ namespace DynamicWin.Utils
 
         public float divisor = 1f;
 
-        bool avAmpsMode = false;
+        private bool avAmpsMode = false;
 
         public AudioVisualizer(UIObject? parent, Vec2 position, Vec2 size, UIAlignment alignment = UIAlignment.TopCenter, int length = 16, int averageAmpsSize = 0, Col Primary = null, Col Secondary = null) : base(parent, position, size, alignment)
         {
@@ -42,7 +37,6 @@ namespace DynamicWin.Utils
                 averageAmps = new float[averageAmpsSize];
                 smoothAverageAmps = new float[averageAmpsSize];
                 avAmpsMode = true;
-
             }
 
             fftValues = new float[length];
@@ -62,13 +56,14 @@ namespace DynamicWin.Utils
                 capture.DataAvailable -= OnDataAvailable;
                 capture.StopRecording();
                 capture.Dispose();
-            }catch(ThreadInterruptedException e)
+            }
+            catch (ThreadInterruptedException e)
             {
                 return;
             }
         }
 
-        float updateTick = 0;
+        private float updateTick = 0;
 
         public override void Update(float deltaTime)
         {
@@ -195,9 +190,9 @@ namespace DynamicWin.Utils
 
         public int averageAmpModeRectSize = 24;
 
-        float averageAmplitude = 0f;
-        float[] averageAmps;
-        float[] smoothAverageAmps;
+        private float averageAmplitude = 0f;
+        private float[] averageAmps;
+        private float[] smoothAverageAmps;
         public float AverageAmplitude { get => averageAmplitude; }
 
         public Col Primary;

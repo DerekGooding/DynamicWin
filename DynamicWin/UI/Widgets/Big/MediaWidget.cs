@@ -1,13 +1,7 @@
 ﻿using DynamicWin.UI.UIElements;
 using DynamicWin.Utils;
 using SkiaSharp;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicWin.UI.Widgets.Big
 {
@@ -162,7 +156,6 @@ namespace DynamicWin.UI.Widgets.Big
                             title.Text = "Error";
                             artist.Text = DWText.Truncate(error, 24);
                         }
-
                     }
                 }
             }
@@ -172,7 +165,7 @@ namespace DynamicWin.UI.Widgets.Big
             next.normalColor = Theme.IconColor * audioVisualizer.GetActionCol().Override(a: 0.2f);
             playPause.normalColor = Theme.IconColor * audioVisualizer.GetActionCol().Override(a: 0.2f);
 
-            if(!isSpotifyAvaliable)
+            if (!isSpotifyAvaliable)
                 smoothedAmp = (float)Math.Max(Mathf.Lerp(smoothedAmp, audioVisualizer.AverageAmplitude, smoothing * deltaTime), audioVisualizer.AverageAmplitude);
             else
                 smoothedAmp = (float)Math.Max(Mathf.Lerp(smoothedAmp, audioVisualizer.AverageAmplitude, smoothing * deltaTime), audioVisualizer.AverageAmplitude);
@@ -248,7 +241,7 @@ namespace DynamicWin.UI.Widgets.Big
 
                 var shadowPaint = GetPaint();
 
-                var drop = SKImageFilter.CreateDropShadowOnly(0, 0, (25f - spotifyBlur) / 2, (25f - spotifyBlur) / 2, 
+                var drop = SKImageFilter.CreateDropShadowOnly(0, 0, (25f - spotifyBlur) / 2, (25f - spotifyBlur) / 2,
                     spotifyCol.Override(a: (25f - spotifyBlur) / 100f).Value());
                 shadowPaint.ImageFilter = drop;
                 shadowPaint.IsStroke = true;
@@ -282,8 +275,8 @@ namespace DynamicWin.UI.Widgets.Big
             }
 
             string[] strings = proc.MainWindowTitle.Split(" - ");
-            
-            if(strings.Length >= 2)
+
+            if (strings.Length >= 2)
             {
                 title = strings[1];
                 artist = strings[0];

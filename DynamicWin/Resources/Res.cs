@@ -147,7 +147,7 @@ namespace DynamicWin.Resources
                 var widgetName = iRegisterableWidgetInstance.WidgetName;
                 System.Diagnostics.Debug.WriteLine($"Registered widget: {widgetName}");
 
-                if(!iRegisterableWidgetInstance.IsSmallWidget)
+                if (!iRegisterableWidgetInstance.IsSmallWidget)
                     availableBigWidgets.Add(iRegisterableWidgetInstance);
                 else
                     availableSmallWidgets.Add(iRegisterableWidgetInstance);
@@ -163,12 +163,12 @@ namespace DynamicWin.Resources
             }
             else
             {
-                foreach(var file in Directory.GetFiles(dirPath))
+                foreach (var file in Directory.GetFiles(dirPath))
                 {
                     if (Path.GetExtension(file).ToLower().Equals(".dll"))
                     {
                         System.Diagnostics.Debug.WriteLine(file);
-                        var DLL = new Assembly[]{ Assembly.LoadFile(Path.Combine(dirPath, file)) };
+                        var DLL = new Assembly[] { Assembly.LoadFile(Path.Combine(dirPath, file)) };
 
                         var extensions = DLL
                             .SelectMany(s => s.GetTypes())
@@ -180,7 +180,7 @@ namespace DynamicWin.Resources
                             System.Diagnostics.Debug.WriteLine($"Extension sucessfully registered: {iRegisterableExtensionInstance.ExtensionName}");
                             Res.extensions.Add(iRegisterableExtensionInstance);
 
-                            foreach(var registerableWidget in iRegisterableExtensionInstance.GetExtensionWidgets())
+                            foreach (var registerableWidget in iRegisterableExtensionInstance.GetExtensionWidgets())
                             {
                                 var widgetName = registerableWidget.WidgetName;
                                 System.Diagnostics.Debug.WriteLine($"Registered widget: {widgetName}");
@@ -218,7 +218,8 @@ namespace DynamicWin.Resources
             try
             {
                 return SKTypeface.FromFile(path);
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine("Could not load font: " + path);
                 return InterRegular;

@@ -1,5 +1,4 @@
-﻿using DynamicWin.Main;
-using DynamicWin.UI;
+﻿using DynamicWin.UI;
 using SkiaSharp;
 
 namespace DynamicWin.Utils
@@ -16,7 +15,8 @@ namespace DynamicWin.Utils
         public int animationInterval;
 
         private bool isRunning;
-        public bool IsRunning { get { return isRunning; } }
+        public bool IsRunning
+        { get { return isRunning; } }
 
         public Animator(int animationDuration, int animationInterval = 1) : base(null, Vec2.zero, Vec2.zero)
         {
@@ -26,7 +26,6 @@ namespace DynamicWin.Utils
 
         public override void Draw(SKCanvas canvas)
         {
-
         }
 
         public void Interrupt()
@@ -41,7 +40,7 @@ namespace DynamicWin.Utils
             elapsed = 0;
         }
 
-        float elapsed = 0;
+        private float elapsed = 0;
 
         public override void Update(float deltaTime)
         {
@@ -65,7 +64,7 @@ namespace DynamicWin.Utils
         {
             isRunning = false;
 
-            if(trigggerStopEvent)
+            if (trigggerStopEvent)
                 onAnimationEnd?.Invoke();
         }
     }

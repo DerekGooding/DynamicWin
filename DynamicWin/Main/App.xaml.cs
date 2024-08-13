@@ -3,10 +3,7 @@ using DynamicWin.Resources;
 using DynamicWin.Utils;
 using Microsoft.Win32;
 using NAudio.CoreAudioApi;
-using System.Configuration;
-using System.Data;
 using System.Diagnostics;
-using System.Threading;
 using System.Windows;
 
 namespace DynamicWin
@@ -60,8 +57,7 @@ namespace DynamicWin
             }
         }
 
-
-        Mutex mutex;
+        private Mutex mutex;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -124,7 +120,6 @@ namespace DynamicWin
             e.Handled = true; // Prevent the application from terminating
         }
 
-
         private static readonly DateTime Jan1st1970 = new DateTime
             (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
@@ -141,5 +136,4 @@ namespace DynamicWin
             return nano;
         }
     }
-
 }

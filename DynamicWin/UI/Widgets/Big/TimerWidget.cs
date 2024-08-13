@@ -1,15 +1,13 @@
-﻿
-using DynamicWin.Main;
+﻿using DynamicWin.Main;
 using DynamicWin.UI.Menu;
 using DynamicWin.UI.Menu.Menus;
 using DynamicWin.UI.UIElements;
-using DynamicWin.UI.UIElements.Custom;
 using DynamicWin.Utils;
 using SkiaSharp;
 
 namespace DynamicWin.UI.Widgets.Big
 {
-    class RegisterTimerWidget : IRegisterableWidget
+    internal class RegisterTimerWidget : IRegisterableWidget
     {
         public bool IsSmallWidget => false;
         public string WidgetName => "Timer";
@@ -22,22 +20,23 @@ namespace DynamicWin.UI.Widgets.Big
 
     public class TimerWidget : WidgetBase
     {
-        DWText timerText;
+        private DWText timerText;
 
-        System.Timers.Timer timer;
+        private System.Timers.Timer timer;
 
-        DWImageButton startStopButton;
+        private DWImageButton startStopButton;
 
-        DWImageButton hourMore;
-        DWImageButton hourLess;
-        DWImageButton minuteMore;
-        DWImageButton minuteLess;
-        DWImageButton secondMore;
-        DWImageButton secondLess;
+        private DWImageButton hourMore;
+        private DWImageButton hourLess;
+        private DWImageButton minuteMore;
+        private DWImageButton minuteLess;
+        private DWImageButton secondMore;
+        private DWImageButton secondLess;
 
         public static TimerWidget instance;
 
-        public int CurrentTime { get { if (isTimerRunning) return initialSecondsSet - elapsedSeconds; else return -1; } }
+        public int CurrentTime
+        { get { if (isTimerRunning) return initialSecondsSet - elapsedSeconds; else return -1; } }
 
         public TimerWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, alignment)
         {
@@ -137,17 +136,18 @@ namespace DynamicWin.UI.Widgets.Big
             }
         }
 
-        static bool isTimerRunning = false;
-        public bool IsTimerRunning { get { return isTimerRunning; } }
-        
-        static int initialSecondsSet = 0;
+        private static bool isTimerRunning = false;
+        public bool IsTimerRunning
+        { get { return isTimerRunning; } }
+
+        private static int initialSecondsSet = 0;
 
         public void ChangeTimerTime(int seconds, int minutes, int hours)
         {
             initialSecondsSet += seconds + minutes * 60 + (hours * 60) * 60;
-            
+
             initialSecondsSet = (int)Mathf.Clamp(initialSecondsSet, 0, int.MaxValue);
-            
+
             TimeSpan t = TimeSpan.FromSeconds(initialSecondsSet);
             string answer = string.Format("{0:D2}:{1:D2}:{2:D2}",
                             t.Hours,
@@ -168,7 +168,7 @@ namespace DynamicWin.UI.Widgets.Big
             isTimerRunning = false;
         }
 
-        void TimerEnd()
+        private void TimerEnd()
         {
             StopTimer();
             RendererMain.Instance.MainIsland.hidden = false;
@@ -176,7 +176,8 @@ namespace DynamicWin.UI.Widgets.Big
             MenuManager.OpenOverlayMenu(new TimerOverMenu(), 15f);
         }
 
-        static int elapsedSeconds = 0;
+        private static int elapsedSeconds = 0;
+
         public void StartTimer()
         {
             instance = this;
@@ -188,7 +189,7 @@ namespace DynamicWin.UI.Widgets.Big
             {
                 elapsedSeconds++;
 
-                if(initialSecondsSet - elapsedSeconds <= 0)
+                if (initialSecondsSet - elapsedSeconds <= 0)
                 {
                     TimerEnd();
                     return;

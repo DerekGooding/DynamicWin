@@ -1,13 +1,8 @@
 ﻿using DynamicWin.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicWin.UI.Widgets.Small
 {
-    class RegisterSmallVisualizerWidget : IRegisterableWidget
+    internal class RegisterSmallVisualizerWidget : IRegisterableWidget
     {
         public bool IsSmallWidget => true;
         public string WidgetName => "Audio Visualizer";
@@ -20,7 +15,7 @@ namespace DynamicWin.UI.Widgets.Small
 
     public class SmallVisualizerWidget : SmallWidgetBase
     {
-        AudioVisualizer audioVisualizer;
+        private AudioVisualizer audioVisualizer;
 
         public SmallVisualizerWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, alignment)
         {

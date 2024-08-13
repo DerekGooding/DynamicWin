@@ -1,20 +1,13 @@
 ﻿using DynamicWin.Utils;
 using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace DynamicWin.UI.UIElements.Custom
 {
     internal class DWTextGroup : UIObject
     {
-        List<DWText> textPieces = new List<DWText>();
+        private List<DWText> textPieces = new List<DWText>();
 
         public float textSize = 24;
-
 
         public DWTextGroup(UIObject? parent, string text, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, Vec2.zero, alignment)
         {
@@ -42,14 +35,14 @@ namespace DynamicWin.UI.UIElements.Custom
             Size.X = xAdded;
         }
 
-        string text = "";
+        private string text = "";
 
         public void SetText(string text)
         {
             if (this.text == text) return;
 
             List<int> sameCharacters = new List<int>();
-            for(int i = 0; i < this.text.Length; i++)
+            for (int i = 0; i < this.text.Length; i++)
             {
                 if (this.text.Length <= i || text.Length <= i) continue;
                 if (this.text[i] == text[i]) sameCharacters.Add(i);

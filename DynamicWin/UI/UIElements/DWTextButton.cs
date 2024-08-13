@@ -1,18 +1,13 @@
 ﻿using DynamicWin.Utils;
-using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicWin.UI.UIElements
 {
     public class DWTextButton : DWButton
     {
-        DWText text;
+        private DWText text;
 
-        public DWText Text { get { return text; } set => text = value; }
+        public DWText Text
+        { get { return text; } set => text = value; }
 
         public float normalTextSize = 14;
         public float textSizeSmoothSpeed = 15f;

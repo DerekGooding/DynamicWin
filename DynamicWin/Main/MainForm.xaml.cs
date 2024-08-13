@@ -1,23 +1,8 @@
 ﻿using DynamicWin.Resources;
 using DynamicWin.UI.Menu;
 using DynamicWin.UI.Menu.Menus;
-using DynamicWin.Utils;
-using Microsoft.VisualBasic;
-using OpenTK.Input;
-using SkiaSharp;
-using SkiaSharp.Views.Desktop;
-using SkiaSharp.Views.WPF;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
 
 namespace DynamicWin.Main
@@ -28,7 +13,6 @@ namespace DynamicWin.Main
         public static MainForm Instance { get => instance; }
 
         public static Action<System.Windows.Input.MouseWheelEventArgs> onScrollEvent;
-
 
         private DateTime _lastRenderTime;
         private readonly TimeSpan _targetElapsedTime = TimeSpan.FromMilliseconds(16); // ~60 FPS
@@ -84,7 +68,7 @@ namespace DynamicWin.Main
             if (RendererMain.Instance != null) RendererMain.Instance.Destroy();
 
             var customControl = new RendererMain();
-            
+
             var parent = new Grid();
             parent.Children.Add(customControl);
 
@@ -115,7 +99,7 @@ namespace DynamicWin.Main
             MenuManager.OpenMenu(Res.HomeMenu);
         }
 
-        bool isLocalDrag = false;
+        private bool isLocalDrag = false;
 
         internal void StartDrag(string[] files, Action callback)
         {
@@ -180,7 +164,7 @@ namespace DynamicWin.Main
         {
             isDragging = false;
 
-            if(MenuManager.Instance.ActiveMenu is ConfigureShortcutMenu)
+            if (MenuManager.Instance.ActiveMenu is ConfigureShortcutMenu)
             {
                 if (e.Data.GetDataPresent(DataFormats.FileDrop))
                 {

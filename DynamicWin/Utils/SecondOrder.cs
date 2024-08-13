@@ -1,6 +1,4 @@
 ﻿using DynamicWin.Main;
-using DynamicWin.Utils;
-using System.Numerics;
 
 namespace DynamicWin.Utils
 {

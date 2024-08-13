@@ -1,13 +1,6 @@
-﻿using DynamicWin.Resources;
-using DynamicWin.UI.UIElements;
+﻿using DynamicWin.UI.UIElements;
 using DynamicWin.Utils;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace DynamicWin.Main
@@ -40,7 +33,6 @@ namespace DynamicWin.Main
         {
             try
             {
-
                 if (SaveManager.Contains("settings"))
                 {
                     IslandMode = ((Int64)SaveManager.Get("settings.islandmode") == 0) ? IslandObject.IslandMode.Island : IslandObject.IslandMode.Notch;
@@ -91,16 +83,16 @@ namespace DynamicWin.Main
                     SaveManager.SaveData.Add("settings", 1);
                 }
 
-
                 // This must be run after loading all settings
                 AfterSettingsLoaded();
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 MessageBox.Show("An error occured trying to load the settings. Please revert back to the default settings by deleting the \"Settings.json\" file located under \"%appdata%/DynamicWin/\".");
             }
         }
 
-        static void AfterSettingsLoaded()
+        private static void AfterSettingsLoaded()
         {
             DynamicWin.Utils.Theme.Instance.UpdateTheme();
         }

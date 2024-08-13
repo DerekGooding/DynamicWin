@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 
 namespace DynamicWin.Utils
 {
-
     public class DeviceUsageChecker
     {
         private static readonly string MicrophoneSubkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone";
@@ -86,5 +83,4 @@ namespace DynamicWin.Utils
             return -1;
         }
     }
-
 }

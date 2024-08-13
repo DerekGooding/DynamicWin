@@ -1,10 +1,8 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Text;
 
 namespace DynamicWin.Utils
 {
-
     public class PowerStatusChecker
     {
         [StructLayout(LayoutKind.Sequential)]

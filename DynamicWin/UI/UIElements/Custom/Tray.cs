@@ -3,7 +3,6 @@ using DynamicWin.Utils;
 using SkiaSharp;
 using System.Collections.Specialized;
 using System.IO;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -12,12 +11,12 @@ namespace DynamicWin.UI.UIElements.Custom
 {
     internal class Tray : UIObject
     {
-        static string[]? cachedTrayFiles;
+        private static string[]? cachedTrayFiles;
 
-        float yOffset = 0f;
-        float mouseSensitivity = 0.225f;
+        private float yOffset = 0f;
+        private float mouseSensitivity = 0.225f;
 
-        DWImage noFilesImage;
+        private DWImage noFilesImage;
 
         public Tray(UIObject? parent, Vec2 position, Vec2 size, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, size, alignment)
         {
@@ -36,7 +35,7 @@ namespace DynamicWin.UI.UIElements.Custom
             {
                 contextMenu.Items.Insert(0, new MenuItem() { Header = "Selected Files: " + selectedFiles.Count, IsEnabled = false });
 
-                MenuItem removeSelected = new MenuItem() { Header = "Remove Selected File" + ((selectedFiles.Count > 1) ? $"s" : "")  };
+                MenuItem removeSelected = new MenuItem() { Header = "Remove Selected File" + ((selectedFiles.Count > 1) ? $"s" : "") };
                 removeSelected.Click += (x, y) =>
                 {
                     new List<TrayFile>(selectedFiles).ForEach((f) =>
@@ -83,9 +82,9 @@ namespace DynamicWin.UI.UIElements.Custom
             MainForm.onScrollEvent -= OnScroll;
         }
 
-        Vec2 mouseDownPos = Vec2.zero;
-        bool isDragging = false;
-        bool canDrag = false;
+        private Vec2 mouseDownPos = Vec2.zero;
+        private bool isDragging = false;
+        private bool canDrag = false;
 
         public override void OnMouseDown()
         {
@@ -95,14 +94,14 @@ namespace DynamicWin.UI.UIElements.Custom
             canDrag = true;
         }
 
-        void OnScroll(MouseWheelEventArgs e)
+        private void OnScroll(MouseWheelEventArgs e)
         {
             scrollFac += e.Delta * mouseSensitivity;
         }
 
-        float scrollFac = 0f;
-        int timer = 0;
-        float mouseYLastSmooth = 0f;
+        private float scrollFac = 0f;
+        private int timer = 0;
+        private float mouseYLastSmooth = 0f;
 
         public override void Update(float deltaTime)
         {
@@ -164,7 +163,7 @@ namespace DynamicWin.UI.UIElements.Custom
                 {
                     if (f.IsSelected)
                     {
-                        if(File.Exists(f.FileName))
+                        if (File.Exists(f.FileName))
                         {
                             draggedFiles.Add(f.FileName);
                         }
@@ -183,7 +182,6 @@ namespace DynamicWin.UI.UIElements.Custom
                     });
 
                     toRemove.ForEach((x) => RemoveFileObject(x));
-
                 });
 
                 isDragging = false;
@@ -197,7 +195,6 @@ namespace DynamicWin.UI.UIElements.Custom
                 f.UpdateCall(deltaTime);
             });
 
-
             new List<TrayFile>(removedFiles).ForEach((file) =>
             {
                 if (!file.IsEnabled) removedFiles.Remove(file);
@@ -210,7 +207,7 @@ namespace DynamicWin.UI.UIElements.Custom
             var rect = GetRect();
             rect.Inflate(25, 0);
 
-            if(fileObjects.Count <= 0)
+            if (fileObjects.Count <= 0)
             {
                 var paint = GetPaint();
 
@@ -255,28 +252,28 @@ namespace DynamicWin.UI.UIElements.Custom
 
         public List<TrayFile> removedFiles = new List<TrayFile>();
 
-        void RemoveFileObject(TrayFile file)
+        private void RemoveFileObject(TrayFile file)
         {
             removedFiles.Add(file);
 
-            if(fileObjects.Contains(file)) fileObjects.Remove(file);
-            if(selectedFiles.Contains(file)) selectedFiles.Remove(file);
+            if (fileObjects.Contains(file)) fileObjects.Remove(file);
+            if (selectedFiles.Contains(file)) selectedFiles.Remove(file);
 
             file.SetActive(false);
         }
 
-        void AddFileObjects()
+        private void AddFileObjects()
         {
             List<TrayFile> filesToRemove = new List<TrayFile>();
             fileObjects.ForEach((f) => filesToRemove.Add(f));
 
-            if(cachedTrayFiles == null) cachedTrayFiles = new string[0];
+            if (cachedTrayFiles == null) cachedTrayFiles = new string[0];
 
-            foreach(var x in cachedTrayFiles)
+            foreach (var x in cachedTrayFiles)
             {
                 bool hasFileAlready = false;
                 TrayFile fileAlreadyExists = null;
-                fileObjects.ForEach((y) => { if(y.FileName.Equals(x)) { hasFileAlready = true; fileAlreadyExists = y; } });
+                fileObjects.ForEach((y) => { if (y.FileName.Equals(x)) { hasFileAlready = true; fileAlreadyExists = y; } });
 
                 if (fileAlreadyExists != null)
                     filesToRemove.Remove(fileAlreadyExists);

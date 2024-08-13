@@ -2,28 +2,19 @@
 using DynamicWin.UI.Menu;
 using DynamicWin.UI.Menu.Menus;
 using DynamicWin.UI.UIElements;
-using DynamicWin.UI.UIElements.Custom;
 using DynamicWin.Utils;
 using Newtonsoft.Json;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Forms;
-using System.Windows.Shapes;
 using ThumbnailGenerator;
 
 namespace DynamicWin.UI.Widgets.Big
 {
-    class RegisterShortcutsWidget : IRegisterableWidget
+    internal class RegisterShortcutsWidget : IRegisterableWidget
     {
         public bool IsSmallWidget => false;
         public string WidgetName => "Shortcuts";
@@ -61,10 +52,10 @@ namespace DynamicWin.UI.Widgets.Big
     internal class ShortcutButton : DWButton
     {
         public ShortcutSave savedShortcut;
-        string saveId;
+        private string saveId;
 
-        DWText shortcutTitle;
-        DWImage shortcutIcon;
+        private DWText shortcutTitle;
+        private DWImage shortcutIcon;
 
         public ShortcutButton(UIObject? parent, string shortcutSaveId, Vec2 position, Vec2 size, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, size - 12.5f, null, alignment)
         {
@@ -73,7 +64,7 @@ namespace DynamicWin.UI.Widgets.Big
             clickScaleMulti = Vec2.one * 1;
             scaleSecondOrder.SetValues(4.5f, 1, 0.1f);
 
-            if(SaveManager.Contains(shortcutSaveId))
+            if (SaveManager.Contains(shortcutSaveId))
             {
                 savedShortcut = (ShortcutSave)SaveManager.Get(shortcutSaveId);
             }
@@ -113,10 +104,10 @@ namespace DynamicWin.UI.Widgets.Big
         {
             var rect = GetRect();
             //rect.Deflate(7.5f, 5);
-            
+
             var paint = GetPaint();
 
-            if(string.IsNullOrEmpty(savedShortcut.path))
+            if (string.IsNullOrEmpty(savedShortcut.path))
             {
                 float[] intervals = [5, 5];
                 paint.PathEffect = SKPathEffect.CreateDash(intervals, 0f);
@@ -175,7 +166,7 @@ namespace DynamicWin.UI.Widgets.Big
 
         internal void SetShortcut(ShortcutSave save)
         {
-            if(!string.IsNullOrEmpty(save.path))
+            if (!string.IsNullOrEmpty(save.path))
             {
                 this.savedShortcut = save;
 
@@ -186,9 +177,9 @@ namespace DynamicWin.UI.Widgets.Big
             }
         }
 
-        Bitmap thumbnail;
-        
-        void UpdateDisplay()
+        private Bitmap thumbnail;
+
+        private void UpdateDisplay()
         {
             shortcutTitle.SilentSetText(DWText.Truncate(string.IsNullOrEmpty(savedShortcut.name) ? " " : savedShortcut.name, 9));
 
@@ -217,7 +208,6 @@ namespace DynamicWin.UI.Widgets.Big
 
                         UpdateDisplay();
                     }).Start();
-
                 }
                 catch (FileNotFoundException fnfE)
                 {
@@ -226,7 +216,7 @@ namespace DynamicWin.UI.Widgets.Big
                 finally
                 {
                     SKBitmap bMap = null;
-                    if(thumbnail != null) bMap = thumbnail.ToSKBitmap();
+                    if (thumbnail != null) bMap = thumbnail.ToSKBitmap();
                     else bMap = Resources.Res.FileIcon;
 
                     shortcutIcon.Image = bMap;
@@ -239,19 +229,19 @@ namespace DynamicWin.UI.Widgets.Big
             });
         }
 
-        void LoadShortcut()
+        private void LoadShortcut()
         {
             if (!SaveManager.Contains("shortcuts." + saveId)) return;
             var shortcut = (ShortcutSave)JsonConvert.DeserializeObject<ShortcutSave>((string)SaveManager.Get("shortcuts." + saveId));
 
-            if(!string.IsNullOrEmpty(shortcut.path))
+            if (!string.IsNullOrEmpty(shortcut.path))
             {
                 savedShortcut = shortcut;
                 UpdateDisplay();
             }
         }
 
-        void RunShortcut()
+        private void RunShortcut()
         {
             if (string.IsNullOrEmpty(savedShortcut.path))
             {
@@ -262,12 +252,12 @@ namespace DynamicWin.UI.Widgets.Big
             OpenWithDefaultProgram(savedShortcut.path);
         }
 
-        void ConfigureShortcut()
+        private void ConfigureShortcut()
         {
             MenuManager.OpenMenu(new ConfigureShortcutMenu(this));
         }
 
-        void OpenWithDefaultProgram(string path)
+        private void OpenWithDefaultProgram(string path)
         {
             if (!File.Exists(path))
             {
@@ -282,7 +272,7 @@ namespace DynamicWin.UI.Widgets.Big
             fileopener.Start();
         }
 
-        void RemoveShortcut()
+        private void RemoveShortcut()
         {
             if (!SaveManager.Contains("shortcuts." + saveId)) return;
             SaveManager.Remove(("shortcuts." + saveId));

@@ -1,15 +1,10 @@
 ﻿using DynamicWin.UI.UIElements;
 using DynamicWin.UI.Widgets.Big;
 using DynamicWin.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicWin.UI.Widgets.Small
 {
-    class RegisterActiveTimerWidget : IRegisterableWidget
+    internal class RegisterActiveTimerWidget : IRegisterableWidget
     {
         public bool IsSmallWidget => true;
 
@@ -23,7 +18,7 @@ namespace DynamicWin.UI.Widgets.Small
 
     public class ActiveTimerWidget : SmallWidgetBase
     {
-        DWText timeText;
+        private DWText timeText;
 
         public ActiveTimerWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, alignment)
         {
@@ -39,9 +34,9 @@ namespace DynamicWin.UI.Widgets.Small
             timeText.SilentSetText(IsTimerActive() ? GetTime() : " ");
         }
 
-        bool IsTimerActive()
+        private bool IsTimerActive()
         {
-            if(TimerWidget.instance != null)
+            if (TimerWidget.instance != null)
             {
                 return TimerWidget.instance.IsTimerRunning;
             }
@@ -49,7 +44,7 @@ namespace DynamicWin.UI.Widgets.Small
             return false;
         }
 
-        string GetTime()
+        private string GetTime()
         {
             if (TimerWidget.instance != null)
             {
@@ -59,7 +54,7 @@ namespace DynamicWin.UI.Widgets.Small
                                 t.Minutes,
                                 t.Seconds);
 
-                return formatedTime;            
+                return formatedTime;
             }
 
             return " ";

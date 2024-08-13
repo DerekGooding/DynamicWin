@@ -1,11 +1,5 @@
-﻿using DynamicWin.Main;
-using DynamicWin.UI.UIElements;
+﻿using DynamicWin.UI.UIElements;
 using DynamicWin.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicWin.UI.Menu.Menus
 {
@@ -20,7 +14,6 @@ namespace DynamicWin.UI.Menu.Menus
             var btn = new DWTextButton(island, "Hello", new Vec2(0, 0), new Vec2(125, 25), () =>
             {
                 MenuManager.OpenOverlayMenu(new TestMenu());
-
             }, UIAlignment.Center);
 
             objects.Add(btn);

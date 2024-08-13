@@ -1,8 +1,7 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
 using System.IO;
+using System.Runtime.InteropServices;
 
 // Source
 // https://stackoverflow.com/questions/21751747/extract-thumbnail-for-any-file-in-windows#:~:text=62,is%20the%20implementation%3A
@@ -47,8 +46,11 @@ namespace ThumbnailGenerator
                 out IntPtr ppv);
 
             void GetParent(out IShellItem ppsi);
+
             void GetDisplayName(SIGDN sigdnName, out IntPtr ppszName);
+
             void GetAttributes(uint sfgaoMask, out uint psfgaoAttribs);
+
             void Compare(IShellItem psi, uint hint, out int piOrder);
         };
 

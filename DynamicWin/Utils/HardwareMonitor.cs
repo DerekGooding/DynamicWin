@@ -9,7 +9,7 @@ namespace DynamicWin.Utils
 {
     internal class HardwareMonitor
     {
-        System.Timers.Timer timer;
+        private System.Timers.Timer timer;
 
         public static string usageString = " ";
 
@@ -26,9 +26,9 @@ namespace DynamicWin.Utils
             timer.Start();
         }
 
-        Computer computer;
-        float lastCpu = 0;
-        string lastRam = "";
+        private Computer computer;
+        private float lastCpu = 0;
+        private string lastRam = "";
 
         private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
@@ -38,7 +38,7 @@ namespace DynamicWin.Utils
                 IsCpuEnabled = true // Enable CPU monitoring
             };
             computer.Open();
-         
+
             foreach (var hardware in computer.Hardware)
             {
                 if (hardware.HardwareType == HardwareType.Cpu)
@@ -84,7 +84,7 @@ namespace DynamicWin.Utils
 
         public static void Stop()
         {
-            if( instance.computer != null )
+            if (instance.computer != null)
             {
                 instance.computer.Close();
             }

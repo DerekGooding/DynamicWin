@@ -3,28 +3,18 @@ using DynamicWin.Resources;
 using DynamicWin.UI.UIElements;
 using DynamicWin.UI.UIElements.Custom;
 using DynamicWin.Utils;
-using NAudio.CoreAudioApi;
-using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System;
-using System.Threading.Tasks;
 using System.Management;
 
 namespace DynamicWin.UI.Menu.Menus
 {
     internal class BrightnessAdjustMenu : BaseMenu
     {
+        private DWImage brightnessImage;
+        private DWProgressBar brightness;
 
-        DWImage brightnessImage;
-        DWProgressBar brightness;
+        private static BrightnessAdjustMenu instance;
 
-        static BrightnessAdjustMenu instance;
-
-        float islandScale = 1.25f;
+        private float islandScale = 1.25f;
 
         public BrightnessAdjustMenu()
         {
@@ -69,7 +59,7 @@ namespace DynamicWin.UI.Menu.Menus
             var volXOffset = KeyHandler.keyDown.Contains(System.Windows.Forms.Keys.VolumeUp) ? 2f :
                 KeyHandler.keyDown.Contains(System.Windows.Forms.Keys.VolumeDown) ? -2f : 0;
 
-            this.brightness.LocalPosition.X = Mathf.Lerp(this.brightness.LocalPosition.X, volXOffset, 
+            this.brightness.LocalPosition.X = Mathf.Lerp(this.brightness.LocalPosition.X, volXOffset,
                 (Math.Abs(volXOffset) > Math.Abs(this.brightness.LocalPosition.X) ? 4.5f : 2.5f) * RendererMain.Instance.DeltaTime);
         }
 
@@ -89,13 +79,13 @@ namespace DynamicWin.UI.Menu.Menus
         }
     }
 
-    static class WindowsSettingsBrightnessController
+    internal static class WindowsSettingsBrightnessController
     {
-        static bool notSupported = false;
+        private static bool notSupported = false;
 
         public static int Get()
         {
-            if(notSupported)
+            if (notSupported)
                 return 100;
 
             try
@@ -110,7 +100,8 @@ namespace DynamicWin.UI.Menu.Menus
                     return (byte)instance.GetPropertyValue("CurrentBrightness");
                 }
                 return 0;
-            }catch(System.Management.ManagementException e)
+            }
+            catch (System.Management.ManagementException e)
             {
                 notSupported = true;
                 return 100;
@@ -131,7 +122,8 @@ namespace DynamicWin.UI.Menu.Menus
                 {
                     instance.InvokeMethod("WmiSetBrightness", args);
                 }
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
             }
