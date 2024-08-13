@@ -1,14 +1,13 @@
 ﻿using System.Diagnostics;
 using System.Windows;
 
-namespace DynamicWin.Main
+namespace DynamicWin.Main;
+
+public class ErrorForm : Window
 {
-    public class ErrorForm : Window
+    public ErrorForm()
     {
-        public ErrorForm()
-        {
-            var result = MessageBox.Show("Only one instance of DynamicWin can run at a time.", "An error occured.");
-            Process.GetCurrentProcess().Kill();
-        }
+        var result = MessageBox.Show("Only one instance of DynamicWin can run at a time.", "An error occured.");
+        Process.GetCurrentProcess().Kill();
     }
 }

@@ -1,222 +1,221 @@
 ﻿using DynamicWin.Main;
 using DynamicWin.Utils;
 
-namespace DynamicWin.UI.Menu
+namespace DynamicWin.UI.Menu;
+
+public class MenuManager
 {
-    public class MenuManager
+    private BaseMenu activeMenu;
+    public BaseMenu ActiveMenu { get => activeMenu; }
+
+    private static MenuManager instance;
+    public static MenuManager Instance { get => instance; }
+
+    public Action<BaseMenu, BaseMenu> onMenuChange;
+    public Action<BaseMenu> onMenuChangeEnd;
+
+    public MenuManager()
     {
-        private BaseMenu activeMenu;
-        public BaseMenu ActiveMenu { get => activeMenu; }
+        instance = this;
+    }
 
-        private static MenuManager instance;
-        public static MenuManager Instance { get => instance; }
+    public void Init()
+    {
+        Resources.Res.CreateStaticMenus();
+        activeMenu = Resources.Res.HomeMenu;
+    }
 
-        public Action<BaseMenu, BaseMenu> onMenuChange;
-        public Action<BaseMenu> onMenuChangeEnd;
+    public static void OpenMenu(BaseMenu newActiveMenu)
+    {
+        Instance.Open(newActiveMenu);
+    }
 
-        public MenuManager()
+    private void Open(BaseMenu newActiveMenu)
+    {
+        SetActiveMenu(newActiveMenu);
+    }
+
+    public static void OpenOverlayMenu(BaseMenu newActiveMenu, float time = 5f)
+    {
+        Instance.OpenOverlay(newActiveMenu, time);
+    }
+
+    private static Thread overlayThread;
+
+    public static void CloseOverlay()
+    {
+        overlayThread.Interrupt();
+    }
+
+    private void OpenOverlay(BaseMenu newActiveMenu, float time)
+    {
+        overlayThread = new Thread(() =>
         {
-            instance = this;
-        }
+            BaseMenu lastMenu = activeMenu;
 
-        public void Init()
-        {
-            Resources.Res.CreateStaticMenus();
-            activeMenu = Resources.Res.HomeMenu;
-        }
+            QueueOpenMenu(newActiveMenu);
+            int timeMillis = (int)(time * 1000);
 
-        public static void OpenMenu(BaseMenu newActiveMenu)
-        {
-            Instance.Open(newActiveMenu);
-        }
-
-        private void Open(BaseMenu newActiveMenu)
-        {
-            SetActiveMenu(newActiveMenu);
-        }
-
-        public static void OpenOverlayMenu(BaseMenu newActiveMenu, float time = 5f)
-        {
-            Instance.OpenOverlay(newActiveMenu, time);
-        }
-
-        private static Thread overlayThread;
-
-        public static void CloseOverlay()
-        {
-            overlayThread.Interrupt();
-        }
-
-        private void OpenOverlay(BaseMenu newActiveMenu, float time)
-        {
-            overlayThread = new Thread(() =>
+            try
             {
-                BaseMenu lastMenu = activeMenu;
-
-                QueueOpenMenu(newActiveMenu);
-                int timeMillis = (int)(time * 1000);
-
-                try
-                {
-                    Thread.Sleep(timeMillis);
-                }
-                catch (ThreadInterruptedException e)
-                {
-                    QueueOpenMenu(lastMenu);
-                    return;
-                }
-
-                if (lastMenu == null) throw new NullReferenceException();
+                Thread.Sleep(timeMillis);
+            }
+            catch (ThreadInterruptedException e)
+            {
                 QueueOpenMenu(lastMenu);
-            });
-            overlayThread.Start();
-        }
+                return;
+            }
 
-        private List<BaseMenu> menuLoadQueue = new List<BaseMenu>();
+            if (lastMenu == null) throw new NullReferenceException();
+            QueueOpenMenu(lastMenu);
+        });
+        overlayThread.Start();
+    }
 
-        private Animator menuAnimatorIn;
-        private Animator menuAnimatorOut;
+    private List<BaseMenu> menuLoadQueue = new List<BaseMenu>();
 
-        public void Update(float deltaTime)
+    private Animator menuAnimatorIn;
+    private Animator menuAnimatorOut;
+
+    public void Update(float deltaTime)
+    {
+        if (menuAnimatorIn != null)
+            menuAnimatorIn.Update(deltaTime);
+        if (menuAnimatorOut != null)
+            menuAnimatorOut.Update(deltaTime);
+    }
+
+    private void SetActiveMenu(BaseMenu newActiveMenu)
+    {
+        if (menuAnimatorIn != null && menuAnimatorIn.IsRunning) return;
+        if (menuAnimatorOut != null && menuAnimatorOut.IsRunning) return;
+
+        onMenuChange?.Invoke(activeMenu, newActiveMenu);
+
+        float yOffset = RendererMain.Instance.MainIsland.Size.Y * 0.75f;
+
+        int length = 250;
+
+        List<UIObject> currentObjects = new List<UIObject>(activeMenu.UiObjects);
+
         {
-            if (menuAnimatorIn != null)
-                menuAnimatorIn.Update(deltaTime);
-            if (menuAnimatorOut != null)
-                menuAnimatorOut.Update(deltaTime);
-        }
+            menuAnimatorOut = new Animator(length, 1);
 
-        private void SetActiveMenu(BaseMenu newActiveMenu)
-        {
-            if (menuAnimatorIn != null && menuAnimatorIn.IsRunning) return;
-            if (menuAnimatorOut != null && menuAnimatorOut.IsRunning) return;
+            currentObjects = new List<UIObject>(activeMenu.UiObjects);
 
-            onMenuChange?.Invoke(activeMenu, newActiveMenu);
-
-            float yOffset = RendererMain.Instance.MainIsland.Size.Y * 0.75f;
-
-            int length = 250;
-
-            List<UIObject> currentObjects = new List<UIObject>(activeMenu.UiObjects);
-
+            menuAnimatorOut.onAnimationUpdate += (t) =>
             {
-                menuAnimatorOut = new Animator(length, 1);
+                float tEased = Easings.EaseOutCubic(t);
+
+                currentObjects.ForEach(obj =>
+                {
+                    if (obj != null)
+                    {
+                        obj.blurAmount = Mathf.Lerp(35, 0, tEased);
+                    }
+                });
+
+                RendererMain.Instance.renderOffset.Y = Mathf.Lerp(-yOffset, 0, tEased);
+            };
+
+            menuAnimatorOut.onAnimationEnd += () =>
+            {
+                activeMenu = newActiveMenu;
+
+                RendererMain.Instance.renderOffset.Y = 0;
+                LoadMenuEnd();
+
+                return;
+            };
+        }
+
+        if (activeMenu != null)
+        {
+            menuAnimatorIn = new Animator(length, 1);
+
+            menuAnimatorIn.onAnimationUpdate += (t) =>
+            {
+                float tEased = Easings.EaseInCubic(t);
+
+                currentObjects.ForEach(obj =>
+                {
+                    if (obj != null)
+                    {
+                        obj.blurAmount = Mathf.Lerp(0, 35, tEased);
+                    }
+                });
+
+                if (RendererMain.Instance != null)
+                    RendererMain.Instance.renderOffset.Y = Mathf.Lerp(0, yOffset, tEased);
+            };
+
+            menuAnimatorIn.onAnimationInterrupt += () =>
+            {
+                LoadMenuEnd();
+                return;
+            };
+
+            menuAnimatorIn.onAnimationEnd += () =>
+            {
+                if (activeMenu != null) activeMenu.OnDeload();
+                activeMenu = newActiveMenu;
+
+                RendererMain.Instance.renderOffset.Y = -yOffset;
 
                 currentObjects = new List<UIObject>(activeMenu.UiObjects);
-
-                menuAnimatorOut.onAnimationUpdate += (t) =>
+                currentObjects.ForEach(obj =>
                 {
-                    float tEased = Easings.EaseOutCubic(t);
-
-                    currentObjects.ForEach(obj =>
+                    if (obj != null)
                     {
-                        if (obj != null)
-                        {
-                            obj.blurAmount = Mathf.Lerp(35, 0, tEased);
-                        }
-                    });
-
-                    RendererMain.Instance.renderOffset.Y = Mathf.Lerp(-yOffset, 0, tEased);
-                };
-
-                menuAnimatorOut.onAnimationEnd += () =>
-                {
-                    activeMenu = newActiveMenu;
-
-                    RendererMain.Instance.renderOffset.Y = 0;
-                    LoadMenuEnd();
-
-                    return;
-                };
-            }
-
-            if (activeMenu != null)
-            {
-                menuAnimatorIn = new Animator(length, 1);
-
-                menuAnimatorIn.onAnimationUpdate += (t) =>
-                {
-                    float tEased = Easings.EaseInCubic(t);
-
-                    currentObjects.ForEach(obj =>
-                    {
-                        if (obj != null)
-                        {
-                            obj.blurAmount = Mathf.Lerp(0, 35, tEased);
-                        }
-                    });
-
-                    if (RendererMain.Instance != null)
-                        RendererMain.Instance.renderOffset.Y = Mathf.Lerp(0, yOffset, tEased);
-                };
-
-                menuAnimatorIn.onAnimationInterrupt += () =>
-                {
-                    LoadMenuEnd();
-                    return;
-                };
-
-                menuAnimatorIn.onAnimationEnd += () =>
-                {
-                    if (activeMenu != null) activeMenu.OnDeload();
-                    activeMenu = newActiveMenu;
-
-                    RendererMain.Instance.renderOffset.Y = -yOffset;
-
-                    currentObjects = new List<UIObject>(activeMenu.UiObjects);
-                    currentObjects.ForEach(obj =>
-                    {
-                        if (obj != null)
-                        {
-                            obj.blurAmount = 35;
-                        }
-                    });
-
-                    if (menuAnimatorOut == null)
-                    {
-                        LoadMenuEnd();
-                        return;
+                        obj.blurAmount = 35;
                     }
+                });
 
-                    activeMenu.UiObjects.Remove(menuAnimatorIn);
-
-                    menuAnimatorOut.Start();
-                };
-            }
-
-            if (menuAnimatorIn == null) menuAnimatorOut.Start();
-            else
-                menuAnimatorIn.Start();
-        }
-
-        private void LoadMenuEnd()
-        {
-            onMenuChangeEnd?.Invoke(activeMenu);
-
-            if (menuLoadQueue.Count != 0)
-            {
-                var queueObj = menuLoadQueue[0];
-
-                if (queueObj == activeMenu)
+                if (menuAnimatorOut == null)
                 {
-                    menuLoadQueue.Remove(queueObj);
+                    LoadMenuEnd();
                     return;
                 }
-                else OpenMenu(queueObj);
 
-                menuLoadQueue.Remove(queueObj);
-            }
+                activeMenu.UiObjects.Remove(menuAnimatorIn);
 
-            menuAnimatorIn = null;
-            menuAnimatorOut = null;
+                menuAnimatorOut.Start();
+            };
         }
 
-        public void QueueOpenMenu(BaseMenu menu)
+        if (menuAnimatorIn == null) menuAnimatorOut.Start();
+        else
+            menuAnimatorIn.Start();
+    }
+
+    private void LoadMenuEnd()
+    {
+        onMenuChangeEnd?.Invoke(activeMenu);
+
+        if (menuLoadQueue.Count != 0)
         {
-            if (menuAnimatorIn == null && menuAnimatorOut == null) OpenMenu(menu);
-            else
+            var queueObj = menuLoadQueue[0];
+
+            if (queueObj == activeMenu)
             {
-                menuLoadQueue.Add(menu);
+                menuLoadQueue.Remove(queueObj);
+                return;
             }
+            else OpenMenu(queueObj);
+
+            menuLoadQueue.Remove(queueObj);
+        }
+
+        menuAnimatorIn = null;
+        menuAnimatorOut = null;
+    }
+
+    public void QueueOpenMenu(BaseMenu menu)
+    {
+        if (menuAnimatorIn == null && menuAnimatorOut == null) OpenMenu(menu);
+        else
+        {
+            menuLoadQueue.Add(menu);
         }
     }
 }

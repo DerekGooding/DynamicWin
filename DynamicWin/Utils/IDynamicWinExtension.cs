@@ -1,15 +1,14 @@
 ﻿using DynamicWin.UI.Widgets;
 
-namespace DynamicWin.Utils
+namespace DynamicWin.Utils;
+
+public interface IDynamicWinExtension
 {
-    public interface IDynamicWinExtension
-    {
-        public string AuthorName { get; }
-        public string ExtensionName { get; }
-        public string ExtensionID { get; }
+    public string AuthorName { get; }
+    public string ExtensionName { get; }
+    public string ExtensionID { get; }
 
-        public void LoadExtension();
+    public void LoadExtension();
 
-        public List<IRegisterableWidget> GetExtensionWidgets();
-    }
+    public List<IRegisterableWidget> GetExtensionWidgets();
 }

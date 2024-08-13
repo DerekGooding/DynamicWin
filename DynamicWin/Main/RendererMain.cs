@@ -12,295 +12,294 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-namespace DynamicWin.Main
+namespace DynamicWin.Main;
+
+public class RendererMain : SKElement
 {
-    public class RendererMain : SKElement
+    //private DispatcherTimer timer;
+
+    private IslandObject islandObject;
+    public IslandObject MainIsland { get => islandObject; }
+
+    private List<UIObject> objects { get => MenuManager.Instance.ActiveMenu.UiObjects; }
+
+    public static Vec2 ScreenDimensions { get => new Vec2(MainForm.Instance.Width, MainForm.Instance.Height); }
+    public static Vec2 CursorPosition { get => new Vec2(Mouse.GetPosition(MainForm.Instance).X, Mouse.GetPosition(MainForm.Instance).Y); }
+
+    private static RendererMain instance;
+    public static RendererMain Instance
+    { get { return instance; } }
+
+    public Vec2 renderOffset = Vec2.zero;
+
+    public Action<float> onUpdate;
+    public Action<SKCanvas> onDraw;
+
+    public RendererMain()
     {
-        //private DispatcherTimer timer;
+        MenuManager m = new MenuManager();
 
-        private IslandObject islandObject;
-        public IslandObject MainIsland { get => islandObject; }
+        // Init control
 
-        private List<UIObject> objects { get => MenuManager.Instance.ActiveMenu.UiObjects; }
+        instance = this;
 
-        public static Vec2 ScreenDimensions { get => new Vec2(MainForm.Instance.Width, MainForm.Instance.Height); }
-        public static Vec2 CursorPosition { get => new Vec2(Mouse.GetPosition(MainForm.Instance).X, Mouse.GetPosition(MainForm.Instance).Y); }
+        islandObject = new IslandObject();
+        m.Init();
 
-        private static RendererMain instance;
-        public static RendererMain Instance
-        { get { return instance; } }
+        // Set up the timer
+        /*            timer = new System.Windows.Forms.Timer
+                    {
+                        Interval = 14
+                    };
+                    timer.Tick += (sender, args) => Update();
+                    timer.Tick += (sender, args) => Render();
+                    timer.Start();*/
 
-        public Vec2 renderOffset = Vec2.zero;
+        /*timer = new DispatcherTimer();
+        timer.Tick += (sender, args) => Update();
+        timer.Tick += (sender, args) => Render();
+        timer.Interval = TimeSpan.FromMilliseconds(8);
+        timer.Start();*/
 
-        public Action<float> onUpdate;
-        public Action<SKCanvas> onDraw;
+        MainForm.Instance.onMainFormRender += Update;
+        MainForm.Instance.onMainFormRender += Render;
 
-        public RendererMain()
+        initialScreenBrightness = BrightnessAdjustMenu.GetBrightness();
+
+        KeyHandler.onKeyDown += OnKeyRegistered;
+
         {
-            MenuManager m = new MenuManager();
+            MainForm.Instance.DragEnter += MainForm.Instance.MainForm_DragEnter;
+            MainForm.Instance.DragLeave += MainForm.Instance.MainForm_DragLeave;
+            MainForm.Instance.Drop += MainForm.Instance.OnDrop;
 
-            // Init control
-
-            instance = this;
-
-            islandObject = new IslandObject();
-            m.Init();
-
-            // Set up the timer
-            /*            timer = new System.Windows.Forms.Timer
-                        {
-                            Interval = 14
-                        };
-                        timer.Tick += (sender, args) => Update();
-                        timer.Tick += (sender, args) => Render();
-                        timer.Start();*/
-
-            /*timer = new DispatcherTimer();
-            timer.Tick += (sender, args) => Update();
-            timer.Tick += (sender, args) => Render();
-            timer.Interval = TimeSpan.FromMilliseconds(8);
-            timer.Start();*/
-
-            MainForm.Instance.onMainFormRender += Update;
-            MainForm.Instance.onMainFormRender += Render;
-
-            initialScreenBrightness = BrightnessAdjustMenu.GetBrightness();
-
-            KeyHandler.onKeyDown += OnKeyRegistered;
-
-            {
-                MainForm.Instance.DragEnter += MainForm.Instance.MainForm_DragEnter;
-                MainForm.Instance.DragLeave += MainForm.Instance.MainForm_DragLeave;
-                MainForm.Instance.Drop += MainForm.Instance.OnDrop;
-
-                MainForm.Instance.MouseWheel += MainForm.Instance.OnScroll;
-            }
-
-            isInitialized = true;
+            MainForm.Instance.MouseWheel += MainForm.Instance.OnScroll;
         }
 
-        public void Destroy()
+        isInitialized = true;
+    }
+
+    public void Destroy()
+    {
+        //timer.Stop();
+
+        MainForm.Instance.onMainFormRender -= Update;
+        MainForm.Instance.onMainFormRender -= Render;
+
+        KeyHandler.onKeyDown -= OnKeyRegistered;
+
         {
-            //timer.Stop();
+            MainForm.Instance.DragEnter -= MainForm.Instance.MainForm_DragEnter;
+            MainForm.Instance.DragLeave -= MainForm.Instance.MainForm_DragLeave;
 
-            MainForm.Instance.onMainFormRender -= Update;
-            MainForm.Instance.onMainFormRender -= Render;
-
-            KeyHandler.onKeyDown -= OnKeyRegistered;
-
-            {
-                MainForm.Instance.DragEnter -= MainForm.Instance.MainForm_DragEnter;
-                MainForm.Instance.DragLeave -= MainForm.Instance.MainForm_DragLeave;
-
-                MainForm.Instance.MouseWheel -= MainForm.Instance.OnScroll;
-            }
-
-            instance = null;
+            MainForm.Instance.MouseWheel -= MainForm.Instance.OnScroll;
         }
 
-        private void OnKeyRegistered(Keys key, KeyModifier modifier)
+        instance = null;
+    }
+
+    private void OnKeyRegistered(Keys key, KeyModifier modifier)
+    {
+        if (key == Keys.LWin && modifier.isCtrlDown)
         {
-            if (key == Keys.LWin && modifier.isCtrlDown)
-            {
-                islandObject.hidden = !islandObject.hidden;
-            }
-
-            if (key == Keys.VolumeDown || key == Keys.VolumeMute || key == Keys.VolumeUp)
-            {
-                if (MenuManager.Instance.ActiveMenu is HomeMenu)
-                {
-                    MenuManager.OpenOverlayMenu(new VolumeAdjustMenu(), 100f);
-                }
-                else
-                {
-                    if (VolumeAdjustMenu.timerUntilClose != null)
-                        VolumeAdjustMenu.timerUntilClose = 0f;
-                }
-            }
-
-            if (key == Keys.MediaNextTrack || key == Keys.MediaPreviousTrack)
-            {
-                if (MenuManager.Instance.ActiveMenu is HomeMenu)
-                {
-                    if (key == Keys.MediaNextTrack) Res.HomeMenu.NextSong(); else Res.HomeMenu.PrevSong();
-                }
-            }
+            islandObject.hidden = !islandObject.hidden;
         }
 
-        private float deltaTime = 0f;
-        public float DeltaTime
-        { get { return deltaTime; } private set => deltaTime = value; }
-
-        private Stopwatch? updateStopwatch;
-
-        private int initialScreenBrightness = 0;
-
-        // Called once every frame to update values
-
-        private new void Update()
+        if (key == Keys.VolumeDown || key == Keys.VolumeMute || key == Keys.VolumeUp)
         {
-            if (updateStopwatch != null)
+            if (MenuManager.Instance.ActiveMenu is HomeMenu)
             {
-                updateStopwatch.Stop();
-                deltaTime = updateStopwatch.ElapsedMilliseconds / 1000f;
+                MenuManager.OpenOverlayMenu(new VolumeAdjustMenu(), 100f);
             }
             else
-                deltaTime = 1f / 1000f;
-
-            updateStopwatch = new Stopwatch();
-            updateStopwatch.Start();
-
-            onUpdate?.Invoke(DeltaTime);
-
-            if (BrightnessAdjustMenu.GetBrightness() != initialScreenBrightness)
             {
-                initialScreenBrightness = BrightnessAdjustMenu.GetBrightness();
-                if (MenuManager.Instance.ActiveMenu is HomeMenu)
-                {
-                    MenuManager.OpenOverlayMenu(new BrightnessAdjustMenu(), 100f);
-                }
-                else
-                {
-                    if (BrightnessAdjustMenu.timerUntilClose != null)
-                    {
-                        BrightnessAdjustMenu.PressBK();
-                        BrightnessAdjustMenu.timerUntilClose = 0f;
-                    }
-                }
-            }
-
-            // Update Menu
-
-            MenuManager.Instance.Update(DeltaTime);
-
-            if (MenuManager.Instance.ActiveMenu != null)
-                MenuManager.Instance.ActiveMenu.Update();
-
-            if (MenuManager.Instance.ActiveMenu is DropFileMenu && !MainForm.Instance.isDragging)
-                MenuManager.OpenMenu(Res.HomeMenu);
-
-            // Update logic here
-
-            islandObject.UpdateCall(DeltaTime);
-
-            if (MainIsland.hidden) return;
-
-            foreach (UIObject uiObject in objects)
-            {
-                uiObject.UpdateCall(DeltaTime);
+                if (VolumeAdjustMenu.timerUntilClose != null)
+                    VolumeAdjustMenu.timerUntilClose = 0f;
             }
         }
 
-        // Called once every frame to render frame, called after Update
-
-        private void Render()
+        if (key == Keys.MediaNextTrack || key == Keys.MediaPreviousTrack)
         {
-            Dispatcher.Invoke((Action)(() =>
+            if (MenuManager.Instance.ActiveMenu is HomeMenu)
             {
-                this.InvalidateVisual();
-            }));
+                if (key == Keys.MediaNextTrack) Res.HomeMenu.NextSong(); else Res.HomeMenu.PrevSong();
+            }
+        }
+    }
+
+    private float deltaTime = 0f;
+    public float DeltaTime
+    { get { return deltaTime; } private set => deltaTime = value; }
+
+    private Stopwatch? updateStopwatch;
+
+    private int initialScreenBrightness = 0;
+
+    // Called once every frame to update values
+
+    private new void Update()
+    {
+        if (updateStopwatch != null)
+        {
+            updateStopwatch.Stop();
+            deltaTime = updateStopwatch.ElapsedMilliseconds / 1000f;
+        }
+        else
+            deltaTime = 1f / 1000f;
+
+        updateStopwatch = new Stopwatch();
+        updateStopwatch.Start();
+
+        onUpdate?.Invoke(DeltaTime);
+
+        if (BrightnessAdjustMenu.GetBrightness() != initialScreenBrightness)
+        {
+            initialScreenBrightness = BrightnessAdjustMenu.GetBrightness();
+            if (MenuManager.Instance.ActiveMenu is HomeMenu)
+            {
+                MenuManager.OpenOverlayMenu(new BrightnessAdjustMenu(), 100f);
+            }
+            else
+            {
+                if (BrightnessAdjustMenu.timerUntilClose != null)
+                {
+                    BrightnessAdjustMenu.PressBK();
+                    BrightnessAdjustMenu.timerUntilClose = 0f;
+                }
+            }
         }
 
-        public int canvasWithoutClip;
-        private bool isInitialized = false;
+        // Update Menu
 
-        private GRContext Context;
+        MenuManager.Instance.Update(DeltaTime);
 
-        /*        public SKSurface GetOpenGlSurface(int width, int height)
-                {
-                    if (Context == null)
-                    {
-                        GLControl control = new GLControl(new GraphicsMode(32, 24, 8, 4));
-                        control.MakeCurrent();
-                        Context = GRContext.CreateGl();
-                    }
-                    var gpuSurface = SKSurface.Create(Context, true, new SKImageInfo(width, height));
-                    return gpuSurface;
-                }*/
+        if (MenuManager.Instance.ActiveMenu != null)
+            MenuManager.Instance.ActiveMenu.Update();
 
-        protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)
+        if (MenuManager.Instance.ActiveMenu is DropFileMenu && !MainForm.Instance.isDragging)
+            MenuManager.OpenMenu(Res.HomeMenu);
+
+        // Update logic here
+
+        islandObject.UpdateCall(DeltaTime);
+
+        if (MainIsland.hidden) return;
+
+        foreach (UIObject uiObject in objects)
         {
-            base.OnPaintSurface(e);
+            uiObject.UpdateCall(DeltaTime);
+        }
+    }
 
-            if (!isInitialized) return;
+    // Called once every frame to render frame, called after Update
 
-            // Render
+    private void Render()
+    {
+        Dispatcher.Invoke((Action)(() =>
+        {
+            this.InvalidateVisual();
+        }));
+    }
 
-            // Get the canvas and information about the surface
-            SKSurface surface = e.Surface;
-            SKCanvas canvas = surface.Canvas;
-            SKImageInfo info = e.Info;
+    public int canvasWithoutClip;
+    private bool isInitialized = false;
 
-            canvas.Clear(SKColors.Transparent);
+    private GRContext Context;
 
-            //var mainScale = 2f;
-            //canvas.Scale(mainScale, mainScale, MainIsland.Position.X + MainIsland.currSize.X / 2, 0);
+    /*        public SKSurface GetOpenGlSurface(int width, int height)
+            {
+                if (Context == null)
+                {
+                    GLControl control = new GLControl(new GraphicsMode(32, 24, 8, 4));
+                    control.MakeCurrent();
+                    Context = GRContext.CreateGl();
+                }
+                var gpuSurface = SKSurface.Create(Context, true, new SKImageInfo(width, height));
+                return gpuSurface;
+            }*/
 
+    protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)
+    {
+        base.OnPaintSurface(e);
+
+        if (!isInitialized) return;
+
+        // Render
+
+        // Get the canvas and information about the surface
+        SKSurface surface = e.Surface;
+        SKCanvas canvas = surface.Canvas;
+        SKImageInfo info = e.Info;
+
+        canvas.Clear(SKColors.Transparent);
+
+        //var mainScale = 2f;
+        //canvas.Scale(mainScale, mainScale, MainIsland.Position.X + MainIsland.currSize.X / 2, 0);
+
+        canvasWithoutClip = canvas.Save();
+
+        if (islandObject.maskInToIsland) Mask(canvas);
+        islandObject.DrawCall(canvas);
+
+        if (MainIsland.hidden) return;
+
+        bool hasContextMenu = false;
+        foreach (UIObject uiObject in objects)
+        {
+            canvas.RestoreToCount(canvasWithoutClip);
             canvasWithoutClip = canvas.Save();
 
-            if (islandObject.maskInToIsland) Mask(canvas);
-            islandObject.DrawCall(canvas);
-
-            if (MainIsland.hidden) return;
-
-            bool hasContextMenu = false;
-            foreach (UIObject uiObject in objects)
+            if (uiObject.IsHovering && uiObject.GetContextMenu() != null)
             {
-                canvas.RestoreToCount(canvasWithoutClip);
-                canvasWithoutClip = canvas.Save();
+                hasContextMenu = true;
 
-                if (uiObject.IsHovering && uiObject.GetContextMenu() != null)
+                var contextMenu = uiObject.GetContextMenu();
+                //contextMenu.BackColor = Theme.IslandBackground.ValueSystem();
+                //contextMenu.ForeColor = Theme.TextMain.ValueSystem();
+
+                ContextMenu = contextMenu;
+            }
+
+            foreach (UIObject obj in uiObject.LocalObjects)
+            {
+                if (obj.IsHovering && obj.GetContextMenu() != null)
                 {
                     hasContextMenu = true;
 
-                    var contextMenu = uiObject.GetContextMenu();
+                    var contextMenu = obj.GetContextMenu();
                     //contextMenu.BackColor = Theme.IslandBackground.ValueSystem();
                     //contextMenu.ForeColor = Theme.TextMain.ValueSystem();
 
                     ContextMenu = contextMenu;
                 }
-
-                foreach (UIObject obj in uiObject.LocalObjects)
-                {
-                    if (obj.IsHovering && obj.GetContextMenu() != null)
-                    {
-                        hasContextMenu = true;
-
-                        var contextMenu = obj.GetContextMenu();
-                        //contextMenu.BackColor = Theme.IslandBackground.ValueSystem();
-                        //contextMenu.ForeColor = Theme.TextMain.ValueSystem();
-
-                        ContextMenu = contextMenu;
-                    }
-                }
-
-                if (uiObject.maskInToIsland)
-                {
-                    Mask(canvas);
-                }
-
-                canvas.Translate(renderOffset.X, renderOffset.Y);
-                uiObject.DrawCall(canvas);
             }
 
-            onDraw?.Invoke(canvas);
+            if (uiObject.maskInToIsland)
+            {
+                Mask(canvas);
+            }
 
-            if (!hasContextMenu) ContextMenu = null;
-
-            canvas.Flush();
+            canvas.Translate(renderOffset.X, renderOffset.Y);
+            uiObject.DrawCall(canvas);
         }
 
-        private void Mask(SKCanvas canvas)
-        {
-            var islandMask = GetMask();
-            canvas.ClipRoundRect(islandMask);
-        }
+        onDraw?.Invoke(canvas);
 
-        public SKRoundRect GetMask()
-        {
-            var islandMask = islandObject.GetRect();
-            islandMask.Deflate(new SKSize(1, 1));
-            return islandMask;
-        }
+        if (!hasContextMenu) ContextMenu = null;
+
+        canvas.Flush();
+    }
+
+    private void Mask(SKCanvas canvas)
+    {
+        var islandMask = GetMask();
+        canvas.ClipRoundRect(islandMask);
+    }
+
+    public SKRoundRect GetMask()
+    {
+        var islandMask = islandObject.GetRect();
+        islandMask.Deflate(new SKSize(1, 1));
+        return islandMask;
     }
 }

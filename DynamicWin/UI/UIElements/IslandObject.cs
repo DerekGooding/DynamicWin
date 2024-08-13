@@ -3,159 +3,158 @@ using DynamicWin.UI.Menu;
 using DynamicWin.Utils;
 using SkiaSharp;
 
-namespace DynamicWin.UI.UIElements
+namespace DynamicWin.UI.UIElements;
+
+public class IslandObject : UIObject
 {
-    public class IslandObject : UIObject
+    public float topOffset = 15f;
+
+    public SecondOrder scaleSecondOrder;
+
+    public Vec2 secondOrderValuesExpand = new Vec2(3f, 0.55f);
+    public Vec2 secondOrderValuesContract = new Vec2(3f, 0.9f);
+
+    public bool hidden = false;
+
+    public Vec2 currSize;
+
+    public enum IslandMode
+    { Island, Notch };
+
+    public IslandMode mode = Settings.IslandMode;
+
+    private float dropShadowStrength = 0f;
+    private float dropShadowSize = 0f;
+
+    public IslandObject() : base(null, Vec2.zero, new Vec2(250, 50), UIAlignment.TopCenter)
     {
-        public float topOffset = 15f;
+        currSize = Size;
 
-        public SecondOrder scaleSecondOrder;
+        Anchor = new Vec2(0.5f, 0f);
 
-        public Vec2 secondOrderValuesExpand = new Vec2(3f, 0.55f);
-        public Vec2 secondOrderValuesContract = new Vec2(3f, 0.9f);
+        roundRadius = 35f;
 
-        public bool hidden = false;
+        LocalPosition = new Vec2(0, topOffset);
 
-        public Vec2 currSize;
+        scaleSecondOrder = new SecondOrder(Size, secondOrderValuesExpand.X, secondOrderValuesExpand.Y, 0.1f);
+        expandInteractionRect = 20;
 
-        public enum IslandMode
-        { Island, Notch };
+        maskInToIsland = false;
+    }
 
-        public IslandMode mode = Settings.IslandMode;
+    public override void Update(float deltaTime)
+    {
+        base.Update(deltaTime);
 
-        private float dropShadowStrength = 0f;
-        private float dropShadowSize = 0f;
-
-        public IslandObject() : base(null, Vec2.zero, new Vec2(250, 50), UIAlignment.TopCenter)
+        if (!hidden)
         {
-            currSize = Size;
-
-            Anchor = new Vec2(0.5f, 0f);
-
-            roundRadius = 35f;
-
-            LocalPosition = new Vec2(0, topOffset);
-
-            scaleSecondOrder = new SecondOrder(Size, secondOrderValuesExpand.X, secondOrderValuesExpand.Y, 0.1f);
-            expandInteractionRect = 20;
-
-            maskInToIsland = false;
-        }
-
-        public override void Update(float deltaTime)
-        {
-            base.Update(deltaTime);
-
-            if (!hidden)
+            if (IsHovering)
             {
-                if (IsHovering)
-                {
-                    scaleSecondOrder.SetValues(secondOrderValuesExpand.X, secondOrderValuesExpand.Y, 0.1f);
-                    currSize = MenuManager.Instance.ActiveMenu.IslandSizeBig();
-                }
-                else
-                {
-                    scaleSecondOrder.SetValues(secondOrderValuesContract.X, secondOrderValuesContract.Y, 0.1f);
-                    currSize = MenuManager.Instance.ActiveMenu.IslandSize();
-                }
-
-                Size = scaleSecondOrder.Update(deltaTime, currSize);
-                //Size = Vec2.lerp(Size, currSize, deltaTime * 15f);
-
-                LocalPosition.Y = Mathf.Lerp(LocalPosition.Y, topOffset, 15f * deltaTime);
+                scaleSecondOrder.SetValues(secondOrderValuesExpand.X, secondOrderValuesExpand.Y, 0.1f);
+                currSize = MenuManager.Instance.ActiveMenu.IslandSizeBig();
             }
             else
             {
                 scaleSecondOrder.SetValues(secondOrderValuesContract.X, secondOrderValuesContract.Y, 0.1f);
-
-                Size = scaleSecondOrder.Update(deltaTime, new Vec2(500, 15));
-                //Size = Vec2.lerp(Size, new Vec2(500, 10), deltaTime * 15f);
-
-                LocalPosition.Y = Mathf.Lerp(LocalPosition.Y, -Size.Y + 15f, 15f * deltaTime);
+                currSize = MenuManager.Instance.ActiveMenu.IslandSize();
             }
 
-            MainForm.Instance.Opacity = hidden ? 0.75f : 1f;
+            Size = scaleSecondOrder.Update(deltaTime, currSize);
+            //Size = Vec2.lerp(Size, currSize, deltaTime * 15f);
 
-            mode = Settings.IslandMode;
+            LocalPosition.Y = Mathf.Lerp(LocalPosition.Y, topOffset, 15f * deltaTime);
+        }
+        else
+        {
+            scaleSecondOrder.SetValues(secondOrderValuesContract.X, secondOrderValuesContract.Y, 0.1f);
 
-            topOffset = Mathf.Lerp(topOffset, (mode == IslandMode.Island) ? 15f : 5f, 15f * deltaTime);
+            Size = scaleSecondOrder.Update(deltaTime, new Vec2(500, 15));
+            //Size = Vec2.lerp(Size, new Vec2(500, 10), deltaTime * 15f);
 
-            dropShadowStrength = Mathf.Lerp(dropShadowStrength, IsHovering ? 0.75f : 0.25f, 10f * deltaTime);
-            dropShadowSize = Mathf.Lerp(dropShadowSize, IsHovering ? 35f : 7.5f, 10f * deltaTime);
+            LocalPosition.Y = Mathf.Lerp(LocalPosition.Y, -Size.Y + 15f, 15f * deltaTime);
         }
 
-        public override void Draw(SKCanvas canvas)
+        MainForm.Instance.Opacity = hidden ? 0.75f : 1f;
+
+        mode = Settings.IslandMode;
+
+        topOffset = Mathf.Lerp(topOffset, (mode == IslandMode.Island) ? 15f : 5f, 15f * deltaTime);
+
+        dropShadowStrength = Mathf.Lerp(dropShadowStrength, IsHovering ? 0.75f : 0.25f, 10f * deltaTime);
+        dropShadowSize = Mathf.Lerp(dropShadowSize, IsHovering ? 35f : 7.5f, 10f * deltaTime);
+    }
+
+    public override void Draw(SKCanvas canvas)
+    {
+        var paint = GetPaint();
+        paint.IsAntialias = Settings.AntiAliasing;
+
+        paint.Color = Theme.IslandBackground.Value();
+
+        if (!hidden)
         {
-            var paint = GetPaint();
-            paint.IsAntialias = Settings.AntiAliasing;
+            paint.ImageFilter = SKImageFilter.CreateDropShadow(1, 1, dropShadowSize, dropShadowSize, new Col(0, 0, 0).Override(a: dropShadowStrength).Value());
+        }
 
-            paint.Color = Theme.IslandBackground.Value();
+        canvas.DrawRoundRect(GetRect(), paint);
 
-            if (!hidden)
-            {
-                paint.ImageFilter = SKImageFilter.CreateDropShadow(1, 1, dropShadowSize, dropShadowSize, new Col(0, 0, 0).Override(a: dropShadowStrength).Value());
+        paint.ImageFilter = null;
+
+        if (mode == IslandMode.Notch && !hidden)
+        {
+            var path = new SKPath();
+
+            var awidth = (float)(Math.Max(Size.Magnitude / 16, 25));
+            var aheight = (float)(Math.Max(Size.Y / 4, 15)) + (LocalPosition.Y - topOffset);
+            var y = 5;
+
+            { // Left notch curve
+                var x = Position.X - awidth;
+
+                path.MoveTo(x - awidth, y);
+                path.CubicTo(
+                    x + 0, y,
+                    x + awidth, y,
+                    x + awidth, y + aheight);
+                path.LineTo(x + awidth, y);
+                path.LineTo(x + 0, y);
             }
 
-            canvas.DrawRoundRect(GetRect(), paint);
+            { // Right notch curve
+                var x = Position.X + Size.X + awidth;
 
-            paint.ImageFilter = null;
-
-            if (mode == IslandMode.Notch && !hidden)
-            {
-                var path = new SKPath();
-
-                var awidth = (float)(Math.Max(Size.Magnitude / 16, 25));
-                var aheight = (float)(Math.Max(Size.Y / 4, 15)) + (LocalPosition.Y - topOffset);
-                var y = 5;
-
-                { // Left notch curve
-                    var x = Position.X - awidth;
-
-                    path.MoveTo(x - awidth, y);
-                    path.CubicTo(
-                        x + 0, y,
-                        x + awidth, y,
-                        x + awidth, y + aheight);
-                    path.LineTo(x + awidth, y);
-                    path.LineTo(x + 0, y);
-                }
-
-                { // Right notch curve
-                    var x = Position.X + Size.X + awidth;
-
-                    path.MoveTo(x + awidth, y);
-                    path.CubicTo(
-                        x - 0, y,
-                        x - awidth, y,
-                        x - awidth, y + aheight);
-                    path.LineTo(x - awidth, y);
-                    path.LineTo(x - 0, y);
-                }
-
-                var r = SKRect.Create(Position.X, 0, Size.X, (Position.Y - topOffset) + topOffset + Size.Y / 2);
-                path.AddRect(r);
-
-                canvas.DrawPath(path, paint);
+                path.MoveTo(x + awidth, y);
+                path.CubicTo(
+                    x - 0, y,
+                    x - awidth, y,
+                    x - awidth, y + aheight);
+                path.LineTo(x - awidth, y);
+                path.LineTo(x - 0, y);
             }
+
+            var r = SKRect.Create(Position.X, 0, Size.X, (Position.Y - topOffset) + topOffset + Size.Y / 2);
+            path.AddRect(r);
+
+            canvas.DrawPath(path, paint);
         }
+    }
 
-        public override SKRoundRect GetInteractionRect()
-        {
-            var rect = SKRect.Create(Position.X, Position.Y, Size.X, Size.Y);
+    public override SKRoundRect GetInteractionRect()
+    {
+        var rect = SKRect.Create(Position.X, Position.Y, Size.X, Size.Y);
 
-            if (IsHovering)
-                rect.Inflate(expandInteractionRect + 5, expandInteractionRect + 5);
+        if (IsHovering)
+            rect.Inflate(expandInteractionRect + 5, expandInteractionRect + 5);
 
-            rect.Inflate(expandInteractionRect, expandInteractionRect);
-            var r = new SKRoundRect(rect, roundRadius);
+        rect.Inflate(expandInteractionRect, expandInteractionRect);
+        var r = new SKRoundRect(rect, roundRadius);
 
-            return r;
-        }
+        return r;
+    }
 
-        public override SKRoundRect GetRect()
-        {
-            var rect = base.GetRect();
-            return rect;
-        }
+    public override SKRoundRect GetRect()
+    {
+        var rect = base.GetRect();
+        return rect;
     }
 }

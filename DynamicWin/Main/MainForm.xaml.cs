@@ -5,178 +5,177 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace DynamicWin.Main
+namespace DynamicWin.Main;
+
+public partial class MainForm : Window
 {
-    public partial class MainForm : Window
+    private static MainForm instance;
+    public static MainForm Instance { get => instance; }
+
+    public static Action<System.Windows.Input.MouseWheelEventArgs> onScrollEvent;
+
+    private DateTime _lastRenderTime;
+    private readonly TimeSpan _targetElapsedTime = TimeSpan.FromMilliseconds(16); // ~60 FPS
+
+    public Action onMainFormRender;
+
+    public MainForm()
     {
-        private static MainForm instance;
-        public static MainForm Instance { get => instance; }
+        InitializeComponent();
 
-        public static Action<System.Windows.Input.MouseWheelEventArgs> onScrollEvent;
+        CompositionTarget.Rendering += OnRendering;
 
-        private DateTime _lastRenderTime;
-        private readonly TimeSpan _targetElapsedTime = TimeSpan.FromMilliseconds(16); // ~60 FPS
+        instance = this;
 
-        public Action onMainFormRender;
+        WindowStyle = WindowStyle.None;
+        WindowState = WindowState.Maximized;
 
-        public MainForm()
+        Topmost = true;
+        AllowsTransparency = true;
+        ShowInTaskbar = false;
+        Title = "DynamicWin Overlay";
+
+        Width = SystemParameters.WorkArea.Width;
+        Height = SystemParameters.WorkArea.Height;
+
+        AddRenderer();
+
+        Res.extensions.ForEach((x) => x.LoadExtension());
+
+        Instance.AllowDrop = true;
+    }
+
+    private void OnRendering(object? sender, EventArgs e)
+    {
+        var currentTime = DateTime.Now;
+        if (currentTime - _lastRenderTime >= _targetElapsedTime)
         {
-            InitializeComponent();
+            _lastRenderTime = currentTime;
 
-            CompositionTarget.Rendering += OnRendering;
+            onMainFormRender.Invoke();
+        }
+    }
 
-            instance = this;
+    public bool isDragging = false;
 
-            this.WindowStyle = WindowStyle.None;
-            this.WindowState = WindowState.Maximized;
+    public void OnScroll(object? sender, System.Windows.Input.MouseWheelEventArgs e)
+    {
+        onScrollEvent?.Invoke(e);
+    }
 
-            this.Topmost = true;
-            this.AllowsTransparency = true;
-            this.ShowInTaskbar = false;
-            this.Title = "DynamicWin Overlay";
+    public void AddRenderer()
+    {
+        RendererMain.Instance?.Destroy();
 
-            this.Width = SystemParameters.WorkArea.Width;
-            this.Height = SystemParameters.WorkArea.Height;
+        var customControl = new RendererMain();
 
+        var parent = new Grid();
+        parent.Children.Add(customControl);
+
+        Content = parent;
+    }
+
+    public void MainForm_DragEnter(object? sender, DragEventArgs e)
+    {
+        //System.Diagnostics.Debug.WriteLine("DragEnter");
+
+        isDragging = true;
+        e.Effects = DragDropEffects.Copy;
+
+        if (!(MenuManager.Instance.ActiveMenu is DropFileMenu)
+            && !(MenuManager.Instance.ActiveMenu is ConfigureShortcutMenu))
+        {
+            MenuManager.OpenMenu(new DropFileMenu());
+        }
+    }
+
+    public void MainForm_DragLeave(object? sender, EventArgs e)
+    {
+        //System.Diagnostics.Debug.WriteLine("DragLeave");
+
+        isDragging = false;
+
+        if (MenuManager.Instance.ActiveMenu is ConfigureShortcutMenu) return;
+        MenuManager.OpenMenu(Res.HomeMenu);
+    }
+
+    private bool isLocalDrag;
+
+    internal void StartDrag(string[] files, Action callback)
+    {
+        if (isLocalDrag) return;
+
+        Array.ForEach(files, file => { System.Diagnostics.Debug.WriteLine(file); });
+
+        if (files == null) return;
+        else if (files.Length <= 0) return;
+
+        try
+        {
+            isLocalDrag = true;
+
+            DataObject dataObject = new(DataFormats.FileDrop, files);
+            var effects = DragDrop.DoDragDrop(this, dataObject, DragDropEffects.Move | DragDropEffects.Copy);
+
+            RendererMain.Instance?.Destroy();
+            Content = new Grid();
             AddRenderer();
 
-            Res.extensions.ForEach((x) => x.LoadExtension());
+            callback?.Invoke();
 
-            MainForm.Instance.AllowDrop = true;
+            isLocalDrag = false;
         }
-
-        private void OnRendering(object? sender, EventArgs e)
+        catch (Exception ex)
         {
-            var currentTime = DateTime.Now;
-            if (currentTime - _lastRenderTime >= _targetElapsedTime)
-            {
-                _lastRenderTime = currentTime;
-
-                onMainFormRender.Invoke();
-            }
+            MessageBox.Show("An error occurred: " + ex.Message);
         }
+    }
 
-        public bool isDragging = false;
-
-        public void OnScroll(object? sender, System.Windows.Input.MouseWheelEventArgs e)
+    protected override void OnQueryContinueDrag(QueryContinueDragEventArgs e)
+    {
+        if (e.Action == DragAction.Cancel)
         {
-            onScrollEvent?.Invoke(e);
+            isLocalDrag = false;
         }
-
-        public void AddRenderer()
+        else if (e.Action == DragAction.Continue)
         {
-            if (RendererMain.Instance != null) RendererMain.Instance.Destroy();
-
-            var customControl = new RendererMain();
-
-            var parent = new Grid();
-            parent.Children.Add(customControl);
-
-            this.Content = parent;
+            isLocalDrag = true;
         }
-
-        public void MainForm_DragEnter(object? sender, DragEventArgs e)
+        else if (e.Action == DragAction.Drop)
         {
-            //System.Diagnostics.Debug.WriteLine("DragEnter");
-
-            isDragging = true;
-            e.Effects = DragDropEffects.Copy;
-
-            if (!(MenuManager.Instance.ActiveMenu is DropFileMenu)
-                && !(MenuManager.Instance.ActiveMenu is ConfigureShortcutMenu))
-            {
-                MenuManager.OpenMenu(new DropFileMenu());
-            }
+            isLocalDrag = false;
         }
+    }
 
-        public void MainForm_DragLeave(object? sender, EventArgs e)
+    protected override void OnDragOver(DragEventArgs e)
+    {
+        if (e.Data.GetDataPresent(DataFormats.FileDrop))
         {
-            //System.Diagnostics.Debug.WriteLine("DragLeave");
-
-            isDragging = false;
-
-            if (MenuManager.Instance.ActiveMenu is ConfigureShortcutMenu) return;
-            MenuManager.OpenMenu(Res.HomeMenu);
+            e.Effects = DragDropEffects.Move;
         }
-
-        private bool isLocalDrag = false;
-
-        internal void StartDrag(string[] files, Action callback)
+        else
         {
-            if (isLocalDrag) return;
-
-            Array.ForEach(files, file => { System.Diagnostics.Debug.WriteLine(file); });
-
-            if (files == null) return;
-            else if (files.Length <= 0) return;
-
-            try
-            {
-                isLocalDrag = true;
-
-                DataObject dataObject = new DataObject(DataFormats.FileDrop, files);
-                var effects = DragDrop.DoDragDrop((DependencyObject)this, dataObject, DragDropEffects.Move | DragDropEffects.Copy);
-
-                if (RendererMain.Instance != null) RendererMain.Instance.Destroy();
-                this.Content = new Grid();
-                AddRenderer();
-
-                callback?.Invoke();
-
-                isLocalDrag = false;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("An error occurred: " + ex.Message);
-            }
+            e.Effects = DragDropEffects.None;
         }
+        base.OnDragOver(e);
+    }
 
-        protected override void OnQueryContinueDrag(QueryContinueDragEventArgs e)
-        {
-            if (e.Action == DragAction.Cancel)
-            {
-                isLocalDrag = false;
-            }
-            else if (e.Action == DragAction.Continue)
-            {
-                isLocalDrag = true;
-            }
-            else if (e.Action == DragAction.Drop)
-            {
-                isLocalDrag = false;
-            }
-        }
+    public void OnDrop(object sender, DragEventArgs e)
+    {
+        isDragging = false;
 
-        protected override void OnDragOver(DragEventArgs e)
+        if (MenuManager.Instance.ActiveMenu is ConfigureShortcutMenu)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                e.Effects = DragDropEffects.Move;
+                ConfigureShortcutMenu.DropData(e);
             }
-            else
-            {
-                e.Effects = DragDropEffects.None;
-            }
-            base.OnDragOver(e);
         }
-
-        public void OnDrop(object sender, System.Windows.DragEventArgs e)
+        else if (e.Data.GetDataPresent(DataFormats.FileDrop))
         {
-            isDragging = false;
-
-            if (MenuManager.Instance.ActiveMenu is ConfigureShortcutMenu)
-            {
-                if (e.Data.GetDataPresent(DataFormats.FileDrop))
-                {
-                    ConfigureShortcutMenu.DropData(e);
-                }
-            }
-            else if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                DropFileMenu.Drop(e);
-                MenuManager.Instance.QueueOpenMenu(Res.HomeMenu);
-                Res.HomeMenu.isWidgetMode = false;
-            }
+            DropFileMenu.Drop(e);
+            MenuManager.Instance.QueueOpenMenu(Res.HomeMenu);
+            Res.HomeMenu.isWidgetMode = false;
         }
     }
 }

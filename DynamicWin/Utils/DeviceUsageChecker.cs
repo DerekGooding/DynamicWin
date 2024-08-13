@@ -1,86 +1,85 @@
 ﻿using Microsoft.Win32;
 
-namespace DynamicWin.Utils
+namespace DynamicWin.Utils;
+
+public class DeviceUsageChecker
 {
-    public class DeviceUsageChecker
+    private static readonly string MicrophoneSubkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone";
+    private static readonly string WebcamSubkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam";
+    private static readonly string TimestampValueName = "LastUsedTimeStop";
+
+    public static bool IsMicrophoneInUse()
     {
-        private static readonly string MicrophoneSubkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone";
-        private static readonly string WebcamSubkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam";
-        private static readonly string TimestampValueName = "LastUsedTimeStop";
+        return IsDeviceInUse(MicrophoneSubkey);
+    }
 
-        public static bool IsMicrophoneInUse()
-        {
-            return IsDeviceInUse(MicrophoneSubkey);
-        }
+    public static bool IsWebcamInUse()
+    {
+        return IsDeviceInUse(WebcamSubkey);
+    }
 
-        public static bool IsWebcamInUse()
+    private static bool IsDeviceInUse(string subkey)
+    {
+        try
         {
-            return IsDeviceInUse(WebcamSubkey);
-        }
-
-        private static bool IsDeviceInUse(string subkey)
-        {
-            try
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(subkey))
             {
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(subkey))
+                if (key == null) return false;
+
+                foreach (string subkeyName in key.GetSubKeyNames())
                 {
-                    if (key == null) return false;
-
-                    foreach (string subkeyName in key.GetSubKeyNames())
+                    string subkeyPath = $@"{subkey}\{subkeyName}";
+                    if (subkeyName.Equals("NonPackaged"))
                     {
-                        string subkeyPath = $@"{subkey}\{subkeyName}";
-                        if (subkeyName.Equals("NonPackaged"))
+                        using (RegistryKey nonPackagedKey = Registry.CurrentUser.OpenSubKey(subkeyPath))
                         {
-                            using (RegistryKey nonPackagedKey = Registry.CurrentUser.OpenSubKey(subkeyPath))
-                            {
-                                if (nonPackagedKey == null) continue;
+                            if (nonPackagedKey == null) continue;
 
-                                foreach (string npSubkeyName in nonPackagedKey.GetSubKeyNames())
+                            foreach (string npSubkeyName in nonPackagedKey.GetSubKeyNames())
+                            {
+                                string npSubkeyPath = $@"{subkeyPath}\{npSubkeyName}";
+                                if (GetSubkeyTimestamp(npSubkeyPath) == 0)
                                 {
-                                    string npSubkeyPath = $@"{subkeyPath}\{npSubkeyName}";
-                                    if (GetSubkeyTimestamp(npSubkeyPath) == 0)
-                                    {
-                                        return true;
-                                    }
+                                    return true;
                                 }
                             }
                         }
-                        else
+                    }
+                    else
+                    {
+                        if (GetSubkeyTimestamp(subkeyPath) == 0)
                         {
-                            if (GetSubkeyTimestamp(subkeyPath) == 0)
-                            {
-                                return true;
-                            }
+                            return true;
                         }
                     }
                 }
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            return false;
         }
-
-        private static long GetSubkeyTimestamp(string subkeyPath)
+        catch (Exception e)
         {
-            try
+            Console.WriteLine(e.Message);
+        }
+        return false;
+    }
+
+    private static long GetSubkeyTimestamp(string subkeyPath)
+    {
+        try
+        {
+            using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(subkeyPath))
             {
-                using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(subkeyPath))
+                if (subkey == null) return -1;
+                object value = subkey.GetValue(TimestampValueName);
+                if (value != null && long.TryParse(value.ToString(), out long timestamp))
                 {
-                    if (subkey == null) return -1;
-                    object value = subkey.GetValue(TimestampValueName);
-                    if (value != null && long.TryParse(value.ToString(), out long timestamp))
-                    {
-                        return timestamp;
-                    }
+                    return timestamp;
                 }
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            return -1;
         }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        return -1;
     }
 }

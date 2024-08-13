@@ -6,134 +6,129 @@ using NAudio.CoreAudioApi;
 using System.Diagnostics;
 using System.Windows;
 
-namespace DynamicWin
+namespace DynamicWin;
+
+public partial class DynamicWinMain : Application
 {
-    public partial class DynamicWinMain : Application
+    public static MMDevice defaultDevice;
+    public static MMDevice defaultMicrophone;
+
+    [STAThread]
+    public static void Main()
     {
-        public static MMDevice defaultDevice;
-        public static MMDevice defaultMicrophone;
+        DynamicWinMain m = new DynamicWinMain();
+        m.Run();
+    }
 
-        [STAThread]
-        public static void Main()
+    public static string Version { get => "1.0.2" + "r"; }
+
+    private void AddToStartup()
+    {
+        try
         {
-            DynamicWinMain m = new DynamicWinMain();
-            m.Run();
-        }
+            // Set the registry key
+            string appName = "DynamicWin";
+            string appPath = Process.GetCurrentProcess().MainModule.FileName;
 
-        public static string Version { get => "1.0.2" + "r"; }
-
-        private void AddToStartup()
-        {
-            try
+            RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
+            if (key.GetValue(appName) == null)
             {
-                // Set the registry key
-                string appName = "DynamicWin";
-                string appPath = Process.GetCurrentProcess().MainModule.FileName;
-
-                RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
-                if (key.GetValue(appName) == null)
-                {
-                    key.SetValue(appName, appPath);
-                }
-            }
-            catch (Exception ex)
-            {
-                // Handle exceptions here
-                MessageBox.Show($"Failed to add application to startup: {ex.Message}");
+                key.SetValue(appName, appPath);
             }
         }
-
-        private void SetHighPriority()
+        catch (Exception ex)
         {
-            try
-            {
-                Process currentProcess = Process.GetCurrentProcess();
-                currentProcess.PriorityClass = ProcessPriorityClass.RealTime;
-            }
-            catch (Exception ex)
-            {
-                // Handle exceptions here
-                MessageBox.Show($"Failed to set process priority: {ex.Message}");
-            }
+            // Handle exceptions here
+            MessageBox.Show($"Failed to add application to startup: {ex.Message}");
+        }
+    }
+
+    private void SetHighPriority()
+    {
+        try
+        {
+            Process currentProcess = Process.GetCurrentProcess();
+            currentProcess.PriorityClass = ProcessPriorityClass.RealTime;
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions here
+            MessageBox.Show($"Failed to set process priority: {ex.Message}");
+        }
+    }
+
+    private Mutex mutex;
+
+    protected override void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e);
+
+        // Handle unhandled exceptions
+        AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+        Dispatcher.UnhandledException += Dispatcher_UnhandledException;
+
+        bool result;
+        mutex = new Mutex(true, "FlorianButz.DynamicWin", out result);
+
+        if (!result)
+        {
+            ErrorForm errorForm = new ErrorForm();
+            errorForm.Show();
+            return;
         }
 
-        private Mutex mutex;
+        AddToStartup();
+        //SetHighPriority();
 
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
+        var devEnum = new MMDeviceEnumerator();
+        defaultDevice = devEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+        defaultMicrophone = devEnum.GetDefaultAudioEndpoint(DataFlow.Capture, Role.Multimedia);
 
-            // Handle unhandled exceptions
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            Dispatcher.UnhandledException += Dispatcher_UnhandledException;
+        SaveManager.LoadData();
 
-            bool result;
-            mutex = new System.Threading.Mutex(true, "FlorianButz.DynamicWin", out result);
+        Res.Load();
+        KeyHandler.Start();
+        new Theme();
 
-            if (!result)
-            {
-                ErrorForm errorForm = new ErrorForm();
-                errorForm.Show();
-                return;
-            }
+        new HardwareMonitor();
 
-            AddToStartup();
-            //SetHighPriority();
+        Settings.InitializeSettings();
 
-            var devEnum = new MMDeviceEnumerator();
-            defaultDevice = devEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-            defaultMicrophone = devEnum.GetDefaultAudioEndpoint(DataFlow.Capture, Role.Multimedia);
+        MainForm mainForm = new MainForm();
+        mainForm.Show();
+    }
 
-            SaveManager.LoadData();
+    protected override void OnExit(ExitEventArgs e)
+    {
+        base.OnExit(e);
 
-            Res.Load();
-            KeyHandler.Start();
-            new Theme();
+        SaveManager.SaveAll();
+        HardwareMonitor.Stop();
 
-            new HardwareMonitor();
+        KeyHandler.Stop();
+        GC.KeepAlive(mutex); // Important
+    }
 
-            Settings.InitializeSettings();
+    private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+        MessageBox.Show($"Unhandled exception: {e.ExceptionObject}");
+    }
 
-            MainForm mainForm = new MainForm();
-            mainForm.Show();
-        }
+    private void Dispatcher_UnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+    {
+        MessageBox.Show($"Unhandled exception: {e.Exception}");
+        e.Handled = true; // Prevent the application from terminating
+    }
 
-        protected override void OnExit(ExitEventArgs e)
-        {
-            base.OnExit(e);
+    private static readonly DateTime Jan1st1970 = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-            SaveManager.SaveAll();
-            HardwareMonitor.Stop();
+    public static long CurrentTimeMillis() => (long)(DateTime.UtcNow - Jan1st1970).TotalMilliseconds;
 
-            KeyHandler.Stop();
-            GC.KeepAlive(mutex); // Important
-        }
-
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            MessageBox.Show($"Unhandled exception: {e.ExceptionObject}");
-        }
-
-        private void Dispatcher_UnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-        {
-            MessageBox.Show($"Unhandled exception: {e.Exception}");
-            e.Handled = true; // Prevent the application from terminating
-        }
-
-        private static readonly DateTime Jan1st1970 = new DateTime
-            (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
-        public static long CurrentTimeMillis()
-        {
-            return (long)(DateTime.UtcNow - Jan1st1970).TotalMilliseconds;
-        }
-
-        public static long NanoTime()
-        {
-            long nano = 10000L * Stopwatch.GetTimestamp();
-            nano /= TimeSpan.TicksPerMillisecond;
-            nano *= 100L;
-            return nano;
-        }
+    public static long NanoTime()
+    {
+        long nano = 10000L * Stopwatch.GetTimestamp();
+        nano /= TimeSpan.TicksPerMillisecond;
+        nano *= 100L;
+        return nano;
     }
 }

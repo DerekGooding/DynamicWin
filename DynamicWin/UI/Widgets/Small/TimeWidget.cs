@@ -1,41 +1,40 @@
 ﻿using DynamicWin.UI.UIElements;
 using DynamicWin.Utils;
 
-namespace DynamicWin.UI.Widgets.Small
+namespace DynamicWin.UI.Widgets.Small;
+
+internal class RegisterTimeWidget : IRegisterableWidget
 {
-    internal class RegisterTimeWidget : IRegisterableWidget
+    public bool IsSmallWidget => true;
+
+    public string WidgetName => "Time Display";
+
+    public WidgetBase CreateWidgetInstance(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter)
     {
-        public bool IsSmallWidget => true;
+        return new TimeWidget(parent, position, alignment);
+    }
+}
 
-        public string WidgetName => "Time Display";
+public class TimeWidget : SmallWidgetBase
+{
+    private DWText timeText;
 
-        public WidgetBase CreateWidgetInstance(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter)
-        {
-            return new TimeWidget(parent, position, alignment);
-        }
+    public TimeWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, alignment)
+    {
+        timeText = new DWText(this, GetTime(), Vec2.zero, UIAlignment.Center);
+        timeText.TextSize = 14;
+        AddLocalObject(timeText);
     }
 
-    public class TimeWidget : SmallWidgetBase
+    public override void Update(float deltaTime)
     {
-        private DWText timeText;
+        base.Update(deltaTime);
 
-        public TimeWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, alignment)
-        {
-            timeText = new DWText(this, GetTime(), Vec2.zero, UIAlignment.Center);
-            timeText.TextSize = 14;
-            AddLocalObject(timeText);
-        }
+        timeText.Text = GetTime();
+    }
 
-        public override void Update(float deltaTime)
-        {
-            base.Update(deltaTime);
-
-            timeText.Text = GetTime();
-        }
-
-        private string GetTime()
-        {
-            return DateTime.Now.ToString("HH:mm");
-        }
+    private string GetTime()
+    {
+        return DateTime.Now.ToString("HH:mm");
     }
 }

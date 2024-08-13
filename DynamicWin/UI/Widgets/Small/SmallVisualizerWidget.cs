@@ -1,36 +1,35 @@
 ﻿using DynamicWin.Utils;
 
-namespace DynamicWin.UI.Widgets.Small
-{
-    internal class RegisterSmallVisualizerWidget : IRegisterableWidget
-    {
-        public bool IsSmallWidget => true;
-        public string WidgetName => "Audio Visualizer";
+namespace DynamicWin.UI.Widgets.Small;
 
-        public WidgetBase CreateWidgetInstance(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter)
+internal class RegisterSmallVisualizerWidget : IRegisterableWidget
+{
+    public bool IsSmallWidget => true;
+    public string WidgetName => "Audio Visualizer";
+
+    public WidgetBase CreateWidgetInstance(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter)
+    {
+        return new SmallVisualizerWidget(parent, position, alignment);
+    }
+}
+
+public class SmallVisualizerWidget : SmallWidgetBase
+{
+    private AudioVisualizer audioVisualizer;
+
+    public SmallVisualizerWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, alignment)
+    {
+        audioVisualizer = new AudioVisualizer(this, new Vec2(-2.25f, 0), new Vec2(GetWidgetSize().X, GetWidgetSize().Y), UIAlignment.Center, length: 16, 16)
         {
-            return new SmallVisualizerWidget(parent, position, alignment);
-        }
+            divisor = 1.75f,
+            barDownSmoothing = 10,
+            barUpSmoothing = 20
+        };
+        AddLocalObject(audioVisualizer);
     }
 
-    public class SmallVisualizerWidget : SmallWidgetBase
+    protected override float GetWidgetWidth()
     {
-        private AudioVisualizer audioVisualizer;
-
-        public SmallVisualizerWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, alignment)
-        {
-            audioVisualizer = new AudioVisualizer(this, new Vec2(-2.25f, 0), new Vec2(GetWidgetSize().X, GetWidgetSize().Y), UIAlignment.Center, length: 16, 16)
-            {
-                divisor = 1.75f,
-                barDownSmoothing = 10,
-                barUpSmoothing = 20
-            };
-            AddLocalObject(audioVisualizer);
-        }
-
-        protected override float GetWidgetWidth()
-        {
-            return base.GetWidgetWidth() * 2;
-        }
+        return base.GetWidgetWidth() * 2;
     }
 }
