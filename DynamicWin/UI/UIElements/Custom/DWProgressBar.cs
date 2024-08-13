@@ -35,7 +35,7 @@ public class DWProgressBar : UIObject
 
         var bgSize = Size;
         var bgP = RawPosition + LocalPosition;
-        bgP.X += bgSize.X * (displayValue) + 3f;
+        bgP.X += bgSize.X * displayValue + 3f;
         var bgRectPos = GetScreenPosFromRawPosition(bgP, bgSize);
         var bgRect = SKRect.Create(bgRectPos.X, bgRectPos.Y, bgSize.X * (1f - displayValue), bgSize.Y);
         var rBgRect = new SKRoundRect(bgRect, roundRadius);

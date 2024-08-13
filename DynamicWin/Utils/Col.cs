@@ -7,8 +7,8 @@ public class Col
 {
     public float r, g, b, a;
 
-    public static Col White { get => new Col(1, 1, 1); }
-    public static Col Transparent { get => new Col(0, 0, 0, 0); }
+    public static Col White => new Col(1, 1, 1);
+    public static Col Transparent => new Col(0, 0, 0, 0);
 
     public Col(float r, float g, float b, float a = 1f)
     {
@@ -95,7 +95,7 @@ public class Col
         if (hex.Length == 6) hexCode += "ff";
         hexCode += hex;
 
-        int argb = Int32.Parse(hexCode, NumberStyles.HexNumber);
+        int argb = int.Parse(hexCode, NumberStyles.HexNumber);
         Color clr = Color.FromArgb(argb);
 
         return new Col(

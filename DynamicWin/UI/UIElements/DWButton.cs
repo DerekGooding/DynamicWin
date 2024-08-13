@@ -67,8 +67,5 @@ public class DWButton : UIObject
             Color = Col.Lerp(Color, GetColor(normalColor), colorSmoothingSpeed * deltaTime);
     }
 
-    public override void OnMouseUp()
-    {
-        clickCallback?.Invoke();
-    }
+    public override void OnMouseUp() => clickCallback?.Invoke();
 }

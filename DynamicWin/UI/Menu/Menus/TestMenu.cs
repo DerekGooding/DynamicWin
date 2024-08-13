@@ -11,10 +11,7 @@ public class TestMenu : BaseMenu
 
         objects.Add(new DWText(island, "Test", Vec2.zero, UIAlignment.TopCenter));
 
-        var btn = new DWTextButton(island, "Hello", new Vec2(0, 0), new Vec2(125, 25), () =>
-        {
-            MenuManager.OpenOverlayMenu(new TestMenu());
-        }, UIAlignment.Center);
+        var btn = new DWTextButton(island, "Hello", new Vec2(0, 0), new Vec2(125, 25), () => MenuManager.OpenOverlayMenu(new TestMenu()), UIAlignment.Center);
 
         objects.Add(btn);
 

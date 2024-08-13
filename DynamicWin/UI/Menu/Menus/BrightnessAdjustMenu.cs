@@ -42,7 +42,7 @@ internal class BrightnessAdjustMenu : BaseMenu
         return objects;
     }
 
-    public static float timerUntilClose = 0f;
+    public static float? timerUntilClose = 0f;
 
     public override void Update()
     {
@@ -54,7 +54,7 @@ internal class BrightnessAdjustMenu : BaseMenu
 
         timerUntilClose += RendererMain.Instance.DeltaTime;
 
-        this.brightness.value = (float)WindowsSettingsBrightnessController.Get() / 100f;
+        this.brightness.value = WindowsSettingsBrightnessController.Get() / 100f;
 
         var volXOffset = KeyHandler.keyDown.Contains(System.Windows.Forms.Keys.VolumeUp) ? 2f :
             KeyHandler.keyDown.Contains(System.Windows.Forms.Keys.VolumeDown) ? -2f : 0;
@@ -101,7 +101,7 @@ internal static class WindowsSettingsBrightnessController
             }
             return 0;
         }
-        catch (System.Management.ManagementException e)
+        catch
         {
             notSupported = true;
             return 100;
@@ -112,11 +112,11 @@ internal static class WindowsSettingsBrightnessController
     {
         try
         {
-            using var mclass = new ManagementClass("WmiMonitorBrightnessMethods")
+            using var myClass = new ManagementClass("WmiMonitorBrightnessMethods")
             {
                 Scope = new ManagementScope(@"\\.\root\wmi")
             };
-            using var instances = mclass.GetInstances();
+            using var instances = myClass.GetInstances();
             var args = new object[] { 1, brightness };
             foreach (ManagementObject instance in instances)
             {

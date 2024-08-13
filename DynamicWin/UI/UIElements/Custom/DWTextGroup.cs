@@ -5,7 +5,7 @@ namespace DynamicWin.UI.UIElements.Custom;
 
 internal class DWTextGroup : UIObject
 {
-    private List<DWText> textPieces = new List<DWText>();
+    private readonly List<DWText> textPieces = new List<DWText>();
 
     public float textSize = 24;
 

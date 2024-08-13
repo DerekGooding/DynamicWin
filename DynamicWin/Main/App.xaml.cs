@@ -20,14 +20,14 @@ public partial class DynamicWinMain : Application
         m.Run();
     }
 
-    public static string Version { get => "1.0.2" + "r"; }
+    public static string Version => "1.0.2" + "r";
 
     private void AddToStartup()
     {
         try
         {
             // Set the registry key
-            string appName = "DynamicWin";
+            const string appName = "DynamicWin";
             string appPath = Process.GetCurrentProcess().MainModule.FileName;
 
             RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
@@ -67,8 +67,7 @@ public partial class DynamicWinMain : Application
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         Dispatcher.UnhandledException += Dispatcher_UnhandledException;
 
-        bool result;
-        mutex = new Mutex(true, "FlorianButz.DynamicWin", out result);
+        mutex = new Mutex(true, "FlorianButz.DynamicWin", out bool result);
 
         if (!result)
         {

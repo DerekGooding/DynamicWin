@@ -14,9 +14,9 @@ internal class Tray : UIObject
     private static string[]? cachedTrayFiles;
 
     private float yOffset = 0f;
-    private float mouseSensitivity = 0.225f;
+    private readonly float mouseSensitivity = 0.225f;
 
-    private DWImage noFilesImage;
+    private readonly DWImage noFilesImage;
 
     public Tray(UIObject? parent, Vec2 position, Vec2 size, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, size, alignment)
     {
@@ -116,10 +116,10 @@ internal class Tray : UIObject
 
         mouseYLastSmooth = Mathf.Lerp(mouseYLastSmooth, 0, 10f * deltaTime);
 
-        var fileW = 60;
-        var fileH = 100;
-        var spacing = 50;
-        var xAdd = 5;
+        const int fileW = 60;
+        const int fileH = 100;
+        const int spacing = 50;
+        const int xAdd = 5;
 
         var maxFilesInOneLine = (int)(Size.X / (fileW + spacing / 2f));
 
@@ -139,7 +139,7 @@ internal class Tray : UIObject
 
         int lines = fileObjects.Count / (maxFilesInOneLine + 1);
 
-        scrollFac = Mathf.Lerp(scrollFac, Mathf.Clamp(scrollFac, -((lines) * (fileH)), 0f), 25f * deltaTime);
+        scrollFac = Mathf.Lerp(scrollFac, Mathf.Clamp(scrollFac, -(lines * fileH), 0f), 25f * deltaTime);
         yOffset = Mathf.Lerp(yOffset, scrollFac + mouseYLastSmooth, 50f * deltaTime);
 
         selectedFiles.Clear();
@@ -190,10 +190,7 @@ internal class Tray : UIObject
             AddFileObjects();
         }
 
-        fileObjects.ForEach((f) =>
-        {
-            f.UpdateCall(deltaTime);
-        });
+        fileObjects.ForEach((f) => f.UpdateCall(deltaTime));
 
         new List<TrayFile>(removedFiles).ForEach((file) =>
         {
@@ -214,7 +211,7 @@ internal class Tray : UIObject
             var placeRect = new SKRoundRect(SKRect.Create(Position.X, Position.Y, Size.X, Size.Y), 25);
             placeRect.Deflate(5, 5);
 
-            float[] intervals = { 10, 10 };
+            float[] intervals = [10, 10];
             paint.PathEffect = SKPathEffect.CreateDash(intervals, 0f);
 
             paint.IsStroke = true;
@@ -236,15 +233,9 @@ internal class Tray : UIObject
 
         canvas.ClipRoundRect(rect, antialias: true);
 
-        fileObjects.ForEach((f) =>
-        {
-            f.DrawCall(canvas);
-        });
+        fileObjects.ForEach((f) => f.DrawCall(canvas));
 
-        removedFiles.ForEach((file) =>
-        {
-            file.DrawCall(canvas);
-        });
+        removedFiles.ForEach((file) => file.DrawCall(canvas));
     }
 
     public List<TrayFile> fileObjects = new List<TrayFile>();
@@ -265,9 +256,9 @@ internal class Tray : UIObject
     private void AddFileObjects()
     {
         List<TrayFile> filesToRemove = new List<TrayFile>();
-        fileObjects.ForEach((f) => filesToRemove.Add(f));
+        fileObjects.ForEach(filesToRemove.Add);
 
-        if (cachedTrayFiles == null) cachedTrayFiles = new string[0];
+        cachedTrayFiles ??= [];
 
         foreach (var x in cachedTrayFiles)
         {

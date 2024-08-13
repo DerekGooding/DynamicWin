@@ -185,19 +185,19 @@ public class WindowsThumbnailProvider
 
     private static IntPtr GetHBitmap(string fileName, int width, int height, ThumbnailOptions options)
     {
-        IShellItem nativeShellItem;
         Guid shellItem2Guid = new Guid(IShellItem2Guid);
-        int retCode = SHCreateItemFromParsingName(fileName, IntPtr.Zero, ref shellItem2Guid, out nativeShellItem);
+        int retCode = SHCreateItemFromParsingName(fileName, IntPtr.Zero, ref shellItem2Guid, out IShellItem nativeShellItem);
 
         if (retCode != 0)
             throw Marshal.GetExceptionForHR(retCode);
 
-        NativeSize nativeSize = new NativeSize();
-        nativeSize.Width = width;
-        nativeSize.Height = height;
+        NativeSize nativeSize = new NativeSize
+        {
+            Width = width,
+            Height = height
+        };
 
-        IntPtr hBitmap;
-        HResult hr = ((IShellItemImageFactory)nativeShellItem).GetImage(nativeSize, options, out hBitmap);
+        HResult hr = ((IShellItemImageFactory)nativeShellItem).GetImage(nativeSize, options, out nint hBitmap);
 
         Marshal.ReleaseComObject(nativeShellItem);
 

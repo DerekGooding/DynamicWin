@@ -26,7 +26,7 @@ internal class DropFileElement : UIObject
         var paint = GetPaint();
         var rect = GetRect();
 
-        float[] intervals = { 10, 10 };
+        float[] intervals = [10, 10];
         paint.PathEffect = SKPathEffect.CreateDash(intervals, 0f);
 
         paint.IsStroke = true;

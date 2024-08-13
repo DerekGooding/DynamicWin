@@ -9,20 +9,18 @@ internal class RegisterBatteryWidget : IRegisterableWidget
     public string WidgetName => "Battery Display";
 
     public WidgetBase CreateWidgetInstance(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter)
-    {
-        return new BatteryWidget(parent, position, alignment);
-    }
+        => new BatteryWidget(parent, position, alignment);
 }
 
 public class BatteryWidget : SmallWidgetBase
 {
-    private DWImage batteryImage;
-    private DWImage batteryFillLevel;
+    private readonly DWImage batteryImage;
+    private readonly DWImage batteryFillLevel;
 
-    private DWImage noBattery;
-    private DWImage batteryCharging;
+    private readonly DWImage noBattery;
+    private readonly DWImage batteryCharging;
 
-    private float imageScale = 1.75f;
+    private readonly float imageScale = 1.75f;
 
     public BatteryWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, alignment)
     {
@@ -47,7 +45,7 @@ public class BatteryWidget : SmallWidgetBase
 
         var batteryStatus = PowerStatusChecker.GetPowerStatus();
 
-        if (batteryStatus.BatteryFlag != ((byte)128))
+        if (batteryStatus.BatteryFlag != 128)
         {
             if (batteryStatus.ACLineStatus == 0)
             {
@@ -91,8 +89,5 @@ public class BatteryWidget : SmallWidgetBase
         }
     }
 
-    protected override float GetWidgetWidth()
-    {
-        return 20;
-    }
+    protected override float GetWidgetWidth() => 20;
 }

@@ -23,8 +23,8 @@ public class IslandObject : UIObject
 
     public IslandMode mode = Settings.IslandMode;
 
-    private float dropShadowStrength = 0f;
-    private float dropShadowSize = 0f;
+    private float dropShadowStrength;
+    private float dropShadowSize;
 
     public IslandObject() : base(null, Vec2.zero, new Vec2(250, 50), UIAlignment.TopCenter)
     {
@@ -106,7 +106,7 @@ public class IslandObject : UIObject
 
             var awidth = (float)(Math.Max(Size.Magnitude / 16, 25));
             var aheight = (float)(Math.Max(Size.Y / 4, 15)) + (LocalPosition.Y - topOffset);
-            var y = 5;
+            const int y = 5;
 
             { // Left notch curve
                 var x = Position.X - awidth;
@@ -147,14 +147,7 @@ public class IslandObject : UIObject
             rect.Inflate(expandInteractionRect + 5, expandInteractionRect + 5);
 
         rect.Inflate(expandInteractionRect, expandInteractionRect);
-        var r = new SKRoundRect(rect, roundRadius);
 
-        return r;
-    }
-
-    public override SKRoundRect GetRect()
-    {
-        var rect = base.GetRect();
-        return rect;
+        return new SKRoundRect(rect, roundRadius);
     }
 }

@@ -11,25 +11,23 @@ class RegisterMediaWidget : IRegisterableWidget
     public string WidgetName => "Media Playback Control";
 
     public WidgetBase CreateWidgetInstance(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter)
-    {
-        return new MediaWidget(parent, position, alignment);
-    }
+        => new MediaWidget(parent, position, alignment);
 }
 
 public class MediaWidget : WidgetBase
 {
     MediaController controller;
-    AudioVisualizer audioVisualizer;
-    AudioVisualizer audioVisualizerBig;
+    readonly AudioVisualizer audioVisualizer;
+    readonly AudioVisualizer audioVisualizerBig;
 
-    DWImageButton playPause;
-    DWImageButton next;
-    DWImageButton prev;
+    readonly DWImageButton playPause;
+    readonly DWImageButton next;
+    readonly DWImageButton prev;
 
-    DWText noMediaPlaying;
+    readonly DWText noMediaPlaying;
 
-    DWText title;
-    DWText artist;
+    readonly DWText title;
+    readonly DWText artist;
 
     /*protected override float GetWidgetWidth()
     {
@@ -40,10 +38,7 @@ public class MediaWidget : WidgetBase
     {
         InitMediaPlayer();
 
-        playPause = new DWImageButton(this, Resources.Res.PlayPause, new Vec2(0, 25), new Vec2(30, 30), () =>
-        {
-            controller.PlayPause();
-        }, alignment: UIAlignment.Center)
+        playPause = new DWImageButton(this, Resources.Res.PlayPause, new Vec2(0, 25), new Vec2(30, 30), controller.PlayPause, alignment: UIAlignment.Center)
         {
             roundRadius = 25,
             normalColor = Col.Transparent,
@@ -54,10 +49,7 @@ public class MediaWidget : WidgetBase
         };
         AddLocalObject(playPause);
 
-        next = new DWImageButton(this, Resources.Res.Next, new Vec2(50, 25), new Vec2(30, 30), () =>
-        {
-            controller.Next();
-        }, alignment: UIAlignment.Center)
+        next = new DWImageButton(this, Resources.Res.Next, new Vec2(50, 25), new Vec2(30, 30), controller.Next, alignment: UIAlignment.Center)
         {
             roundRadius = 25,
             normalColor = Col.Transparent,
@@ -68,10 +60,7 @@ public class MediaWidget : WidgetBase
         };
         AddLocalObject(next);
 
-        prev = new DWImageButton(this, Resources.Res.Previous, new Vec2(-50, 25), new Vec2(30, 30), () =>
-        {
-            controller.Previous();
-        }, alignment: UIAlignment.Center)
+        prev = new DWImageButton(this, Resources.Res.Previous, new Vec2(-50, 25), new Vec2(30, 30), controller.Previous, alignment: UIAlignment.Center)
         {
             roundRadius = 25,
             normalColor = Col.Transparent,
@@ -88,7 +77,7 @@ public class MediaWidget : WidgetBase
         };
         AddLocalObject(audioVisualizer);
 
-        audioVisualizerBig = new AudioVisualizer(this, new Vec2(0, 0), GetWidgetSize(), length: 16, alignment: UIAlignment.Center,
+        audioVisualizerBig = new AudioVisualizer(this, new Vec2(0, 0), GetWidgetSize(), alignment: UIAlignment.Center, length: 16,
             Primary: spotifyCol.Override(a: 0.35f), Secondary: spotifyCol.Override(a: 0.025f) * 0.1f)
         {
             divisor = 2f
@@ -123,10 +112,10 @@ public class MediaWidget : WidgetBase
         AddLocalObject(artist);
     }
 
-    float smoothedAmp = 0f;
-    float smoothing = 1.5f;
+    float smoothedAmp;
+    readonly float smoothing = 1.5f;
 
-    int cycle = 0;
+    int cycle;
 
     public override void Update(float deltaTime)
     {
@@ -134,28 +123,23 @@ public class MediaWidget : WidgetBase
 
         if (cycle % 32 == 0)
         {
-            isSpotifyAvaliable = IsSpotifyAvaliable();
+            isSpotifyAvaliable = IsSpotifyAvailable();
 
             if (isSpotifyAvaliable)
             {
-                string titleString;
-                string artistString;
-                string error;
-
-                GetSpotifyTrackInfo(out titleString, out artistString, out error);
+                GetSpotifyTrackInfo(out string titleString, out string artistString, out string error);
 
                 if (string.IsNullOrEmpty(error))
                 {
-                    title.Text = DWText.Truncate(titleString, (GetWidgetWidth() == 400 ? 50 : 20));
-                    artist.Text = DWText.Truncate(artistString, (GetWidgetWidth() == 400 ? 60 : 28));
+                    title.Text = DWText.Truncate(titleString, GetWidgetWidth() == 400 ? 50 : 20);
+                    artist.Text = DWText.Truncate(artistString, GetWidgetWidth() == 400 ? 60 : 28);
                 }
-                else
+                else if (!error.Equals("Paused")
+                        || title.Text.Equals("title", StringComparison.OrdinalIgnoreCase)
+                        || title.Text.Equals("error", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (!error.Equals("Paused") || title.Text.ToLower().Equals("title") || title.Text.ToLower().Equals("error"))
-                    {
-                        title.Text = "Error";
-                        artist.Text = DWText.Truncate(error, 24);
-                    }
+                    title.Text = "Error";
+                    artist.Text = DWText.Truncate(error, 24);
                 }
             }
         }
@@ -166,9 +150,9 @@ public class MediaWidget : WidgetBase
         playPause.normalColor = Theme.IconColor * audioVisualizer.GetActionCol().Override(a: 0.2f);
 
         if (!isSpotifyAvaliable)
-            smoothedAmp = (float)Math.Max(Mathf.Lerp(smoothedAmp, audioVisualizer.AverageAmplitude, smoothing * deltaTime), audioVisualizer.AverageAmplitude);
+            smoothedAmp = Math.Max(Mathf.Lerp(smoothedAmp, audioVisualizer.AverageAmplitude, smoothing * deltaTime), audioVisualizer.AverageAmplitude);
         else
-            smoothedAmp = (float)Math.Max(Mathf.Lerp(smoothedAmp, audioVisualizer.AverageAmplitude, smoothing * deltaTime), audioVisualizer.AverageAmplitude);
+            smoothedAmp = Math.Max(Mathf.Lerp(smoothedAmp, audioVisualizer.AverageAmplitude, smoothing * deltaTime), audioVisualizer.AverageAmplitude);
 
         if (smoothedAmp < 0.005f) smoothedAmp = 0f;
 
@@ -190,7 +174,7 @@ public class MediaWidget : WidgetBase
 
     float spotifyBlur = 0f;
     bool isSpotifyAvaliable = false;
-    Col spotifyCol = Col.FromHex("#1cb351");
+    readonly Col spotifyCol = Col.FromHex("#1cb351");
 
     public override void DrawWidget(SKCanvas canvas)
     {
@@ -212,24 +196,23 @@ public class MediaWidget : WidgetBase
         {
             paint.Color = spotifyCol.Override(a: Color.a * (1f - (spotifyBlur / 25f))).Value();
 
-            var blur = SKImageFilter.CreateBlur((float)Math.Max(GetBlur(), spotifyBlur) + 0.1f, (float)Math.Max(GetBlur(), spotifyBlur) + 0.1f);
-            paint.ImageFilter = blur;
+            paint.ImageFilter = SKImageFilter.CreateBlur((float)Math.Max(GetBlur(), spotifyBlur) + 0.1f, (float)Math.Max(GetBlur(), spotifyBlur) + 0.1f);
 
             var r = GetRect();
 
-            var inward = 5;
-            var w = 25 + spotifyBlur * (isSpotifyAvaliable ? 2.5f : -0.15f);
-            var h = 25 + spotifyBlur * (isSpotifyAvaliable ? 2.5f : -0.15f);
-            var x = Position.X + r.Width - w / 2 - inward;
-            var y = Position.Y - h / 2 + inward;
+            const int inward = 5;
+            var w = 25 + (spotifyBlur * (isSpotifyAvaliable ? 2.5f : -0.15f));
+            var h = 25 + (spotifyBlur * (isSpotifyAvaliable ? 2.5f : -0.15f));
+            var x = Position.X + r.Width - (w / 2) - inward;
+            var y = Position.Y - (h / 2) + inward;
 
-            canvas.DrawBitmap((Resources.Res.Spotify == null) ? Resources.Res.SevereWeatherWarning : Resources.Res.Spotify, SKRect.Create(x, y, w, h), paint);
+            canvas.DrawBitmap(Resources.Res.Spotify ?? Resources.Res.SevereWeatherWarning, SKRect.Create(x, y, w, h), paint);
 
             paint.Color = GetColor(spotifyCol.Override(a: 0.25f * Color.a)).Value();
             paint.StrokeWidth = 2f;
 
-            float[] intervals = { 5, 10 };
-            paint.PathEffect = SKPathEffect.CreateDash(intervals, (float)-cycle * 0.1f);
+            float[] intervals = [5, 10];
+            paint.PathEffect = SKPathEffect.CreateDash(intervals, -cycle * 0.1f);
 
             paint.IsStroke = true;
             paint.StrokeCap = SKStrokeCap.Round;
@@ -241,9 +224,8 @@ public class MediaWidget : WidgetBase
 
             var shadowPaint = GetPaint();
 
-            var drop = SKImageFilter.CreateDropShadowOnly(0, 0, (25f - spotifyBlur) / 2, (25f - spotifyBlur) / 2,
+            shadowPaint.ImageFilter = SKImageFilter.CreateDropShadowOnly(0, 0, (25f - spotifyBlur) / 2, (25f - spotifyBlur) / 2,
                 spotifyCol.Override(a: (25f - spotifyBlur) / 100f).Value());
-            shadowPaint.ImageFilter = drop;
             shadowPaint.IsStroke = true;
             shadowPaint.StrokeWidth = 15;
 
@@ -266,7 +248,7 @@ public class MediaWidget : WidgetBase
             return;
         }
 
-        if (proc.MainWindowTitle.ToLower().StartsWith("spotify"))
+        if (proc.MainWindowTitle.StartsWith("spotify", StringComparison.CurrentCultureIgnoreCase))
         {
             error = "Paused";
             title = null;
@@ -287,13 +269,8 @@ public class MediaWidget : WidgetBase
             error = null;
             title = "Advertisement";
             artist = "";
-            return;
         }
     }
 
-    public bool IsSpotifyAvaliable()
-    {
-        var processes = Process.GetProcessesByName("Spotify");
-        return processes.Any();
-    }
+    public static bool IsSpotifyAvailable() => Process.GetProcessesByName("Spotify").Length != 0;
 }

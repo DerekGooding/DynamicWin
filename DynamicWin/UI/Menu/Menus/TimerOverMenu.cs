@@ -40,7 +40,7 @@ public class TimerOverMenu : BaseMenu
     }
 
     private float sinCycle = -0.65f;
-    private float speed = 3.5f;
+    private readonly float speed = 3.5f;
 
     private float islandSizeMulti = 1f;
 

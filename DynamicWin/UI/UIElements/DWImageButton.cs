@@ -5,16 +5,14 @@ namespace DynamicWin.UI.UIElements;
 
 public class DWImageButton : DWButton
 {
-    private DWImage image;
     public float imageScale = 0.85f;
 
-    public DWImage Image
-    { get { return image; } set => image = value; }
+    public DWImage Image { get; set; }
 
     public DWImageButton(UIObject? parent, SKBitmap image, Vec2 position, Vec2 size, Action clickCallback, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, size, clickCallback, alignment)
     {
-        this.image = new DWImage(this, image, Vec2.zero, size * imageScale, UIAlignment.Center);
-        AddLocalObject(this.image);
+        Image = new DWImage(this, image, Vec2.zero, size * imageScale, UIAlignment.Center);
+        AddLocalObject(Image);
     }
 
     public override void Update(float deltaTime)

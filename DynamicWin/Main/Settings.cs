@@ -5,22 +5,17 @@ using System.Windows;
 
 namespace DynamicWin.Main;
 
-public class Settings
+public static class Settings
 {
-    private static IslandObject.IslandMode islandMode;
-    private static bool allowBlur;
-    private static bool allowAnimation;
-    private static bool antiAliasing;
-    private static int theme;
-    private static bool useCustomTheme;
-    private static ThemeHolder customTheme;
+    //private static readonly bool useCustomTheme;
+    //private static ThemeHolder customTheme;
 
-    public static IslandObject.IslandMode IslandMode { get => islandMode; set => islandMode = value; }
-    public static bool AllowBlur { get => allowBlur; set => allowBlur = value; }
-    public static bool AllowAnimation { get => allowAnimation; set => allowAnimation = value; }
-    public static bool AntiAliasing { get => antiAliasing; set => antiAliasing = value; }
+    public static IslandObject.IslandMode IslandMode { get; set; }
+    public static bool AllowBlur { get; set; }
+    public static bool AllowAnimation { get; set; }
+    public static bool AntiAliasing { get; set; }
 
-    public static int Theme { get => theme; set => theme = value; }
+    public static int Theme { get; set; }
 
     public static List<string> smallWidgetsLeft;
     public static List<string> smallWidgetsRight;
@@ -35,13 +30,13 @@ public class Settings
         {
             if (SaveManager.Contains("settings"))
             {
-                IslandMode = ((Int64)SaveManager.Get("settings.islandmode") == 0) ? IslandObject.IslandMode.Island : IslandObject.IslandMode.Notch;
+                IslandMode = ((long)SaveManager.Get("settings.islandmode") == 0) ? IslandObject.IslandMode.Island : IslandObject.IslandMode.Notch;
 
                 AllowBlur = (bool)SaveManager.Get("settings.allowblur");
                 AllowAnimation = (bool)SaveManager.Get("settings.allowanimtion");
                 AntiAliasing = (bool)SaveManager.Get("settings.antialiasing");
 
-                Theme = (int)((Int64)SaveManager.Get("settings.theme"));
+                Theme = (int)(long)SaveManager.Get("settings.theme");
 
                 Settings.smallWidgetsLeft = new List<string>();
                 Settings.smallWidgetsRight = new List<string>();
@@ -78,7 +73,7 @@ public class Settings
                 AllowAnimation = true;
                 AntiAliasing = true;
 
-                Settings.Theme = 0;
+                Theme = 0;
 
                 SaveManager.SaveData.Add("settings", 1);
             }
@@ -86,16 +81,13 @@ public class Settings
             // This must be run after loading all settings
             AfterSettingsLoaded();
         }
-        catch (Exception e)
+        catch
         {
-            MessageBox.Show("An error occured trying to load the settings. Please revert back to the default settings by deleting the \"Settings.json\" file located under \"%appdata%/DynamicWin/\".");
+            MessageBox.Show("An error occurred trying to load the settings. Please revert back to the default settings by deleting the \"Settings.json\" file located under \"%appdata%/DynamicWin/\".");
         }
     }
 
-    private static void AfterSettingsLoaded()
-    {
-        DynamicWin.Utils.Theme.Instance.UpdateTheme();
-    }
+    private static void AfterSettingsLoaded() => Utils.Theme.Instance.UpdateTheme();
 
     public static void Save()
     {

@@ -14,21 +14,17 @@ using System.Windows.Threading;
 
 namespace DynamicWin.Main;
 
-public class RendererMain : SKElement
+public class RendererMain : SKElement, IDisposable
 {
-    //private DispatcherTimer timer;
+    public IslandObject MainIsland { get; }
 
-    private IslandObject islandObject;
-    public IslandObject MainIsland { get => islandObject; }
+    private List<UIObject> Objects => MenuManager.Instance.ActiveMenu.UiObjects;
 
-    private List<UIObject> objects { get => MenuManager.Instance.ActiveMenu.UiObjects; }
+    public static Vec2 ScreenDimensions => new(MainForm.Instance.Width, MainForm.Instance.Height);
+    public static Vec2 CursorPosition => new(Mouse.GetPosition(MainForm.Instance).X, Mouse.GetPosition(MainForm.Instance).Y);
 
-    public static Vec2 ScreenDimensions { get => new Vec2(MainForm.Instance.Width, MainForm.Instance.Height); }
-    public static Vec2 CursorPosition { get => new Vec2(Mouse.GetPosition(MainForm.Instance).X, Mouse.GetPosition(MainForm.Instance).Y); }
-
-    private static RendererMain instance;
-    public static RendererMain Instance
-    { get { return instance; } }
+    private static RendererMain? instance;
+    public static RendererMain? Instance => instance;
 
     public Vec2 renderOffset = Vec2.zero;
 
@@ -37,13 +33,13 @@ public class RendererMain : SKElement
 
     public RendererMain()
     {
-        MenuManager m = new MenuManager();
+        MenuManager m = new();
 
         // Init control
 
         instance = this;
 
-        islandObject = new IslandObject();
+        MainIsland = new IslandObject();
         m.Init();
 
         // Set up the timer
@@ -79,7 +75,7 @@ public class RendererMain : SKElement
         isInitialized = true;
     }
 
-    public void Destroy()
+    public void Dispose()
     {
         //timer.Stop();
 
@@ -102,7 +98,7 @@ public class RendererMain : SKElement
     {
         if (key == Keys.LWin && modifier.isCtrlDown)
         {
-            islandObject.hidden = !islandObject.hidden;
+            MainIsland.hidden = !MainIsland.hidden;
         }
 
         if (key == Keys.VolumeDown || key == Keys.VolumeMute || key == Keys.VolumeUp)
@@ -127,25 +123,25 @@ public class RendererMain : SKElement
         }
     }
 
-    private float deltaTime = 0f;
-    public float DeltaTime
-    { get { return deltaTime; } private set => deltaTime = value; }
+    public float DeltaTime { get; private set; }
 
     private Stopwatch? updateStopwatch;
 
-    private int initialScreenBrightness = 0;
+    private int initialScreenBrightness;
 
     // Called once every frame to update values
 
-    private new void Update()
+    private void Update()
     {
         if (updateStopwatch != null)
         {
             updateStopwatch.Stop();
-            deltaTime = updateStopwatch.ElapsedMilliseconds / 1000f;
+            DeltaTime = updateStopwatch.ElapsedMilliseconds / 1000f;
         }
         else
-            deltaTime = 1f / 1000f;
+        {
+            DeltaTime = 1f / 1000f;
+        }
 
         updateStopwatch = new Stopwatch();
         updateStopwatch.Start();
@@ -173,19 +169,18 @@ public class RendererMain : SKElement
 
         MenuManager.Instance.Update(DeltaTime);
 
-        if (MenuManager.Instance.ActiveMenu != null)
-            MenuManager.Instance.ActiveMenu.Update();
+        MenuManager.Instance.ActiveMenu?.Update();
 
         if (MenuManager.Instance.ActiveMenu is DropFileMenu && !MainForm.Instance.isDragging)
             MenuManager.OpenMenu(Res.HomeMenu);
 
         // Update logic here
 
-        islandObject.UpdateCall(DeltaTime);
+        MainIsland.UpdateCall(DeltaTime);
 
         if (MainIsland.hidden) return;
 
-        foreach (UIObject uiObject in objects)
+        foreach (UIObject uiObject in Objects)
         {
             uiObject.UpdateCall(DeltaTime);
         }
@@ -193,18 +188,12 @@ public class RendererMain : SKElement
 
     // Called once every frame to render frame, called after Update
 
-    private void Render()
-    {
-        Dispatcher.Invoke((Action)(() =>
-        {
-            this.InvalidateVisual();
-        }));
-    }
+    private void Render() => Dispatcher.Invoke(InvalidateVisual);
 
     public int canvasWithoutClip;
-    private bool isInitialized = false;
+    private readonly bool isInitialized;
 
-    private GRContext Context;
+    //private GRContext Context;
 
     /*        public SKSurface GetOpenGlSurface(int width, int height)
             {
@@ -238,13 +227,13 @@ public class RendererMain : SKElement
 
         canvasWithoutClip = canvas.Save();
 
-        if (islandObject.maskInToIsland) Mask(canvas);
-        islandObject.DrawCall(canvas);
+        if (MainIsland.maskInToIsland) Mask(canvas);
+        MainIsland.DrawCall(canvas);
 
         if (MainIsland.hidden) return;
 
         bool hasContextMenu = false;
-        foreach (UIObject uiObject in objects)
+        foreach (UIObject uiObject in Objects)
         {
             canvas.RestoreToCount(canvasWithoutClip);
             canvasWithoutClip = canvas.Save();
@@ -298,7 +287,7 @@ public class RendererMain : SKElement
 
     public SKRoundRect GetMask()
     {
-        var islandMask = islandObject.GetRect();
+        var islandMask = MainIsland.GetRect();
         islandMask.Deflate(new SKSize(1, 1));
         return islandMask;
     }

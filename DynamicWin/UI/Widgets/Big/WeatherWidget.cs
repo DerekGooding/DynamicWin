@@ -14,23 +14,20 @@ class RegisterWeatherWidget : IRegisterableWidget
     public bool IsSmallWidget => false;
     public string WidgetName => "Weather";
 
-    public WidgetBase CreateWidgetInstance(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter)
-    {
-        return new WeatherWidget(parent, position, alignment);
-    }
+    public WidgetBase CreateWidgetInstance(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) => new WeatherWidget(parent, position, alignment);
 }
 
 public class WeatherWidget : WidgetBase
 {
-    DWText temperatureText;
-    DWText weatherText;
-    DWText locationText;
+    readonly DWText temperatureText;
+    readonly DWText weatherText;
+    readonly DWText locationText;
 
-    UIObject locationTextReplacement;
+    readonly UIObject locationTextReplacement;
 
     static WeatherFetcher weatherFetcher;
 
-    DWImage weatherTypeIcon;
+    readonly DWImage weatherTypeIcon;
 
     bool hideLocation = false;
 
@@ -87,8 +84,7 @@ public class WeatherWidget : WidgetBase
             allowIconThemeColor = true
         };
 
-        if (weatherFetcher == null)
-            weatherFetcher = new WeatherFetcher();
+        weatherFetcher ??= new WeatherFetcher();
 
         weatherFetcher.onWeatherDataReceived += OnWeatherDataReceived;
         weatherFetcher.Fetch();
@@ -127,7 +123,7 @@ public class WeatherWidget : WidgetBase
 
     void OnWeatherDataReceived(WeatherData weatherData)
     {
-        temperatureText.SetText(weatherData.temperatureCelcius);
+        temperatureText.SetText(weatherData.temperatureCelsius);
         weatherText.SetText(weatherData.weatherText);
         locationText.SetText(weatherData.city);
 
@@ -136,24 +132,44 @@ public class WeatherWidget : WidgetBase
 
     void UpdateIcon(string weather)
     {
-        if (weather.ToLower().Contains("sun") || weather.ToLower().Contains("clear"))
+        if (weather.Contains("sun", StringComparison.CurrentCultureIgnoreCase) || weather.Contains("clear", StringComparison.CurrentCultureIgnoreCase))
+        {
             weatherTypeIcon.Image = Res.Sunny;
-        else if (weather.ToLower().Contains("cloud") || weather.ToLower().Contains("overcast"))
+        }
+        else if (weather.Contains("cloud", StringComparison.CurrentCultureIgnoreCase) || weather.Contains("overcast", StringComparison.CurrentCultureIgnoreCase))
+        {
             weatherTypeIcon.Image = Res.Cloudy;
-        else if (weather.ToLower().Contains("rain") || weather.ToLower().Contains("shower"))
+        }
+        else if (weather.Contains("rain", StringComparison.CurrentCultureIgnoreCase) || weather.Contains("shower", StringComparison.CurrentCultureIgnoreCase))
+        {
             weatherTypeIcon.Image = Res.Rainy;
-        else if (weather.ToLower().Contains("thunder"))
+        }
+        else if (weather.Contains("thunder", StringComparison.CurrentCultureIgnoreCase))
+        {
             weatherTypeIcon.Image = Res.Thunderstorm;
-        else if (weather.ToLower().Contains("snow"))
+        }
+        else if (weather.Contains("snow", StringComparison.CurrentCultureIgnoreCase))
+        {
             weatherTypeIcon.Image = Res.Snowy;
-        else if (weather.ToLower().Contains("sleet"))
+        }
+        else if (weather.Contains("sleet", StringComparison.CurrentCultureIgnoreCase))
+        {
             weatherTypeIcon.Image = Res.Rainy;
-        else if (weather.ToLower().Contains("fog") || weather.ToLower().Contains("haze") || weather.ToLower().Contains("mist"))
+        }
+        else if (weather.Contains("fog", StringComparison.CurrentCultureIgnoreCase)
+                    || weather.Contains("haze", StringComparison.CurrentCultureIgnoreCase)
+                    || weather.Contains("mist", StringComparison.CurrentCultureIgnoreCase))
+        {
             weatherTypeIcon.Image = Res.Foggy;
-        else if (weather.ToLower().Contains("windy") || weather.ToLower().Contains("breezy"))
+        }
+        else if (weather.Contains("windy", StringComparison.CurrentCultureIgnoreCase) || weather.Contains("breezy", StringComparison.CurrentCultureIgnoreCase))
+        {
             weatherTypeIcon.Image = Res.Windy;
+        }
         else
+        {
             weatherTypeIcon.Image = Res.SevereWeatherWarning;
+        }
     }
 
     public override void DrawWidget(SKCanvas canvas)
@@ -171,8 +187,8 @@ public class WeatherWidget : WidgetBase
 
 public class WeatherFetcher
 {
-    private WeatherData weatherData = new WeatherData();
-    public WeatherData Weather { get => weatherData; }
+    private WeatherData weatherData = new();
+    public WeatherData Weather => weatherData;
 
     public Action<WeatherData> onWeatherDataReceived;
 
@@ -195,12 +211,14 @@ public class WeatherFetcher
             XmlTextReader reader = null;
             try
             {
-                string sAddress = String.Format("https://tile-service.weather.microsoft.com/livetile/front/{0},{1}", lat, lon);
+                string sAddress = string.Format("https://tile-service.weather.microsoft.com/livetile/front/{0},{1}", lat, lon);
 
                 int nCpt = 0;
 
-                reader = new XmlTextReader(sAddress);
-                reader.WhitespaceHandling = WhitespaceHandling.None;
+                reader = new XmlTextReader(sAddress)
+                {
+                    WhitespaceHandling = WhitespaceHandling.None
+                };
                 while (reader.Read())
                 {
                     if (reader.NodeType == XmlNodeType.Text)
@@ -215,17 +233,16 @@ public class WeatherFetcher
             }
             finally
             {
-                if (reader != null)
-                    reader.Close();
+                reader?.Close();
             }
 
             string tempF = temp.Replace("°", "");
-            double tempC = (Double.Parse(tempF) - 32.0) * (double)5 / 9;
+            double tempC = (double.Parse(tempF) - 32.0) * 5 / 9;
             string tempCText = tempC.ToString("#.#");
 
-            System.Diagnostics.Debug.WriteLine(String.Format("{0}, {1}F({2}°C), {3}", location.city, temp, tempCText, weather));
+            System.Diagnostics.Debug.WriteLine(string.Format("{0}, {1}F({2}°C), {3}", location.city, temp, tempCText, weather));
 
-            weatherData = new WeatherData() { city = location.city, region = location.region, temperatureCelcius = tempCText + "°C", temperatureFahrenheit = tempF + "F", weatherText = weather };
+            weatherData = new WeatherData() { city = location.city, region = location.region, temperatureCelsius = tempCText + "°C", temperatureFahrenheit = tempF + "F", weatherText = weather };
             onWeatherDataReceived?.Invoke(weatherData);
 
             Thread.Sleep(120000);
@@ -248,6 +265,6 @@ public struct WeatherData
     public string city;
     public string region;
     public string weatherText;
-    public string temperatureCelcius;
+    public string temperatureCelsius;
     public string temperatureFahrenheit;
 }

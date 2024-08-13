@@ -12,7 +12,6 @@ public interface IRegisterableSetting
     /// <summary>
     /// Every setting that want to be added have to be returned inside of a List here.
     /// </summary>
-    /// <returns></returns>
     public List<UIObject> SettingsObjects();
 
     /// <summary>

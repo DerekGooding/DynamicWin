@@ -10,7 +10,7 @@ namespace DynamicWin.Main;
 public partial class MainForm : Window
 {
     private static MainForm instance;
-    public static MainForm Instance { get => instance; }
+    public static MainForm Instance => instance;
 
     public static Action<System.Windows.Input.MouseWheelEventArgs> onScrollEvent;
 
@@ -65,7 +65,7 @@ public partial class MainForm : Window
 
     public void AddRenderer()
     {
-        RendererMain.Instance?.Destroy();
+        RendererMain.Instance?.Dispose();
 
         var customControl = new RendererMain();
 
@@ -105,7 +105,7 @@ public partial class MainForm : Window
     {
         if (isLocalDrag) return;
 
-        Array.ForEach(files, file => { System.Diagnostics.Debug.WriteLine(file); });
+        Array.ForEach(files, file => System.Diagnostics.Debug.WriteLine(file));
 
         if (files == null) return;
         else if (files.Length <= 0) return;
@@ -117,7 +117,7 @@ public partial class MainForm : Window
             DataObject dataObject = new(DataFormats.FileDrop, files);
             var effects = DragDrop.DoDragDrop(this, dataObject, DragDropEffects.Move | DragDropEffects.Copy);
 
-            RendererMain.Instance?.Destroy();
+            RendererMain.Instance?.Dispose();
             Content = new Grid();
             AddRenderer();
 

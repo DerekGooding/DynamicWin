@@ -62,7 +62,7 @@ public class HomeMenu : BaseMenu
             for (int i = 0; i < bigWidgets.Count; i++)
             {
                 sizeTogether += bigWidgets[i].GetWidgetSize().X + bigWidgetsSpacing * 2;
-                if ((i) % maxBigWidgetInOneRow == 1)
+                if (i % maxBigWidgetInOneRow == 1)
                 {
                     sizeTogetherBiggest = (float)Math.Max(sizeTogetherBiggest, sizeTogether);
                     sizeTogether = 0f;
@@ -77,7 +77,7 @@ public class HomeMenu : BaseMenu
 
             for (int i = 0; i < bigWidgets.Count; i++)
             {
-                if ((i) % maxBigWidgetInOneRow == 0)
+                if (i % maxBigWidgetInOneRow == 0)
                 {
                     sizeTogetherBiggest += bigWidgets[i].GetWidgetSize().Y;
                 }
@@ -97,7 +97,7 @@ public class HomeMenu : BaseMenu
     private UIObject smallWidgetsContainer;
     private UIObject bigWidgetsContainer;
 
-    private List<UIObject> bigMenuItems = new List<UIObject>();
+    private readonly List<UIObject> bigMenuItems = new List<UIObject>();
 
     private UIObject topContainer;
 
@@ -122,27 +122,25 @@ public class HomeMenu : BaseMenu
         };
         bigMenuItems.Add(topContainer);
 
-        widgetButton = new DWTextImageButton(topContainer, Resources.Res.Widgets, "Widgets", new Vec2(75 / 2 + 5, 0), new Vec2(75, 20), () =>
+        widgetButton = new DWTextImageButton(topContainer, Resources.Res.Widgets, "Widgets", new Vec2(75 / 2 + 5, 0), new Vec2(75, 20), () => isWidgetMode = true,
+        UIAlignment.MiddleLeft)
         {
-            isWidgetMode = true;
-        },
-        UIAlignment.MiddleLeft);
-        widgetButton.normalColor = Col.Transparent;
-        widgetButton.hoverColor = Col.Transparent;
-        widgetButton.clickColor = Theme.Primary.Override(a: 0.35f);
-        widgetButton.roundRadius = 25;
+            normalColor = Col.Transparent,
+            hoverColor = Col.Transparent,
+            clickColor = Theme.Primary.Override(a: 0.35f),
+            roundRadius = 25
+        };
 
         bigMenuItems.Add(widgetButton);
 
-        trayButton = new DWTextImageButton(topContainer, Resources.Res.Tray, "Tray", new Vec2(110, 0), new Vec2(55, 20), () =>
+        trayButton = new DWTextImageButton(topContainer, Resources.Res.Tray, "Tray", new Vec2(110, 0), new Vec2(55, 20), () => isWidgetMode = false,
+        UIAlignment.MiddleLeft)
         {
-            isWidgetMode = false;
-        },
-        UIAlignment.MiddleLeft);
-        trayButton.normalColor = Col.Transparent;
-        trayButton.hoverColor = Col.Transparent;
-        trayButton.clickColor = Theme.Primary.Override(a: 0.35f);
-        trayButton.roundRadius = 25;
+            normalColor = Col.Transparent,
+            hoverColor = Col.Transparent,
+            clickColor = Theme.Primary.Override(a: 0.35f),
+            roundRadius = 25
+        };
 
         bigMenuItems.Add(trayButton);
 
@@ -151,11 +149,13 @@ public class HomeMenu : BaseMenu
             //new SettingsWindow();
             MenuManager.OpenMenu(new SettingsMenu());
         },
-        UIAlignment.MiddleRight);
-        settingsButton.normalColor = Col.Transparent;
-        settingsButton.hoverColor = Col.Transparent;
-        settingsButton.clickColor = Theme.Primary.Override(a: 0.35f);
-        settingsButton.roundRadius = 25;
+        UIAlignment.MiddleRight)
+        {
+            normalColor = Col.Transparent,
+            hoverColor = Col.Transparent,
+            clickColor = Theme.Primary.Override(a: 0.35f),
+            roundRadius = 25
+        };
 
         bigMenuItems.Add(settingsButton);
 
@@ -215,23 +215,14 @@ public class HomeMenu : BaseMenu
             if (!widgets.ContainsKey(bigWidget.ToString())) continue;
             var widget = widgets[bigWidget.ToString()];
 
-            bigWidgets.Add((WidgetBase)widget.CreateWidgetInstance(bigWidgetsContainer, Vec2.zero, UIAlignment.BottomCenter));
+            bigWidgets.Add(widget.CreateWidgetInstance(bigWidgetsContainer, Vec2.zero, UIAlignment.BottomCenter));
         }
 
-        smallLeftWidgets.ForEach(x =>
-        {
-            objects.Add(x);
-        });
+        smallLeftWidgets.ForEach(objects.Add);
 
-        smallRightWidgets.ForEach(x =>
-        {
-            objects.Add(x);
-        });
+        smallRightWidgets.ForEach(objects.Add);
 
-        smallCenterWidgets.ForEach(x =>
-        {
-            objects.Add(x);
-        });
+        smallCenterWidgets.ForEach(objects.Add);
 
         bigWidgets.ForEach(x =>
         {
@@ -271,15 +262,15 @@ public class HomeMenu : BaseMenu
 
     public float topSpacing = 20;
     public float bigWidgetsSpacing = 15;
-    private int maxBigWidgetInOneRow = 2;
+    private readonly int maxBigWidgetInOneRow = 2;
 
     public float smallWidgetsSpacing = 10;
     public float middleWidgetsSpacing = 35;
 
     private bool wasHovering = false;
 
-    private float sCD = 35;
-    private float bCD = 50;
+    private readonly float sCD = 35;
+    private readonly float bCD = 50;
 
     public bool isWidgetMode = true;
     private bool wasWidgetMode = false;
@@ -392,7 +383,7 @@ public class HomeMenu : BaseMenu
 
                     bigWidgets[i].LocalPosition.Y = -line * (lastBiggestY + bigWidgetsSpacing);
 
-                    if ((i) % maxBigWidgetInOneRow == 1)
+                    if (i % maxBigWidgetInOneRow == 1)
                     {
                         lastBiggestY = 0f;
                         CenterWidgets(widgetsInOneLine, bigWidgetsContainer);

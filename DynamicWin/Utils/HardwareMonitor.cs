@@ -4,7 +4,7 @@ namespace DynamicWin.Utils;
 
 internal class HardwareMonitor
 {
-    private System.Timers.Timer timer;
+    private readonly System.Timers.Timer timer;
 
     public static string usageString = " ";
 
@@ -29,14 +29,12 @@ internal class HardwareMonitor
         timer.Start();
     }
 
-    private Computer computer;
+    private readonly Computer computer;
     private float lastCpu;
     private string lastRam = string.Empty;
 
     private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
     {
-        
-
         foreach (var hardware in computer.Hardware)
         {
             if (hardware.HardwareType == HardwareType.Cpu)
@@ -77,8 +75,8 @@ internal class HardwareMonitor
 
         usageString = $"CPU: {lastCpu}%    RAM: {lastRam}";
 
-        instance.computer.Close();
+        computer.Close();
     }
 
-    public static void Stop() => instance.computer?.Close();
+    public static void Stop() => instance?.computer.Close();
 }

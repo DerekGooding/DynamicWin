@@ -17,12 +17,14 @@ internal class RegisterTimeWidget : IRegisterableWidget
 
 public class TimeWidget : SmallWidgetBase
 {
-    private DWText timeText;
+    private readonly DWText timeText;
 
     public TimeWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, alignment)
     {
-        timeText = new DWText(this, GetTime(), Vec2.zero, UIAlignment.Center);
-        timeText.TextSize = 14;
+        timeText = new DWText(this, GetTime(), Vec2.zero, UIAlignment.Center)
+        {
+            TextSize = 14
+        };
         AddLocalObject(timeText);
     }
 

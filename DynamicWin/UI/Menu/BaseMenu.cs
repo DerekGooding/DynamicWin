@@ -6,14 +6,12 @@ namespace DynamicWin.UI.Menu;
 
 public class BaseMenu : IDisposable
 {
-    private List<UIObject> uiObjects = new List<UIObject>();
 
-    public List<UIObject> UiObjects
-    { get { return uiObjects; } }
+    public List<UIObject> UiObjects { get; } = new List<UIObject>();
 
     public BaseMenu()
     {
-        uiObjects = InitializeMenu(RendererMain.Instance.MainIsland);
+        UiObjects = InitializeMenu(RendererMain.Instance.MainIsland);
     }
 
     public virtual Vec2 IslandSize()
@@ -33,6 +31,6 @@ public class BaseMenu : IDisposable
 
     public void Dispose()
     {
-        uiObjects.Clear();
+        UiObjects.Clear();
     }
 }

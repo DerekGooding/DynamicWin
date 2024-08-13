@@ -3,12 +3,8 @@ using SkiaSharp;
 
 namespace DynamicWin.UI.Widgets;
 
-public class TestWidget : WidgetBase
+public class TestWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : WidgetBase(parent, position, alignment)
 {
-    public TestWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, alignment)
-    {
-    }
-
     public override void DrawWidget(SKCanvas canvas)
     {
         base.DrawWidget(canvas);
@@ -16,7 +12,7 @@ public class TestWidget : WidgetBase
         var paint = GetPaint();
         var rect = GetRect();
 
-        float[] intervals = { 10, 10 };
+        float[] intervals = [10, 10];
         paint.PathEffect = SKPathEffect.CreateDash(intervals, 0f);
 
         paint.IsStroke = true;

@@ -11,22 +11,22 @@ internal class RegisterSystemUsageWidget : IRegisterableWidget
     public string WidgetName => "System Usage Display";
 
     public WidgetBase CreateWidgetInstance(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter)
-    {
-        return new SystemUsageWidget(parent, position, alignment);
-    }
+        => new SystemUsageWidget(parent, position, alignment);
 }
 
 public class SystemUsageWidget : SmallWidgetBase
 {
-    private DWText text;
+    private readonly DWText text;
 
-    private Computer computer;
+    private readonly Computer computer;
 
     public SystemUsageWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, alignment)
     {
-        text = new DWText(this, GetUsage(), Vec2.zero, UIAlignment.Center);
-        text.TextSize = 12;
-        text.Color = Theme.TextSecond;
+        text = new DWText(this, GetUsage(), Vec2.zero, UIAlignment.Center)
+        {
+            TextSize = 12,
+            Color = Theme.TextSecond
+        };
         AddLocalObject(text);
     }
 
@@ -45,13 +45,7 @@ public class SystemUsageWidget : SmallWidgetBase
 
     private float updateCycle = 0f;
 
-    private string GetUsage()
-    {
-        return HardwareMonitor.usageString;
-    }
+    private string GetUsage() => HardwareMonitor.usageString;
 
-    protected override float GetWidgetWidth()
-    {
-        return Math.Max(225f, text != null ? text.TextBounds.X : 10 - 10);
-    }
+    protected override float GetWidgetWidth() => Math.Max(225f, text != null ? text.TextBounds.X : 10 - 10);
 }

@@ -16,10 +16,7 @@ public class SettingsMenu : BaseMenu
 {
     public SettingsMenu()
     {
-        MainForm.onScrollEvent += (MouseWheelEventArgs x) =>
-        {
-            yScrollOffset += x.Delta * 0.25f;
-        };
+        MainForm.onScrollEvent += (MouseWheelEventArgs x) => yScrollOffset += x.Delta * 0.25f;
     }
 
     private bool changedTheme = false;
@@ -60,55 +57,68 @@ public class SettingsMenu : BaseMenu
             item.LoadSettings();
         }
 
-        var generalTitle = new DWText(island, "General", new Vec2(25, 0), UIAlignment.TopLeft);
-        generalTitle.Font = Res.InterBold;
+        var generalTitle = new DWText(island, "General", new Vec2(25, 0), UIAlignment.TopLeft)
+        {
+            Font = Res.InterBold
+        };
         generalTitle.Anchor.X = 0;
         objects.Add(generalTitle);
 
         {
-            var islandModesTitle = new DWText(island, "Island Mode", new Vec2(25, 0), UIAlignment.TopLeft);
-            islandModesTitle.Font = Res.InterRegular;
-            islandModesTitle.Color = Theme.TextSecond;
-            islandModesTitle.TextSize = 15;
+            var islandModesTitle = new DWText(island, "Island Mode", new Vec2(25, 0), UIAlignment.TopLeft)
+            {
+                Font = Res.InterRegular,
+                Color = Theme.TextSecond,
+                TextSize = 15
+            };
             islandModesTitle.Anchor.X = 0;
             objects.Add(islandModesTitle);
 
             var islandModes = new string[] { "Island", "Notch" };
-            var islandMode = new MultiSelectionButton(island, islandModes, new Vec2(25, 0), new Vec2(IslandSize().X - 50, 25), UIAlignment.TopLeft);
-            islandMode.SelectedIndex = (Settings.IslandMode == IslandObject.IslandMode.Island) ? 0 : 1;
-            islandMode.Anchor.X = 0;
-            islandMode.onClick += (index) =>
+            var islandMode = new MultiSelectionButton(island, islandModes, new Vec2(25, 0), new Vec2(IslandSize().X - 50, 25), UIAlignment.TopLeft)
             {
-                Settings.IslandMode = (index == 0) ? IslandObject.IslandMode.Island : IslandObject.IslandMode.Notch;
+                SelectedIndex = (Settings.IslandMode == IslandObject.IslandMode.Island) ? 0 : 1
             };
+            islandMode.Anchor.X = 0;
+            islandMode.onClick += (index) => Settings.IslandMode = (index == 0) ? IslandObject.IslandMode.Island : IslandObject.IslandMode.Notch;
             objects.Add(islandMode);
         }
 
-        allowBlur = new Checkbox(island, "Allow Blur", new Vec2(25, 0), new Vec2(25, 25), () => { }, UIAlignment.TopLeft);
-        allowBlur.IsChecked = Settings.AllowBlur;
+        allowBlur = new Checkbox(island, "Allow Blur", new Vec2(25, 0), new Vec2(25, 25), () => { }, UIAlignment.TopLeft)
+        {
+            IsChecked = Settings.AllowBlur
+        };
         allowBlur.Anchor.X = 0;
         objects.Add(allowBlur);
 
-        allowAnimation = new Checkbox(island, "Allow SO Animation", new Vec2(25, 0), new Vec2(25, 25), () => { }, UIAlignment.TopLeft);
-        allowAnimation.IsChecked = Settings.AllowAnimation;
+        allowAnimation = new Checkbox(island, "Allow SO Animation", new Vec2(25, 0), new Vec2(25, 25), () => { }, UIAlignment.TopLeft)
+        {
+            IsChecked = Settings.AllowAnimation
+        };
         allowAnimation.Anchor.X = 0;
         objects.Add(allowAnimation);
 
-        antiAliasing = new Checkbox(island, "Anti Aliasing", new Vec2(25, 0), new Vec2(25, 25), () => { }, UIAlignment.TopLeft);
-        antiAliasing.IsChecked = Settings.AntiAliasing;
+        antiAliasing = new Checkbox(island, "Anti Aliasing", new Vec2(25, 0), new Vec2(25, 25), () => { }, UIAlignment.TopLeft)
+        {
+            IsChecked = Settings.AntiAliasing
+        };
         antiAliasing.Anchor.X = 0;
         objects.Add(antiAliasing);
 
         {
-            var themeTitle = new DWText(island, "Themes", new Vec2(25, 0), UIAlignment.TopLeft);
-            themeTitle.Font = Res.InterRegular;
-            themeTitle.TextSize = 15;
+            var themeTitle = new DWText(island, "Themes", new Vec2(25, 0), UIAlignment.TopLeft)
+            {
+                Font = Res.InterRegular,
+                TextSize = 15
+            };
             themeTitle.Anchor.X = 0;
             objects.Add(themeTitle);
 
             var themeOptions = new string[] { "Custom", "Dark", "Light", "Candy", "Forest Dawn", "Sunset Glow" };
-            var theme = new MultiSelectionButton(island, themeOptions, new Vec2(25, 0), new Vec2(IslandSize().X - 50, 25), UIAlignment.TopLeft);
-            theme.SelectedIndex = Settings.Theme + 1;
+            var theme = new MultiSelectionButton(island, themeOptions, new Vec2(25, 0), new Vec2(IslandSize().X - 50, 25), UIAlignment.TopLeft)
+            {
+                SelectedIndex = Settings.Theme + 1
+            };
             theme.Anchor.X = 0;
             theme.onClick += (index) =>
             {
@@ -118,17 +128,21 @@ public class SettingsMenu : BaseMenu
             objects.Add(theme);
         }
 
-        var widgetsTitle = new DWText(island, "Widgets", new Vec2(25, 0), UIAlignment.TopLeft);
-        widgetsTitle.Font = Res.InterBold;
-        widgetsTitle.Color = Theme.TextSecond;
+        var widgetsTitle = new DWText(island, "Widgets", new Vec2(25, 0), UIAlignment.TopLeft)
+        {
+            Font = Res.InterBold,
+            Color = Theme.TextSecond
+        };
         widgetsTitle.Anchor.X = 0;
         objects.Add(widgetsTitle);
 
         {
-            var wTitle = new DWText(island, "Small Widgets (Right click to add / edit)", new Vec2(25, 0), UIAlignment.TopLeft);
-            wTitle.Font = Res.InterRegular;
-            wTitle.Color = Theme.TextSecond;
-            wTitle.TextSize = 15;
+            var wTitle = new DWText(island, "Small Widgets (Right click to add / edit)", new Vec2(25, 0), UIAlignment.TopLeft)
+            {
+                Font = Res.InterRegular,
+                Color = Theme.TextSecond,
+                TextSize = 15
+            };
             wTitle.Anchor.X = 0;
             objects.Add(wTitle);
 
@@ -144,10 +158,12 @@ public class SettingsMenu : BaseMenu
         });
 
         {
-            var wTitle = new DWText(island, "Big Widgets (Right click to add / edit)", new Vec2(25, 15), UIAlignment.TopLeft);
-            wTitle.Font = Res.InterRegular;
-            wTitle.Color = Theme.TextSecond;
-            wTitle.TextSize = 15;
+            var wTitle = new DWText(island, "Big Widgets (Right click to add / edit)", new Vec2(25, 15), UIAlignment.TopLeft)
+            {
+                Font = Res.InterRegular,
+                Color = Theme.TextSecond,
+                TextSize = 15
+            };
             wTitle.Anchor.X = 0;
             objects.Add(wTitle);
 
@@ -162,19 +178,23 @@ public class SettingsMenu : BaseMenu
             TextSize = 20
         });
 
-        var widgetOptionsTitle = new DWText(island, "Widget Settings", new Vec2(25, 0), UIAlignment.TopLeft);
-        widgetOptionsTitle.Font = Res.InterBold;
-        widgetOptionsTitle.Color = Theme.TextSecond;
+        var widgetOptionsTitle = new DWText(island, "Widget Settings", new Vec2(25, 0), UIAlignment.TopLeft)
+        {
+            Font = Res.InterBold,
+            Color = Theme.TextSecond
+        };
         widgetOptionsTitle.Anchor.X = 0;
         objects.Add(widgetOptionsTitle);
 
         {
             foreach (var option in customOptions)
             {
-                var wTitle = new DWText(island, option.SettingTitle, new Vec2(25, 0), UIAlignment.TopLeft);
-                wTitle.Font = Res.InterRegular;
-                wTitle.Color = Theme.TextSecond;
-                wTitle.TextSize = 15;
+                var wTitle = new DWText(island, option.SettingTitle, new Vec2(25, 0), UIAlignment.TopLeft)
+                {
+                    Font = Res.InterRegular,
+                    Color = Theme.TextSecond,
+                    TextSize = 15
+                };
                 wTitle.Anchor.X = 0;
                 objects.Add(wTitle);
 
@@ -225,7 +245,7 @@ public class SettingsMenu : BaseMenu
             TextSize = 15
         });
 
-        var backBtn = new DWTextButton(island, "Apply and Back", new Vec2(0, -45), new Vec2(350, 40), () => { SaveAndBack(); }, UIAlignment.BottomCenter)
+        var backBtn = new DWTextButton(island, "Apply and Back", new Vec2(0, -45), new Vec2(350, 40), SaveAndBack, UIAlignment.BottomCenter)
         {
             roundRadius = 25
         };
@@ -260,7 +280,7 @@ public class SettingsMenu : BaseMenu
 
         var yScrollLim = 0f;
         var yPos = 35f;
-        var spacing = 15f;
+        const float spacing = 15f;
 
         for (int i = 0; i < UiObjects.Count - 2; i++)
         {
@@ -322,7 +342,7 @@ public class SettingsMenu : BaseMenu
         {
             foreach (var file in Directory.GetFiles(dirPath))
             {
-                if (Path.GetExtension(file).ToLower().Equals(".dll"))
+                if (Path.GetExtension(file).Equals(".dll", StringComparison.OrdinalIgnoreCase))
                 {
                     System.Diagnostics.Debug.WriteLine(file);
                     var DLL = new Assembly[] { Assembly.LoadFile(Path.Combine(dirPath, file)) };
@@ -344,7 +364,7 @@ public class SettingsMenu : BaseMenu
 
 internal class BigWidgetAdder : UIObject
 {
-    private AddNew addNew;
+    private readonly AddNew addNew;
 
     public BigWidgetAdder(UIObject? parent, Vec2 position, Vec2 size, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, size, alignment)
     {
@@ -370,7 +390,7 @@ internal class BigWidgetAdder : UIObject
         addNew.LocalPosition.X = Mathf.Lerp(addNew.LocalPosition.X, isDisplayEven() ? Size.X / 2f : Size.X / 1.3333333f, 15f * deltaTime);
         addNew.Size.X = Mathf.Lerp(addNew.Size.X, isDisplayEven() ? Size.X : Size.X / 2, 15f * deltaTime);
 
-        var lines2 = (int)Math.Max(1, (displays.Count / maxE + 1));
+        var lines2 = (int)Math.Max(1, displays.Count / maxE + 1);
         Size.Y = Mathf.Lerp(Size.Y, lines2 * 45, 15f * RendererMain.Instance.DeltaTime);
     }
 
@@ -379,12 +399,12 @@ internal class BigWidgetAdder : UIObject
         return displays.Count % 2 == 0;
     }
 
-    private List<BigWidgetAdderDisplay> displays = new List<BigWidgetAdderDisplay>();
-    private float maxE = 2;
+    private readonly List<BigWidgetAdderDisplay> displays = new List<BigWidgetAdderDisplay>();
+    private readonly float maxE = 2;
 
     private void UpdateWidgetDisplay()
     {
-        displays.ForEach((x) => DestroyLocalObject(x));
+        displays.ForEach(DestroyLocalObject);
         displays.Clear();
 
         Dictionary<string, IRegisterableWidget> bigWidgets = new Dictionary<string, IRegisterableWidget>();
@@ -496,7 +516,7 @@ internal class AddNew : UIObject
         var placeRect = new SKRoundRect(SKRect.Create(Position.X, Position.Y, Size.X, Size.Y), 25);
         placeRect.Deflate(5, 5);
 
-        float[] intervals = { 10, 10 };
+        float[] intervals = [10, 10];
         paint.PathEffect = SKPathEffect.CreateDash(intervals, 0f);
 
         paint.IsStroke = true;
@@ -551,7 +571,7 @@ internal class BigWidgetAdderDisplay : UIObject
         canvas.RestoreToCount(canvasRestore);
     }
 
-    private Col color;
+    private readonly Col color;
     private float s = 1;
 
     public override void Update(float deltaTime)
@@ -594,14 +614,16 @@ internal class SmallWidgetAdder : UIObject
         Color = Theme.WidgetBackground.Override(a: 0.1f);
         roundRadius = 25;
 
-        container = new UIObject(this, Vec2.zero, new Vec2(size.X - 100, size.Y), UIAlignment.Center);
-        container.Color = Col.Transparent;
+        container = new UIObject(this, Vec2.zero, new Vec2(size.X - 100, size.Y), UIAlignment.Center)
+        {
+            Color = Col.Transparent
+        };
         AddLocalObject(container);
 
         UpdateWidgetDisplay();
     }
 
-    private UIObject container;
+    private readonly UIObject container;
 
     public List<SmallWidgetBase> smallLeftWidgets = new List<SmallWidgetBase>();
     public List<SmallWidgetBase> smallRightWidgets = new List<SmallWidgetBase>();
@@ -609,9 +631,9 @@ internal class SmallWidgetAdder : UIObject
 
     private void UpdateWidgetDisplay()
     {
-        smallRightWidgets.ForEach((x) => DestroyLocalObject(x));
-        smallLeftWidgets.ForEach((x) => DestroyLocalObject(x));
-        smallCenterWidgets.ForEach((x) => DestroyLocalObject(x));
+        smallRightWidgets.ForEach(DestroyLocalObject);
+        smallLeftWidgets.ForEach(DestroyLocalObject);
+        smallCenterWidgets.ForEach(DestroyLocalObject);
 
         smallRightWidgets.Clear();
         smallLeftWidgets.Clear();
@@ -733,9 +755,9 @@ internal class SmallWidgetAdder : UIObject
             smallRightWidgets.Add(instance);
         }
 
-        smallCenterWidgets.ForEach((x) => AddLocalObject(x));
-        smallLeftWidgets.ForEach((x) => AddLocalObject(x));
-        smallRightWidgets.ForEach((x) => AddLocalObject(x));
+        smallCenterWidgets.ForEach(AddLocalObject);
+        smallLeftWidgets.ForEach(AddLocalObject);
+        smallRightWidgets.ForEach(AddLocalObject);
     }
 
     public float smallWidgetsSpacing = 30;
@@ -871,8 +893,10 @@ public class Checkbox : DWImageButton
 
     public Checkbox(UIObject? parent, string buttonText, Vec2 position, Vec2 size, Action clickCallback, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, Res.Check, position, size, clickCallback, alignment)
     {
-        var text = new DWText(this, buttonText, new Vec2(15, 0), UIAlignment.MiddleRight);
-        text.Color = Theme.TextSecond;
+        var text = new DWText(this, buttonText, new Vec2(15, 0), UIAlignment.MiddleRight)
+        {
+            Color = Theme.TextSecond
+        };
         text.Anchor.X = 0;
         text.TextSize = size.Y / 1.5f;
         AddLocalObject(text);
@@ -892,8 +916,8 @@ public class Checkbox : DWImageButton
 
 public class MultiSelectionButton : UIObject
 {
-    private string[] options;
-    private DWTextButton[] buttons;
+    private readonly string[] options;
+    private readonly DWTextButton[] buttons;
 
     public Action<int> onClick;
 
@@ -912,7 +936,7 @@ public class MultiSelectionButton : UIObject
         for (int i = 0; i < options.Length; i++)
         {
             var lambdaIndex = i; // Either I'm going insane or I don't understand lambdas, but it seems like only the pointer given in to the OnClick() method. This is why this line is needed!
-            var action = () => { OnClick(lambdaIndex); }; // For some it just outputs the length of options if there is no seperate variable for it.
+            var action = () => OnClick(lambdaIndex); // For some it just outputs the length of options if there is no seperate variable for it.
 
             if (counter >= maxInOneRow)
             {

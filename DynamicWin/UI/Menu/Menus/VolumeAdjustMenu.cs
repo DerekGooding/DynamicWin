@@ -48,9 +48,11 @@ internal class VolumeAdjustMenu : BaseMenu
     {
         var objects = base.InitializeMenu(island);
 
-        mutedBg = new UIObject(island, new Vec2(10, 0), new Vec2(40, 20), UIAlignment.MiddleLeft);
-        mutedBg.Color = Theme.Error;
-        mutedBg.roundRadius = 15;
+        mutedBg = new UIObject(island, new Vec2(10, 0), new Vec2(40, 20), UIAlignment.MiddleLeft)
+        {
+            Color = Theme.Error,
+            roundRadius = 15
+        };
         mutedBg.Anchor.X = 0;
         objects.Add(mutedBg);
 
@@ -72,10 +74,10 @@ internal class VolumeAdjustMenu : BaseMenu
         return objects;
     }
 
-    public static float timerUntilClose = 0f;
+    public static float? timerUntilClose = 0f;
 
-    private float timer = 0;
-    private float shakeSpeed = 35;
+    private float timer;
+    private readonly float shakeSpeed = 35;
 
     private float Func(float x)
     {

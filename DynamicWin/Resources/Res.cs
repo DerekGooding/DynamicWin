@@ -7,11 +7,11 @@ using System.Reflection;
 
 namespace DynamicWin.Resources;
 
-public class Res
+public static class Res
 {
-    public static SKTypeface InterRegular { get => LoadTypeface("Resources\\Inter_24pt-Regular.ttf"); }
-    public static SKTypeface InterBold { get => LoadTypeface("Resources\\Inter_24pt-ExtraBold.ttf"); }
-    public static SKTypeface CascadiaMono { get => LoadTypeface("Resources\\CascadiaMono.ttf"); }
+    public static SKTypeface InterRegular => LoadTypeface("Resources\\Inter_24pt-Regular.ttf");
+    public static SKTypeface InterBold => LoadTypeface("Resources\\Inter_24pt-ExtraBold.ttf");
+    public static SKTypeface CascadiaMono => LoadTypeface("Resources\\CascadiaMono.ttf");
 
     public static SKBitmap searchIcon;
     public static SKBitmap editIcon;
@@ -62,19 +62,14 @@ public class Res
     public static SKBitmap SevereWeatherWarning;
 
     public static string TimerOverSound = "Resources\\sounds\\TimerOver.wav";
-
-    private static HomeMenu homeMenu;
-    public static HomeMenu HomeMenu { get => homeMenu; set => homeMenu = value; }
+    public static HomeMenu HomeMenu { get; set; }
 
     public static List<IRegisterableWidget> availableBigWidgets;
     public static List<IRegisterableWidget> availableSmallWidgets;
 
     public static List<IDynamicWinExtension> extensions;
 
-    public static void CreateStaticMenus()
-    {
-        homeMenu = new HomeMenu();
-    }
+    public static void CreateStaticMenus() => HomeMenu = new HomeMenu();
 
     public static void Load()
     {
@@ -133,9 +128,9 @@ public class Res
 
     private static void RegisterWidgets()
     {
-        availableBigWidgets = new List<IRegisterableWidget>();
-        availableSmallWidgets = new List<IRegisterableWidget>();
-        extensions = new List<IDynamicWinExtension>();
+        availableBigWidgets = [];
+        availableSmallWidgets = [];
+        extensions = [];
 
         var registerableWidgets = AppDomain.CurrentDomain.GetAssemblies()
         .SelectMany(s => s.GetTypes())
@@ -165,7 +160,7 @@ public class Res
         {
             foreach (var file in Directory.GetFiles(dirPath))
             {
-                if (Path.GetExtension(file).ToLower().Equals(".dll"))
+                if (Path.GetExtension(file).Equals(".dll", StringComparison.OrdinalIgnoreCase))
                 {
                     System.Diagnostics.Debug.WriteLine(file);
                     var DLL = new Assembly[] { Assembly.LoadFile(Path.Combine(dirPath, file)) };
@@ -177,7 +172,7 @@ public class Res
                     foreach (var registerableExtension in extensions)
                     {
                         var iRegisterableExtensionInstance = (IDynamicWinExtension)Activator.CreateInstance(registerableExtension);
-                        System.Diagnostics.Debug.WriteLine($"Extension sucessfully registered: {iRegisterableExtensionInstance.ExtensionName}");
+                        System.Diagnostics.Debug.WriteLine($"Extension successfully registered: {iRegisterableExtensionInstance.ExtensionName}");
                         Res.extensions.Add(iRegisterableExtensionInstance);
 
                         foreach (var registerableWidget in iRegisterableExtensionInstance.GetExtensionWidgets())
@@ -200,15 +195,13 @@ public class Res
     {
         try
         {
-            using (var stream = File.OpenRead(path))
-            {
-                var image = SKImage.FromEncodedData(stream);
-                return SKBitmap.FromImage(image);
-            }
+            using var stream = File.OpenRead(path);
+            var image = SKImage.FromEncodedData(stream);
+            return SKBitmap.FromImage(image);
         }
-        catch (Exception e)
+        catch
         {
-            System.Diagnostics.Debug.WriteLine("Could not load texture: " + path);
+            System.Diagnostics.Debug.WriteLine($"Could not load texture: {path}");
             return searchIcon;
         }
     }
@@ -219,9 +212,9 @@ public class Res
         {
             return SKTypeface.FromFile(path);
         }
-        catch (Exception e)
+        catch
         {
-            System.Diagnostics.Debug.WriteLine("Could not load font: " + path);
+            System.Diagnostics.Debug.WriteLine($"Could not load font: {path}");
             return InterRegular;
         }
     }

@@ -52,10 +52,10 @@ public class ShortcutsWidget : WidgetBase
 internal class ShortcutButton : DWButton
 {
     public ShortcutSave savedShortcut;
-    private string saveId;
+    private readonly string saveId;
 
-    private DWText shortcutTitle;
-    private DWImage shortcutIcon;
+    private readonly DWText shortcutTitle;
+    private readonly DWImage shortcutIcon;
 
     public ShortcutButton(UIObject? parent, string shortcutSaveId, Vec2 position, Vec2 size, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, size - 12.5f, null, alignment)
     {
@@ -73,22 +73,26 @@ internal class ShortcutButton : DWButton
             savedShortcut = new ShortcutSave();
         }
 
-        shortcutTitle = new DWText(this, " ", new Vec2(15f, 0), UIAlignment.MiddleLeft);
-        shortcutTitle.TextSize = 9.5f;
+        shortcutTitle = new DWText(this, " ", new Vec2(15f, 0), UIAlignment.MiddleLeft)
+        {
+            TextSize = 9.5f
+        };
         shortcutTitle.Anchor.X = 0f;
         shortcutTitle.Font = Res.InterBold;
         shortcutTitle.Color = Theme.TextSecond;
         shortcutTitle.SilentSetActive(false);
         AddLocalObject(shortcutTitle);
 
-        shortcutIcon = new DWImage(this, Res.FileIcon, new Vec2(0, 0), new Vec2(20, 20), UIAlignment.MiddleLeft);
-        shortcutIcon.allowIconThemeColor = false;
+        shortcutIcon = new DWImage(this, Res.FileIcon, new Vec2(0, 0), new Vec2(20, 20), UIAlignment.MiddleLeft)
+        {
+            allowIconThemeColor = false
+        };
         shortcutIcon.SilentSetActive(false);
         AddLocalObject(shortcutIcon);
 
-        clickCallback = () => { RunShortcut(); };
+        clickCallback = RunShortcut;
 
-        this.saveId = shortcutSaveId;
+        saveId = shortcutSaveId;
         LoadShortcut();
     }
 
@@ -138,26 +142,17 @@ internal class ShortcutButton : DWButton
         if (string.IsNullOrEmpty(savedShortcut.path))
         {
             var config = new MenuItem() { Header = "Configure Shortcut" };
-            config.Click += (s, e) =>
-            {
-                ConfigureShortcut();
-            };
+            config.Click += (s, e) => ConfigureShortcut();
             ctx.Items.Add(config);
         }
         else
         {
             var run = new MenuItem() { Header = "Run Shortcut" };
-            run.Click += (s, e) =>
-            {
-                RunShortcut();
-            };
+            run.Click += (s, e) => RunShortcut();
             ctx.Items.Add(run);
 
             var remove = new MenuItem() { Header = "Remove Shortcut" };
-            remove.Click += (s, e) =>
-            {
-                RemoveShortcut();
-            };
+            remove.Click += (s, e) => RemoveShortcut();
             ctx.Items.Add(remove);
         }
 
@@ -168,7 +163,7 @@ internal class ShortcutButton : DWButton
     {
         if (!string.IsNullOrEmpty(save.path))
         {
-            this.savedShortcut = save;
+            savedShortcut = save;
 
             SaveManager.Add("shortcuts." + saveId, JsonConvert.SerializeObject(save));
             SaveManager.SaveAll();
@@ -187,13 +182,13 @@ internal class ShortcutButton : DWButton
         {
             try
             {
-                int THUMB_SIZE = 256;
+                const int THUMB_SIZE = 256;
                 thumbnail = WindowsThumbnailProvider.GetThumbnail(
                    savedShortcut.path, THUMB_SIZE, THUMB_SIZE, ThumbnailOptions.None);
             }
-            catch (System.Runtime.InteropServices.COMException e)
+            catch (System.Runtime.InteropServices.COMException)
             {
-                System.Diagnostics.Debug.WriteLine("Could not load icon.");
+                Debug.WriteLine("Could not load icon.");
 
                 new Thread(() =>
                 {
@@ -201,7 +196,7 @@ internal class ShortcutButton : DWButton
                     {
                         Thread.Sleep(1500);
                     }
-                    catch (ThreadInterruptedException e)
+                    catch
                     {
                         return;
                     }
@@ -209,7 +204,7 @@ internal class ShortcutButton : DWButton
                     UpdateDisplay();
                 }).Start();
             }
-            catch (FileNotFoundException fnfE)
+            catch
             {
                 return;
             }
@@ -217,12 +212,11 @@ internal class ShortcutButton : DWButton
             {
                 SKBitmap bMap = null;
                 if (thumbnail != null) bMap = thumbnail.ToSKBitmap();
-                else bMap = Resources.Res.FileIcon;
+                else bMap = Res.FileIcon;
 
                 shortcutIcon.Image = bMap;
 
-                if (thumbnail != null)
-                    thumbnail.Dispose();
+                thumbnail?.Dispose();
             }
 
             SetActive(true);
@@ -232,7 +226,7 @@ internal class ShortcutButton : DWButton
     private void LoadShortcut()
     {
         if (!SaveManager.Contains("shortcuts." + saveId)) return;
-        var shortcut = (ShortcutSave)JsonConvert.DeserializeObject<ShortcutSave>((string)SaveManager.Get("shortcuts." + saveId));
+        var shortcut = JsonConvert.DeserializeObject<ShortcutSave>((string)SaveManager.Get("shortcuts." + saveId));
 
         if (!string.IsNullOrEmpty(shortcut.path))
         {
@@ -252,10 +246,7 @@ internal class ShortcutButton : DWButton
         OpenWithDefaultProgram(savedShortcut.path);
     }
 
-    private void ConfigureShortcut()
-    {
-        MenuManager.OpenMenu(new ConfigureShortcutMenu(this));
-    }
+    private void ConfigureShortcut() => MenuManager.OpenMenu(new ConfigureShortcutMenu(this));
 
     private void OpenWithDefaultProgram(string path)
     {
@@ -265,17 +256,17 @@ internal class ShortcutButton : DWButton
             return;
         }
 
-        using Process fileopener = new Process();
+        using Process fileOpener = new();
 
-        fileopener.StartInfo.FileName = "explorer";
-        fileopener.StartInfo.Arguments = "\"" + path + "\"";
-        fileopener.Start();
+        fileOpener.StartInfo.FileName = "explorer";
+        fileOpener.StartInfo.Arguments = $"\"{path}\"";
+        fileOpener.Start();
     }
 
     private void RemoveShortcut()
     {
-        if (!SaveManager.Contains("shortcuts." + saveId)) return;
-        SaveManager.Remove(("shortcuts." + saveId));
+        if (!SaveManager.Contains($"shortcuts.{saveId}")) return;
+        SaveManager.Remove($"shortcuts.{saveId}");
         SaveManager.SaveAll();
 
         savedShortcut = new ShortcutSave();
@@ -284,6 +275,6 @@ internal class ShortcutButton : DWButton
     public struct ShortcutSave
     {
         public string path; // The path to the app / url to open
-        public string name; // The displayname of the shortcut
+        public string name; // The displayName of the shortcut
     }
 }

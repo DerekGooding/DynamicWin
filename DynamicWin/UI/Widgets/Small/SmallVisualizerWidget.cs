@@ -8,14 +8,12 @@ internal class RegisterSmallVisualizerWidget : IRegisterableWidget
     public string WidgetName => "Audio Visualizer";
 
     public WidgetBase CreateWidgetInstance(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter)
-    {
-        return new SmallVisualizerWidget(parent, position, alignment);
-    }
+        => new SmallVisualizerWidget(parent, position, alignment);
 }
 
 public class SmallVisualizerWidget : SmallWidgetBase
 {
-    private AudioVisualizer audioVisualizer;
+    private readonly AudioVisualizer audioVisualizer;
 
     public SmallVisualizerWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, alignment)
     {
@@ -28,8 +26,5 @@ public class SmallVisualizerWidget : SmallWidgetBase
         AddLocalObject(audioVisualizer);
     }
 
-    protected override float GetWidgetWidth()
-    {
-        return base.GetWidgetWidth() * 2;
-    }
+    protected override float GetWidgetWidth() => base.GetWidgetWidth() * 2;
 }

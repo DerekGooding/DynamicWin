@@ -6,18 +6,18 @@ namespace DynamicWin.Utils;
 
 public class AudioVisualizer : UIObject
 {
-    private int fftLength;
-    private float[] fftValues;
-    private WasapiLoopbackCapture capture;
+    private readonly int fftLength;
+    private readonly float[] fftValues;
+    private readonly WasapiLoopbackCapture capture;
     private readonly object fftLock = new object();
 
-    private float[] barHeight;
+    private readonly float[] barHeight;
     public float barUpSmoothing = 100f;
     public float barDownSmoothing = 10f;
 
     public float divisor = 1f;
 
-    private bool avAmpsMode = false;
+    private readonly bool avAmpsMode = false;
 
     public AudioVisualizer(UIObject? parent, Vec2 position, Vec2 size, UIAlignment alignment = UIAlignment.TopCenter, int length = 16, int averageAmpsSize = 0, Col Primary = null, Col Secondary = null) : base(parent, position, size, alignment)
     {
@@ -57,9 +57,8 @@ public class AudioVisualizer : UIObject
             capture.StopRecording();
             capture.Dispose();
         }
-        catch (ThreadInterruptedException e)
+        catch
         {
-            return;
         }
     }
 
@@ -185,15 +184,15 @@ public class AudioVisualizer : UIObject
             n >>= 1;
         }
 
-        return ((reversedN << count) & ((1 << bits) - 1));
+        return (reversedN << count) & ((1 << bits) - 1);
     }
 
     public int averageAmpModeRectSize = 24;
 
     private float averageAmplitude = 0f;
-    private float[] averageAmps;
-    private float[] smoothAverageAmps;
-    public float AverageAmplitude { get => averageAmplitude; }
+    private readonly float[] averageAmps;
+    private readonly float[] smoothAverageAmps;
+    public float AverageAmplitude => averageAmplitude;
 
     public Col Primary;
     public Col Secondary;

@@ -13,27 +13,25 @@ internal class RegisterTimerWidget : IRegisterableWidget
     public string WidgetName => "Timer";
 
     public WidgetBase CreateWidgetInstance(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter)
-    {
-        return new TimerWidget(parent, position, alignment);
-    }
+        => new TimerWidget(parent, position, alignment);
 }
 
 public class TimerWidget : WidgetBase
 {
-    private DWText timerText;
+    private readonly DWText timerText;
 
     private System.Timers.Timer timer;
 
-    private DWImageButton startStopButton;
+    private readonly DWImageButton startStopButton;
 
-    private DWImageButton hourMore;
-    private DWImageButton hourLess;
-    private DWImageButton minuteMore;
-    private DWImageButton minuteLess;
-    private DWImageButton secondMore;
-    private DWImageButton secondLess;
+    private readonly DWImageButton hourMore;
+    private readonly DWImageButton hourLess;
+    private readonly DWImageButton minuteMore;
+    private readonly DWImageButton minuteLess;
+    private readonly DWImageButton secondMore;
+    private readonly DWImageButton secondLess;
 
-    public static TimerWidget instance;
+    public static TimerWidget? Instance;
 
     public int CurrentTime
     { get { if (isTimerRunning) return initialSecondsSet - elapsedSeconds; else return -1; } }
@@ -48,30 +46,21 @@ public class TimerWidget : WidgetBase
         timerText.Anchor.X = 0;
         AddLocalObject(timerText);
 
-        startStopButton = new DWImageButton(parent, Resources.Res.Play, new Vec2(-35, 0), new Vec2(25, 25), () =>
-        {
-            ToggleTimer();
-        }, alignment: UIAlignment.MiddleRight);
+        startStopButton = new DWImageButton(parent, Resources.Res.Play, new Vec2(-35, 0), new Vec2(25, 25), ToggleTimer, alignment: UIAlignment.MiddleRight);
         AddLocalObject(startStopButton);
 
         // More / Less buttons
 
         // Hours
 
-        hourMore = new DWImageButton(parent, Resources.Res.ArrowUp, new Vec2(0, -30f), new Vec2(25f, 25f), () =>
-        {
-            ChangeTimerTime(0, 0, 1);
-        }, alignment: UIAlignment.MiddleLeft)
+        hourMore = new DWImageButton(parent, Resources.Res.ArrowUp, new Vec2(0, -30f), new Vec2(25f, 25f), () => ChangeTimerTime(0, 0, 1), alignment: UIAlignment.MiddleLeft)
         {
             expandInteractionRect = 0,
             normalColor = Col.Transparent
         };
         AddLocalObject(hourMore);
 
-        hourLess = new DWImageButton(parent, Resources.Res.ArrowDown, new Vec2(0, 30f), new Vec2(25f, 25f), () =>
-        {
-            ChangeTimerTime(0, 0, -1);
-        }, alignment: UIAlignment.MiddleLeft)
+        hourLess = new DWImageButton(parent, Resources.Res.ArrowDown, new Vec2(0, 30f), new Vec2(25f, 25f), () => ChangeTimerTime(0, 0, -1), alignment: UIAlignment.MiddleLeft)
         {
             expandInteractionRect = 0,
             normalColor = Col.Transparent
@@ -80,20 +69,14 @@ public class TimerWidget : WidgetBase
 
         // Minutes
 
-        minuteMore = new DWImageButton(parent, Resources.Res.ArrowUp, new Vec2(0, -30f), new Vec2(25f, 25f), () =>
-        {
-            ChangeTimerTime(0, 1, 0);
-        }, alignment: UIAlignment.MiddleLeft)
+        minuteMore = new DWImageButton(parent, Resources.Res.ArrowUp, new Vec2(0, -30f), new Vec2(25f, 25f), () => ChangeTimerTime(0, 1, 0), alignment: UIAlignment.MiddleLeft)
         {
             expandInteractionRect = 0,
             normalColor = Col.Transparent
         };
         AddLocalObject(minuteMore);
 
-        minuteLess = new DWImageButton(parent, Resources.Res.ArrowDown, new Vec2(0, 30f), new Vec2(25f, 25f), () =>
-        {
-            ChangeTimerTime(0, -1, 0);
-        }, alignment: UIAlignment.MiddleLeft)
+        minuteLess = new DWImageButton(parent, Resources.Res.ArrowDown, new Vec2(0, 30f), new Vec2(25f, 25f), () => ChangeTimerTime(0, -1, 0), alignment: UIAlignment.MiddleLeft)
         {
             expandInteractionRect = 0,
             normalColor = Col.Transparent
@@ -102,20 +85,14 @@ public class TimerWidget : WidgetBase
 
         // Seconds
 
-        secondMore = new DWImageButton(parent, Resources.Res.ArrowUp, new Vec2(0, -30f), new Vec2(25f, 25f), () =>
-        {
-            ChangeTimerTime(1, 0, 0);
-        }, alignment: UIAlignment.MiddleLeft)
+        secondMore = new DWImageButton(parent, Resources.Res.ArrowUp, new Vec2(0, -30f), new Vec2(25f, 25f), () => ChangeTimerTime(1, 0, 0), alignment: UIAlignment.MiddleLeft)
         {
             expandInteractionRect = 0,
             normalColor = Col.Transparent
         };
         AddLocalObject(secondMore);
 
-        secondLess = new DWImageButton(parent, Resources.Res.ArrowDown, new Vec2(0, 30f), new Vec2(25f, 25f), () =>
-        {
-            ChangeTimerTime(-1, 0, 0);
-        }, alignment: UIAlignment.MiddleLeft)
+        secondLess = new DWImageButton(parent, Resources.Res.ArrowDown, new Vec2(0, 30f), new Vec2(25f, 25f), () => ChangeTimerTime(-1, 0, 0), alignment: UIAlignment.MiddleLeft)
         {
             expandInteractionRect = 0,
             normalColor = Col.Transparent
@@ -129,22 +106,21 @@ public class TimerWidget : WidgetBase
         secondMore.Image.Color = Theme.IconColor.Override(a: 0.45f);
         secondLess.Image.Color = Theme.IconColor.Override(a: 0.45f);
 
-        if (instance == null)
+        if (Instance == null)
         {
-            instance = this;
+            Instance = this;
             ChangeTimerTime(0, 5, 0);
         }
     }
 
-    private static bool isTimerRunning = false;
-    public bool IsTimerRunning
-    { get { return isTimerRunning; } }
+    private static bool isTimerRunning;
+    public bool IsTimerRunning => isTimerRunning;
 
-    private static int initialSecondsSet = 0;
+    private static int initialSecondsSet;
 
     public void ChangeTimerTime(int seconds, int minutes, int hours)
     {
-        initialSecondsSet += seconds + minutes * 60 + (hours * 60) * 60;
+        initialSecondsSet += seconds + (minutes * 60) + (hours * 60 * 60);
 
         initialSecondsSet = (int)Mathf.Clamp(initialSecondsSet, 0, int.MaxValue);
 
@@ -164,7 +140,7 @@ public class TimerWidget : WidgetBase
 
     public void StopTimer()
     {
-        instance.timer.Stop();
+        Instance?.timer.Stop();
         isTimerRunning = false;
     }
 
@@ -180,7 +156,7 @@ public class TimerWidget : WidgetBase
 
     public void StartTimer()
     {
-        instance = this;
+        Instance = this;
         isTimerRunning = true;
         elapsedSeconds = 0;
 
@@ -189,10 +165,9 @@ public class TimerWidget : WidgetBase
         {
             elapsedSeconds++;
 
-            if (initialSecondsSet - elapsedSeconds <= 0)
+            if (initialSecondsSet <= elapsedSeconds)
             {
                 TimerEnd();
-                return;
             }
         };
         timer.Start();
@@ -204,8 +179,8 @@ public class TimerWidget : WidgetBase
 
         timerText.TextSize = Mathf.Lerp(timerText.TextSize, isTimerRunning ? 29 : 25, 10f * deltaTime);
 
-        var tOff = -5f;
-        var mul = 0.365f;
+        const float tOff = -5f;
+        const float mul = 0.365f;
 
         TimeSpan t = TimeSpan.FromSeconds(initialSecondsSet);
         var h = (timerText.GetBoundsForString(string.Format("{0:D2}", t.Hours)).X) * mul;

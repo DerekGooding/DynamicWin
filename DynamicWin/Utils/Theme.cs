@@ -98,10 +98,10 @@ public class Theme
 
         try
         {
-            string defaultTheme = "{\r\n  \"IslandColor\": \"#000000\",\r\n  \"TextMain\": \"#dd11dd\",\r\n  \"TextSecond\": \"#aa11aa\",\r\n  \"TextThird\": \"#661166\",\r\n  \"Primary\": \"#dd11dd\",\r\n  \"Secondary\": \"#111111\",\r\n  \"Success\": \"#991199\",\r\n  \"Error\": \"#3311933\",\r\n  \"IconColor\": \"#dd11dd\",\r\n  \"WidgetBackground\": \"#11ffffff\"\r\n}";
+            const string defaultTheme = "{\r\n  \"IslandColor\": \"#000000\",\r\n  \"TextMain\": \"#dd11dd\",\r\n  \"TextSecond\": \"#aa11aa\",\r\n  \"TextThird\": \"#661166\",\r\n  \"Primary\": \"#dd11dd\",\r\n  \"Secondary\": \"#111111\",\r\n  \"Success\": \"#991199\",\r\n  \"Error\": \"#3311933\",\r\n  \"IconColor\": \"#dd11dd\",\r\n  \"WidgetBackground\": \"#11ffffff\"\r\n}";
 
             var directory = SaveManager.SavePath;
-            var fileName = "Theme.json";
+            const string fileName = "Theme.json";
 
             if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
 
@@ -125,7 +125,7 @@ public class Theme
 
             customTheme = GetTheme(json);
         }
-        catch (Exception e)
+        catch
         {
             System.Diagnostics.Debug.WriteLine("Couldn't load custom theme.");
             customTheme = darkTheme;

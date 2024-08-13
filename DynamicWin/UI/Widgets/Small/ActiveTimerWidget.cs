@@ -18,12 +18,14 @@ internal class RegisterActiveTimerWidget : IRegisterableWidget
 
 public class ActiveTimerWidget : SmallWidgetBase
 {
-    private DWText timeText;
+    private readonly DWText timeText;
 
     public ActiveTimerWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, alignment)
     {
-        timeText = new DWText(this, GetTime(), Vec2.zero, UIAlignment.Center);
-        timeText.TextSize = 14;
+        timeText = new DWText(this, GetTime(), Vec2.zero, UIAlignment.Center)
+        {
+            TextSize = 14
+        };
         AddLocalObject(timeText);
     }
 
@@ -36,9 +38,9 @@ public class ActiveTimerWidget : SmallWidgetBase
 
     private bool IsTimerActive()
     {
-        if (TimerWidget.instance != null)
+        if (TimerWidget.Instance != null)
         {
-            return TimerWidget.instance.IsTimerRunning;
+            return TimerWidget.Instance.IsTimerRunning;
         }
 
         return false;
@@ -46,9 +48,9 @@ public class ActiveTimerWidget : SmallWidgetBase
 
     private string GetTime()
     {
-        if (TimerWidget.instance != null)
+        if (TimerWidget.Instance != null)
         {
-            TimeSpan t = TimeSpan.FromSeconds(TimerWidget.instance.CurrentTime);
+            TimeSpan t = TimeSpan.FromSeconds(TimerWidget.Instance.CurrentTime);
             string formatedTime = string.Format("{0:D2}:{1:D2}:{2:D2}",
                             t.Hours,
                             t.Minutes,

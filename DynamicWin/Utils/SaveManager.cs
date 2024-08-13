@@ -5,12 +5,10 @@ namespace DynamicWin.Utils;
 
 internal class SaveManager
 {
-    private static Dictionary<string, object> data = new Dictionary<string, object>();
-    public static Dictionary<string, object> SaveData
-    { get { return data; } set => data = value; }
+    public static Dictionary<string, object> SaveData { get; set; } = new Dictionary<string, object>();
 
     public static string SavePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DynamicWin");
-    private static string fileName = "Settings.json";
+    private static readonly string fileName = "Settings.json";
 
     private static string cachedJsonSave = "";
 
@@ -32,7 +30,7 @@ internal class SaveManager
         var json = File.ReadAllText(fullPath);
         cachedJsonSave = json;
 
-        data = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+        SaveData = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
     }
 
     public static void SaveAll()
@@ -40,7 +38,7 @@ internal class SaveManager
         if (!Directory.Exists(SavePath)) Directory.CreateDirectory(SavePath);
 
         var fullPath = Path.Combine(SavePath, fileName);
-        var json = JsonConvert.SerializeObject(data, Formatting.Indented);
+        var json = JsonConvert.SerializeObject(SaveData, Formatting.Indented);
 
         if (!File.Exists(fullPath))
             File.Create(fullPath);
@@ -51,21 +49,21 @@ internal class SaveManager
     public static void Add(string key, object value)
     {
         if (!Contains(key))
-            data.Add(key, value);
+            SaveData.Add(key, value);
         else
-            data[key] = value;
+            SaveData[key] = value;
     }
 
     public static void Remove(string key)
     {
         if (Contains(key))
-            data.Remove(key);
+            SaveData.Remove(key);
     }
 
     public static object Get(string key)
     {
         if (Contains(key))
-            return data[key];
+            return SaveData[key];
         else
             return default;
     }
@@ -73,13 +71,13 @@ internal class SaveManager
     public static T Get<T>(string key)
     {
         if (Contains(key))
-            return (T)JsonConvert.DeserializeObject<T>(cachedJsonSave);
+            return JsonConvert.DeserializeObject<T>(cachedJsonSave);
         else
             return default(T);
     }
 
     public static bool Contains(string key)
     {
-        return data.ContainsKey(key);
+        return SaveData.ContainsKey(key);
     }
 }

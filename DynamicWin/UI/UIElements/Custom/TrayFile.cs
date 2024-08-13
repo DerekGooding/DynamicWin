@@ -10,25 +10,24 @@ namespace DynamicWin.UI.UIElements.Custom;
 
 internal class TrayFile : UIObject
 {
-    private string file;
     private Bitmap thumbnail;
 
-    public string FileName { get => file; }
+    public string FileName { get; }
 
-    private DWImage fileIconImage;
-    private DWText fileTitle;
+    private readonly DWImage fileIconImage;
+    private readonly DWText fileTitle;
 
     private bool isSelected = false;
-    public bool IsSelected { get => isSelected; }
+    public bool IsSelected => isSelected;
 
     public static TrayFile lastSelected;
 
-    private Tray tray;
+    private readonly Tray tray;
 
     public TrayFile(UIObject? parent, string file, Vec2 position, Tray tray, UIAlignment alignment = UIAlignment.TopCenter) :
         base(parent, position, new Vec2(60, 75), alignment)
     {
-        this.file = file;
+        this.FileName = file;
         SilentSetActive(false);
 
         this.tray = tray;
@@ -61,10 +60,12 @@ internal class TrayFile : UIObject
             TextSize = 10f
         });
 
-        fileIconImage = new DWImage(this, Resources.Res.FileIcon, new Vec2(0, 30), new Vec2(50, 50), UIAlignment.TopCenter);
-        fileIconImage.allowIconThemeColor = false;
-        fileIconImage.roundRadius = 5f;
-        fileIconImage.maskOwnRect = true;
+        fileIconImage = new DWImage(this, Resources.Res.FileIcon, new Vec2(0, 30), new Vec2(50, 50), UIAlignment.TopCenter)
+        {
+            allowIconThemeColor = false,
+            roundRadius = 5f,
+            maskOwnRect = true
+        };
 
         AddLocalObject(fileIconImage);
 
@@ -77,11 +78,11 @@ internal class TrayFile : UIObject
         {
             try
             {
-                int THUMB_SIZE = 256;
+                const int THUMB_SIZE = 256;
                 thumbnail = WindowsThumbnailProvider.GetThumbnail(
-                   file, THUMB_SIZE, THUMB_SIZE, ThumbnailOptions.None);
+                   FileName, THUMB_SIZE, THUMB_SIZE, ThumbnailOptions.None);
             }
-            catch (System.Runtime.InteropServices.COMException e)
+            catch (System.Runtime.InteropServices.COMException)
             {
                 System.Diagnostics.Debug.WriteLine("Could not load icon.");
 
@@ -91,7 +92,7 @@ internal class TrayFile : UIObject
                     {
                         Thread.Sleep(1500);
                     }
-                    catch (ThreadInterruptedException e)
+                    catch
                     {
                         return;
                     }
@@ -99,28 +100,27 @@ internal class TrayFile : UIObject
                     RefreshIcon();
                 }).Start();
             }
-            catch (FileNotFoundException fnfE)
+            catch
             {
                 return;
             }
             finally
             {
-                SKBitmap bMap = null;
+                SKBitmap? bMap = null;
                 if (thumbnail != null) bMap = thumbnail.ToSKBitmap();
                 else bMap = Resources.Res.FileIcon;
 
                 fileIconImage.Image = bMap;
 
-                if (thumbnail != null)
-                    thumbnail.Dispose();
+                thumbnail?.Dispose();
             }
 
             SetActive(true);
         });
     }
 
-    private float cycle = 0f;
-    private float speed = 5f;
+    private float cycle;
+    private readonly float speed = 5f;
 
     public override void Update(float deltaTime)
     {
@@ -169,7 +169,7 @@ internal class TrayFile : UIObject
         }
     }
 
-    private bool wasSelected = false;
+    private bool wasSelected;
 
     public override void OnMouseUp()
     {
@@ -180,17 +180,15 @@ internal class TrayFile : UIObject
         else
         {
             wasSelected = true;
-            return;
         }
     }
 
     public override void OnGlobalMouseUp()
     {
-        if (!IsHovering)
-        {
-            if (!(KeyHandler.keyDown.Contains(Keys.LControlKey) || KeyHandler.keyDown.Contains(Keys.RControlKey)
+        if (!IsHovering && !(KeyHandler.keyDown.Contains(Keys.LControlKey) || KeyHandler.keyDown.Contains(Keys.RControlKey)
                 || KeyHandler.keyDown.Contains(Keys.LShiftKey) || KeyHandler.keyDown.Contains(Keys.RShiftKey)))
-                isSelected = false;
+        {
+            isSelected = false;
         }
     }
 

@@ -9,7 +9,7 @@ public class KeyHandler
     private const int WH_KEYBOARD_LL = 13;
     private const int WM_KEYDOWN = 0x0100;
     private const int WM_KEYUP = 0x0101;
-    private static LowLevelKeyboardProc _proc = HookCallback;
+    private static readonly LowLevelKeyboardProc _proc = HookCallback;
     private static IntPtr _hookID = IntPtr.Zero;
 
     public static void Start()
@@ -42,17 +42,19 @@ public class KeyHandler
         int nCode, IntPtr wParam, IntPtr lParam)
     {
         int vkCode = Marshal.ReadInt32(lParam);
-        if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN && !keyDown.Contains((Keys)vkCode))
+        if (nCode >= 0 && wParam == WM_KEYDOWN && !keyDown.Contains((Keys)vkCode))
         {
             keyDown.Add((Keys)vkCode);
 
-            var keyModi = new KeyModifier();
-            keyModi.isShiftDown = keyDown.Contains(Keys.LShiftKey) || keyDown.Contains(Keys.RShiftKey);
-            keyModi.isCtrlDown = keyDown.Contains(Keys.LControlKey) || keyDown.Contains(Keys.RControlKey);
+            var keyModi = new KeyModifier
+            {
+                isShiftDown = keyDown.Contains(Keys.LShiftKey) || keyDown.Contains(Keys.RShiftKey),
+                isCtrlDown = keyDown.Contains(Keys.LControlKey) || keyDown.Contains(Keys.RControlKey)
+            };
 
             onKeyDown?.Invoke((Keys)vkCode, keyModi);
         }
-        else if (nCode >= 0 && wParam == (IntPtr)WM_KEYUP && keyDown.Contains((Keys)vkCode))
+        else if (nCode >= 0 && wParam == WM_KEYUP && keyDown.Contains((Keys)vkCode))
         {
             keyDown.Remove((Keys)vkCode);
         }

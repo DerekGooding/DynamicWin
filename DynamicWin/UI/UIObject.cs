@@ -9,39 +9,30 @@ namespace DynamicWin.UI;
 
 public class UIObject
 {
-    private UIObject? parent;
-    public UIObject? Parent { get { return parent; } set { parent = value; } }
+    public UIObject? Parent { get; set; }
 
     private Vec2 position = Vec2.zero;
-    private Vec2 localPosition = Vec2.zero;
-    private Vec2 anchor = new Vec2(0.5f, 0.5f);
-    private Vec2 size = Vec2.one;
     private Col color = Col.White;
 
-    public Vec2 RawPosition { get => position; }
-    public Vec2 Position { get => GetPosition() + localPosition; set => position = value; }
-    public Vec2 LocalPosition { get => localPosition; set => localPosition = value; }
-    public Vec2 Anchor { get => anchor; set => anchor = value; }
-    public Vec2 Size { get => size; set => size = value; }
-    public Col Color { get => new Col(color.r, color.g, color.b, color.a * Alpha); set => color = value; }
-
-    private bool isHovering = false;
-    private bool isMouseDown = false;
-    private bool isGlobalMouseDown = false;
+    public Vec2 RawPosition => position;
+    public Vec2 Position { get => GetPosition() + LocalPosition; set => position = value; }
+    public Vec2 LocalPosition { get; set; } = Vec2.zero;
+    public Vec2 Anchor { get; set; } = new Vec2(0.5f, 0.5f);
+    public Vec2 Size { get; set; } = Vec2.one;
+    public Col Color { get => new(color.r, color.g, color.b, color.a * Alpha); set => color = value; }
+    private bool isGlobalMouseDown;
     protected bool drawLocalObjects = true;
 
-    public bool IsHovering { get => isHovering; private set => isHovering = value; }
-    public bool IsMouseDown { get => isMouseDown; private set => isMouseDown = value; }
+    public bool IsHovering { get; private set; }
+    public bool IsMouseDown { get; private set; }
 
     public UIAlignment alignment = UIAlignment.TopCenter;
 
-    protected float localBlurAmount = 0f;
-    public float blurAmount = 0f;
-    public float roundRadius = 0f;
+    protected float localBlurAmount;
+    public float blurAmount;
+    public float roundRadius;
     public bool maskInToIsland = true;
-
-    private List<UIObject> localObjects = new List<UIObject>();
-    public List<UIObject> LocalObjects { get => localObjects; }
+    public List<UIObject> LocalObjects { get; } = new List<UIObject>();
 
     private bool isEnabled = true;
     public bool IsEnabled { get => isEnabled; set => SetActive(value); }
@@ -55,21 +46,21 @@ public class UIObject
 
     protected void AddLocalObject(UIObject obj)
     {
-        obj.parent = this;
-        localObjects.Add(obj);
+        obj.Parent = this;
+        LocalObjects.Add(obj);
     }
 
     protected void DestroyLocalObject(UIObject obj)
     {
         obj.DestroyCall();
-        localObjects.Remove(obj);
+        LocalObjects.Remove(obj);
     }
 
     public UIObject(UIObject? parent, Vec2 position, Vec2 size, UIAlignment alignment = UIAlignment.TopCenter)
     {
-        this.parent = parent;
+        this.Parent = parent;
         this.position = position;
-        this.size = size;
+        this.Size = size;
         this.alignment = alignment;
 
         this.contextMenu = CreateContextMenu();
@@ -78,27 +69,24 @@ public class UIObject
         RendererMain.Instance.ContextMenuClosing += CtxClose;
     }
 
-    void CtxOpen(object sender, RoutedEventArgs e)
+    private void CtxOpen(object sender, RoutedEventArgs e)
     {
         if (RendererMain.Instance.ContextMenu != null)
             canInteract = false;
     }
 
-    void CtxClose(object sender, RoutedEventArgs e)
-    {
-        canInteract = true;
-    }
+    private void CtxClose(object sender, RoutedEventArgs e) => canInteract = true;
 
-    public Vec2 GetScreenPosFromRawPosition(Vec2 position, Vec2 Size = null, UIAlignment alignment = UIAlignment.None, UIObject parent = null)
+    public Vec2 GetScreenPosFromRawPosition(Vec2 position, Vec2? Size = null, UIAlignment alignment = UIAlignment.None, UIObject? parent = null)
     {
-        if (parent == null) parent = this.parent;
-        if (Size == null) Size = this.Size;
+        parent ??= Parent;
+        Size ??= this.Size;
         if (alignment == UIAlignment.None) alignment = this.alignment;
 
         if (parent == null)
         {
             Vec2 screenDim = RendererMain.ScreenDimensions;
-            if (Size == null) Size = Vec2.one;
+            Size ??= Vec2.one;
             switch (alignment)
             {
                 case UIAlignment.TopLeft:
@@ -188,7 +176,7 @@ public class UIObject
 
     protected virtual Vec2 GetPosition()
     {
-        if (parent == null)
+        if (Parent == null)
         {
             Vec2 screenDim = RendererMain.ScreenDimensions;
             switch (alignment)
@@ -232,8 +220,8 @@ public class UIObject
         }
         else
         {
-            Vec2 parentDim = parent.Size;
-            Vec2 parentPos = parent.Position;
+            Vec2 parentDim = Parent.Size;
+            Vec2 parentPos = Parent.Position;
 
             switch (alignment)
             {
@@ -290,13 +278,13 @@ public class UIObject
     {
         if (!isEnabled) return;
 
-        if (parent != null)
-            pAlpha = parent.Alpha;
+        if (Parent != null)
+            pAlpha = Parent.Alpha;
 
         if (canInteract)
         {
             var rect = SKRect.Create(RendererMain.CursorPosition.X, RendererMain.CursorPosition.Y, 1, 1);
-            isHovering = GetInteractionRect().Contains(rect);
+            IsHovering = GetInteractionRect().Contains(rect);
 
             if (!isGlobalMouseDown && Mouse.LeftButton == MouseButtonState.Pressed)
             {
@@ -329,7 +317,7 @@ public class UIObject
 
         if (drawLocalObjects)
         {
-            new List<UIObject>(localObjects).ForEach((UIObject obj) =>
+            new List<UIObject>(LocalObjects).ForEach((UIObject obj) =>
             {
                 obj.blurAmount = GetBlur();
                 obj.UpdateCall(deltaTime);
@@ -347,10 +335,7 @@ public class UIObject
 
         if (drawLocalObjects)
         {
-            new List<UIObject>(localObjects).ForEach((UIObject obj) =>
-            {
-                obj.DrawCall(canvas);
-            });
+            new List<UIObject>(LocalObjects).ForEach((UIObject obj) => obj.DrawCall(canvas));
         }
     }
 
@@ -380,24 +365,17 @@ public class UIObject
 
         if (GetBlur() != 0f)
         {
-            var blur = SKImageFilter.CreateBlur(GetBlur(), GetBlur());
-            paint.ImageFilter = blur;
+            paint.ImageFilter = SKImageFilter.CreateBlur(GetBlur(), GetBlur());
         }
 
         return paint;
     }
 
-    public Col GetColor(Col col)
-    {
-        return new Col(col.r, col.g, col.b, col.a * Alpha);
-    }
+    public Col GetColor(Col col) => new Col(col.r, col.g, col.b, col.a * Alpha);
 
     public void DestroyCall()
     {
-        localObjects.ForEach((UIObject obj) =>
-        {
-            obj.DestroyCall();
-        });
+        LocalObjects.ForEach((UIObject obj) => obj.DestroyCall());
 
         OnDestroy();
     }
@@ -410,10 +388,7 @@ public class UIObject
     public virtual void OnMouseUp() { }
     public virtual void OnGlobalMouseUp() { }
 
-    public void SilentSetActive(bool isEnabled)
-    {
-        this.isEnabled = isEnabled;
-    }
+    public void SilentSetActive(bool isEnabled) => this.isEnabled = isEnabled;
 
     Animator toggleAnim;
 
@@ -471,7 +446,7 @@ public class UIObject
         return r;
     }
 
-    ContextMenu? contextMenu = null;
+    readonly ContextMenu? contextMenu = null;
 
     public virtual ContextMenu? CreateContextMenu() { return null; }
     public virtual ContextMenu? GetContextMenu() { return contextMenu; }

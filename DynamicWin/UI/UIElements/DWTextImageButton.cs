@@ -5,29 +5,23 @@ namespace DynamicWin.UI.UIElements;
 
 public class DWTextImageButton : DWButton
 {
-    private DWText text;
-
-    public DWText Text
-    { get { return text; } set => text = value; }
+    public DWText Text { get; set; }
 
     public float normalTextSize = 10;
     public float textSizeSmoothSpeed = 15f;
-
-    private DWImage image;
     public float imageScale = 0.85f;
 
-    public DWImage Image
-    { get { return image; } private set => image = value; }
+    public DWImage Image { get; private set; }
 
     public DWTextImageButton(UIObject? parent, SKBitmap image, string buttonText, Vec2 position, Vec2 size, Action clickCallback, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, size, clickCallback, alignment)
     {
-        text = new DWText(this, buttonText, new Vec2(-7.5f, 0), UIAlignment.MiddleRight);
-        text.Anchor.X = 0f;
-        AddLocalObject(text);
+        Text = new DWText(this, buttonText, new Vec2(-7.5f, 0), UIAlignment.MiddleRight);
+        Text.Anchor.X = 0f;
+        AddLocalObject(Text);
 
-        this.image = new DWImage(this, image, new Vec2(15, 0), Vec2.one * size.Y * imageScale, UIAlignment.MiddleLeft);
-        text.Anchor.X = 1f;
-        AddLocalObject(this.image);
+        Image = new DWImage(this, image, new Vec2(15, 0), Vec2.one * size.Y * imageScale, UIAlignment.MiddleLeft);
+        Text.Anchor.X = 1f;
+        AddLocalObject(Image);
 
         Text.TextSize = normalTextSize;
     }

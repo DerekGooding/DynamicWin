@@ -10,9 +10,7 @@ public class SmallWidgetBase : WidgetBase
         isSmallWidget = true;
     }
 
-    protected override float GetWidgetHeight()
-    { return 15; }
+    protected override float GetWidgetHeight() => 15;
 
-    protected override float GetWidgetWidth()
-    { return 35; }
+    protected override float GetWidgetWidth() => 35;
 }

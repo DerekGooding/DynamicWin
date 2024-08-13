@@ -10,7 +10,7 @@ namespace DynamicWin.UI.Menu.Menus;
 
 internal class ConfigureShortcutMenu : BaseMenu
 {
-    private ShortcutButton _shortcutButtonToConfigure;
+    private readonly ShortcutButton _shortcutButtonToConfigure;
     private ShortcutButton.ShortcutSave save;
 
     private static ConfigureShortcutMenu instance;
@@ -63,9 +63,11 @@ internal class ConfigureShortcutMenu : BaseMenu
         {
             _shortcutButtonToConfigure.SetShortcut(save);
             MenuManager.OpenMenu(Res.HomeMenu);
-        }, UIAlignment.BottomCenter);
-        saveAndBack.hoverScaleMulti = Vec2.one * 1.025f;
-        saveAndBack.roundRadius = 15;
+        }, UIAlignment.BottomCenter)
+        {
+            hoverScaleMulti = Vec2.one * 1.025f,
+            roundRadius = 15
+        };
         objects.Add(saveAndBack);
 
         elementTitle = new DWText(island, "Untitled", new Vec2(25, 25), UIAlignment.TopLeft);

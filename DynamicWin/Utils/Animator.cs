@@ -15,8 +15,7 @@ public class Animator : UIObject
     public int animationInterval;
 
     private bool isRunning;
-    public bool IsRunning
-    { get { return isRunning; } }
+    public bool IsRunning => isRunning;
 
     public Animator(int animationDuration, int animationInterval = 1) : base(null, Vec2.zero, Vec2.zero)
     {
@@ -55,7 +54,7 @@ public class Animator : UIObject
             return;
         }
 
-        float progress = elapsed / (float)animationDuration;
+        float progress = elapsed / animationDuration;
 
         onAnimationUpdate?.Invoke(progress);
     }

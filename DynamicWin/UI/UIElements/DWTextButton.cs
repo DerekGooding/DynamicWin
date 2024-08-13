@@ -4,18 +4,15 @@ namespace DynamicWin.UI.UIElements;
 
 public class DWTextButton : DWButton
 {
-    private DWText text;
-
-    public DWText Text
-    { get { return text; } set => text = value; }
+    public DWText Text { get; set; }
 
     public float normalTextSize = 14;
     public float textSizeSmoothSpeed = 15f;
 
     public DWTextButton(UIObject? parent, string buttonText, Vec2 position, Vec2 size, Action clickCallback, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, size, clickCallback, alignment)
     {
-        text = new DWText(this, buttonText, Vec2.zero, UIAlignment.Center);
-        AddLocalObject(text);
+        Text = new DWText(this, buttonText, Vec2.zero, UIAlignment.Center);
+        AddLocalObject(Text);
 
         Text.TextSize = normalTextSize;
     }

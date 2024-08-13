@@ -6,10 +6,10 @@ namespace DynamicWin.UI.Menu;
 public class MenuManager
 {
     private BaseMenu activeMenu;
-    public BaseMenu ActiveMenu { get => activeMenu; }
+    public BaseMenu ActiveMenu => activeMenu;
 
     private static MenuManager instance;
-    public static MenuManager Instance { get => instance; }
+    public static MenuManager Instance => instance;
 
     public Action<BaseMenu, BaseMenu> onMenuChange;
     public Action<BaseMenu> onMenuChangeEnd;
@@ -60,7 +60,7 @@ public class MenuManager
             {
                 Thread.Sleep(timeMillis);
             }
-            catch (ThreadInterruptedException e)
+            catch
             {
                 QueueOpenMenu(lastMenu);
                 return;
@@ -72,17 +72,15 @@ public class MenuManager
         overlayThread.Start();
     }
 
-    private List<BaseMenu> menuLoadQueue = new List<BaseMenu>();
+    private readonly List<BaseMenu> menuLoadQueue = new List<BaseMenu>();
 
     private Animator menuAnimatorIn;
     private Animator menuAnimatorOut;
 
     public void Update(float deltaTime)
     {
-        if (menuAnimatorIn != null)
-            menuAnimatorIn.Update(deltaTime);
-        if (menuAnimatorOut != null)
-            menuAnimatorOut.Update(deltaTime);
+        menuAnimatorIn?.Update(deltaTime);
+        menuAnimatorOut?.Update(deltaTime);
     }
 
     private void SetActiveMenu(BaseMenu newActiveMenu)
@@ -94,7 +92,7 @@ public class MenuManager
 
         float yOffset = RendererMain.Instance.MainIsland.Size.Y * 0.75f;
 
-        int length = 250;
+        const int length = 250;
 
         List<UIObject> currentObjects = new List<UIObject>(activeMenu.UiObjects);
 
@@ -157,7 +155,7 @@ public class MenuManager
 
             menuAnimatorIn.onAnimationEnd += () =>
             {
-                if (activeMenu != null) activeMenu.OnDeload();
+                activeMenu?.OnDeload();
                 activeMenu = newActiveMenu;
 
                 RendererMain.Instance.renderOffset.Y = -yOffset;

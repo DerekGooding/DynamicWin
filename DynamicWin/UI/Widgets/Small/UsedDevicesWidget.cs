@@ -55,15 +55,16 @@ class RegisterUsedDevicesOptions : IRegisterableSetting
 
         var loudnessMeter = new LoudnessMeter(null, new Vec2(0, 0), new Vec2(400, 7.5f));
 
-        var thresholdSlider = new DWSlider(null, new Vec2(0, 0), new Vec2(400, 25));
-        thresholdSlider.value = Mathf.Clamp(saveData.indicatorThreshold, 0.05f, 1f);
-        thresholdSlider.clickCallback = (x) =>
+        var thresholdSlider = new DWSlider(null, new Vec2(0, 0), new Vec2(400, 25))
         {
-            saveData.indicatorThreshold = x;
+            value = Mathf.Clamp(saveData.indicatorThreshold, 0.05f, 1f),
+            clickCallback = (x) => saveData.indicatorThreshold = x
         };
 
-        var enableIndicatorCheckbox = new Checkbox(null, "Show Microphone Indicator", new Vec2(25, 0), new Vec2(25, 25), null, alignment: UIAlignment.TopLeft);
-        enableIndicatorCheckbox.IsChecked = saveData.enableIndicator;
+        var enableIndicatorCheckbox = new Checkbox(null, "Show Microphone Indicator", new Vec2(25, 0), new Vec2(25, 25), null, alignment: UIAlignment.TopLeft)
+        {
+            IsChecked = saveData.enableIndicator
+        };
 
         var thresholdText = new DWText(null, "Threshold", new Vec2(25, 0), UIAlignment.TopLeft);
 
@@ -102,7 +103,7 @@ internal class LoudnessMeter : DWProgressBar
         value = GetMicrophoneLoudness();
 
         contentColor = GetColor(
-            ((value > 0.85f) ? new Col(1, 0, 0) : (value > 0.65f) ? new Col(1, 1, 0) : new Col(0, 1, 0))
+            (value > 0.85f) ? new Col(1, 0, 0) : (value > 0.65f) ? new Col(1, 1, 0) : new Col(0, 1, 0)
             ) * (RegisterUsedDevicesOptions.saveData.indicatorThreshold < value ? 1f : 0.45f);
 
         Color = contentColor * 0.25f;
@@ -125,15 +126,15 @@ public class UsedDevicesWidget : SmallWidgetBase
         base.OnDestroy();
     }
 
-    float camDotSize = 2.5f;
+    readonly float camDotSize = 2.5f;
     float camDotSizeCurrent = 0f;
     float camDotPositionX = 0f;
 
-    float micDotSize = 2.5f;
+    readonly float micDotSize = 2.5f;
     float micDotSizeCurrent = 0f;
     float micDotPositionX = 0f;
 
-    float seperation = 6.5f;
+    readonly float seperation = 6.5f;
 
     protected override float GetWidgetWidth()
     {
@@ -143,7 +144,7 @@ public class UsedDevicesWidget : SmallWidgetBase
     float sinCycleCamera = 1f;
     float sinCycleMicrophone = 0f;
 
-    float sinSpeed = 2.75f;
+    readonly float sinSpeed = 2.75f;
 
     public override void Update(float deltaTime)
     {

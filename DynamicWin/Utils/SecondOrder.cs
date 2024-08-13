@@ -11,7 +11,7 @@ public class SecondOrder
     public SecondOrder(Vec2 x0, float f = 2f, float z = 0.4f, float r = 0.1f)
     {
         k1 = (float)(z / (Math.PI * f));
-        k2 = (float)(1 / ((2 * Math.PI * f) * (2 * Math.PI * f)));
+        k2 = (float)(1 / (2 * Math.PI * f * (2 * Math.PI * f)));
         k3 = (float)(r * z / (2 * Math.PI * f));
 
         xp = x0;
@@ -22,7 +22,7 @@ public class SecondOrder
     public void SetValues(float f = 2f, float z = 0.4f, float r = 0.1f)
     {
         k1 = (float)(z / (Math.PI * f));
-        k2 = (float)(1 / ((2 * Math.PI * f) * (2 * Math.PI * f)));
+        k2 = (float)(1 / (2 * Math.PI * f * (2 * Math.PI * f)));
         k3 = (float)(r * z / (2 * Math.PI * f));
     }
 

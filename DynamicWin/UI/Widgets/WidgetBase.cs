@@ -7,11 +7,10 @@ namespace DynamicWin.UI.Widgets;
 
 public class WidgetBase : UIObject
 {
-    public bool isEditMode = false;
+    public bool isEditMode;
 
-    protected bool isSmallWidget = false;
-    public bool IsSmallWidget
-    { get { return isSmallWidget; } }
+    protected bool isSmallWidget;
+    public bool IsSmallWidget => isSmallWidget;
 
     //DWText widgetName;
 
@@ -19,8 +18,8 @@ public class WidgetBase : UIObject
     {
         Size = GetWidgetSize();
 
-        var objs = InitializeWidget();
-        objs.ForEach(obj => AddLocalObject(obj));
+        var objs = InitializeWidget;
+        objs.ForEach(AddLocalObject);
 
         roundRadius = 15f;
 
@@ -31,19 +30,13 @@ public class WidgetBase : UIObject
         };*/
     }
 
-    public Vec2 GetWidgetSize()
-    { return new Vec2(GetWidgetWidth(), GetWidgetHeight()); }
+    public Vec2 GetWidgetSize() => new(GetWidgetWidth(), GetWidgetHeight());
 
-    protected virtual float GetWidgetHeight()
-    { return 100; }
+    protected virtual float GetWidgetHeight() => 100;
 
-    protected virtual float GetWidgetWidth()
-    { return 200; }
+    protected virtual float GetWidgetWidth() => 200;
 
-    public List<UIObject> InitializeWidget()
-    {
-        return new List<UIObject>();
-    }
+    public static List<UIObject> InitializeWidget => [];
 
     public Action onEditRemoveWidget;
     public Action onEditMoveWidgetLeft;
@@ -53,16 +46,16 @@ public class WidgetBase : UIObject
     {
         if (!isEditMode) return null;
 
-        var ctx = new System.Windows.Controls.ContextMenu();
+        var ctx = new ContextMenu();
 
-        MenuItem remove = new MenuItem() { Header = "Remove" };
-        remove.Click += (x, y) => onEditRemoveWidget?.Invoke();
+        MenuItem remove = new() { Header = "Remove" };
+        remove.Click += (x, y) => onEditRemoveWidget.Invoke();
 
-        MenuItem pL = new MenuItem() { Header = "<- Push Left" };
-        pL.Click += (x, y) => onEditMoveWidgetLeft?.Invoke();
+        MenuItem pL = new() { Header = "<- Push Left" };
+        pL.Click += (x, y) => onEditMoveWidgetLeft.Invoke();
 
-        MenuItem pR = new MenuItem() { Header = "Push Right ->" };
-        pR.Click += (x, y) => onEditMoveWidgetRight?.Invoke();
+        MenuItem pR = new() { Header = "Push Right ->" };
+        pR.Click += (x, y) => onEditMoveWidgetRight.Invoke();
 
         ctx.Items.Add(remove);
         ctx.Items.Add(pL);
@@ -71,7 +64,7 @@ public class WidgetBase : UIObject
         return ctx;
     }
 
-    private float hoverProgress = 0f;
+    private float hoverProgress;
 
     public override void Draw(SKCanvas canvas)
     {
@@ -86,8 +79,8 @@ public class WidgetBase : UIObject
 
             int ogC = canvas.Save();
 
-            var p = Position + Size / 2;
-            canvas.Scale(1 + hoverProgress / 60, 1 + hoverProgress / 60, p.X, p.Y);
+            var p = Position + (Size / 2);
+            canvas.Scale(1 + (hoverProgress / 60), 1 + (hoverProgress / 60), p.X, p.Y);
 
             int sc = canvas.Save();
             canvas.ClipRoundRect(GetRect(), SKClipOperation.Difference, antialias: true);
@@ -130,9 +123,9 @@ public class WidgetBase : UIObject
             paint.StrokeJoin = SKStrokeJoin.Round;
             paint.StrokeWidth = 2f;
 
-            float expand = 10;
-            var brect = SKRect.Create(Position.X - expand / 2, Position.Y - expand / 2, Size.X + expand, Size.Y + expand);
-            var broundRect = new SKRoundRect(brect, roundRadius);
+            const float expand = 10;
+            SKRect bRect = SKRect.Create(Position.X - (expand / 2), Position.Y - (expand / 2), Size.X + expand, Size.Y + expand);
+            SKRoundRect bRoundRect = new(bRect, roundRadius);
 
             int noClip = canvas.Save();
 
@@ -140,7 +133,7 @@ public class WidgetBase : UIObject
             //    canvas.ClipRect(clipRect, SKClipOperation.Difference);
 
             paint.Color = SKColors.DimGray;
-            canvas.DrawRoundRect(broundRect, paint);
+            canvas.DrawRoundRect(bRoundRect, paint);
 
             canvas.RestoreToCount(noClip);
         }
