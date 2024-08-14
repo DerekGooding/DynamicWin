@@ -14,11 +14,6 @@ internal class DWTextGroup : UIObject
         SetText(text);
     }
 
-    public override void Update(float deltaTime)
-    {
-        base.Update(deltaTime);
-    }
-
     public override void Draw(SKCanvas canvas)
     {
         base.Draw(canvas);
@@ -35,7 +30,7 @@ internal class DWTextGroup : UIObject
         Size.X = xAdded;
     }
 
-    private string text = "";
+    private string text = string.Empty;
 
     public void SetText(string text)
     {
@@ -82,8 +77,5 @@ internal class DWTextGroup : UIObject
         }
     }
 
-    public void Refresh()
-    {
-        SetText(text);
-    }
+    public void Refresh() => SetText(text);
 }

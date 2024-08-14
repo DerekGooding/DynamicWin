@@ -13,7 +13,7 @@ internal class Tray : UIObject
 {
     private static string[]? cachedTrayFiles;
 
-    private float yOffset = 0f;
+    private float yOffset;
     private readonly float mouseSensitivity = 0.225f;
 
     private readonly DWImage noFilesImage;
@@ -29,13 +29,13 @@ internal class Tray : UIObject
 
     public override ContextMenu? GetContextMenu()
     {
-        ContextMenu contextMenu = new ContextMenu();
+        ContextMenu contextMenu = new();
 
         if (selectedFiles.Count != 0)
         {
             contextMenu.Items.Insert(0, new MenuItem() { Header = "Selected Files: " + selectedFiles.Count, IsEnabled = false });
 
-            MenuItem removeSelected = new MenuItem() { Header = "Remove Selected File" + ((selectedFiles.Count > 1) ? $"s" : "") };
+            MenuItem removeSelected = new() { Header = "Remove Selected File" + ((selectedFiles.Count > 1) ? $"s" : "") };
             removeSelected.Click += (x, y) =>
             {
                 new List<TrayFile>(selectedFiles).ForEach((f) =>
@@ -46,7 +46,7 @@ internal class Tray : UIObject
                 selectedFiles.Clear();
             };
 
-            MenuItem copySelected = new MenuItem() { Header = "Copy Selected File" + ((selectedFiles.Count > 1) ? $"s" : "") };
+            MenuItem copySelected = new() { Header = "Copy Selected File" + ((selectedFiles.Count > 1) ? $"s" : "") };
             copySelected.Click += (x, y) =>
             {
                 StringCollection paths = [];
@@ -59,7 +59,7 @@ internal class Tray : UIObject
             contextMenu.Items.Add(new Separator());
         }
 
-        MenuItem removeAll = new MenuItem() { Header = "Remove All Files" };
+        MenuItem removeAll = new() { Header = "Remove All Files" };
         removeAll.Click += (x, y) =>
         {
             new List<TrayFile>(fileObjects).ForEach((f) =>
@@ -83,8 +83,8 @@ internal class Tray : UIObject
     }
 
     private Vec2 mouseDownPos = Vec2.zero;
-    private bool isDragging = false;
-    private bool canDrag = false;
+    private bool isDragging;
+    private bool canDrag;
 
     public override void OnMouseDown()
     {
@@ -99,9 +99,9 @@ internal class Tray : UIObject
         scrollFac += e.Delta * mouseSensitivity;
     }
 
-    private float scrollFac = 0f;
-    private int timer = 0;
-    private float mouseYLastSmooth = 0f;
+    private float scrollFac;
+    private int timer;
+    private float mouseYLastSmooth;
 
     public override void Update(float deltaTime)
     {

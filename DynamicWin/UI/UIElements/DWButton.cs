@@ -18,7 +18,7 @@ public class DWButton : UIObject
 
     public Vec2 normalScaleMulti = Vec2.one * 1f;
     public Vec2 hoverScaleMulti = Vec2.one * 1.05f;
-    public Vec2 clickScaleMulti = Vec2.one * 1f - 0.05f;
+    public Vec2 clickScaleMulti = (Vec2.one * 1f) - 0.05f;
 
     protected Vec2 scaleMultiplier = Vec2.one;
 

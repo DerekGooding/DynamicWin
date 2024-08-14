@@ -10,24 +10,27 @@ namespace DynamicWin.UI.UIElements.Custom;
 
 internal class TrayFile : UIObject
 {
-    private Bitmap thumbnail;
+    private Bitmap? thumbnail;
 
     public string FileName { get; }
 
     private readonly DWImage fileIconImage;
     private readonly DWText fileTitle;
 
-    private bool isSelected = false;
-    public bool IsSelected => isSelected;
+    public bool IsSelected { get; private set; }
 
-    public static TrayFile lastSelected;
+    public static TrayFile? LastSelected;
 
     private readonly Tray tray;
+
+    private float cycle;
+    private readonly float speed = 5f;
+    private bool wasSelected;
 
     public TrayFile(UIObject? parent, string file, Vec2 position, Tray tray, UIAlignment alignment = UIAlignment.TopCenter) :
         base(parent, position, new Vec2(60, 75), alignment)
     {
-        this.FileName = file;
+        FileName = file;
         SilentSetActive(false);
 
         this.tray = tray;
@@ -119,9 +122,6 @@ internal class TrayFile : UIObject
         });
     }
 
-    private float cycle;
-    private readonly float speed = 5f;
-
     public override void Update(float deltaTime)
     {
         base.Update(deltaTime);
@@ -134,20 +134,20 @@ internal class TrayFile : UIObject
 
     public override void OnMouseDown()
     {
-        if (!isSelected) isSelected = true;
+        if (!IsSelected) IsSelected = true;
         else return;
 
         wasSelected = false;
 
-        if (isSelected)
+        if (IsSelected)
         {
             if (KeyHandler.keyDown.Contains(Keys.LShiftKey) || KeyHandler.keyDown.Contains(Keys.RShiftKey))
             {
                 int indexLast = 0;
-                if (TrayFile.lastSelected != null)
-                    indexLast = tray.fileObjects.IndexOf(TrayFile.lastSelected);
+                if (LastSelected != null)
+                    indexLast = tray.fileObjects.IndexOf(LastSelected);
 
-                lastSelected = this;
+                LastSelected = this;
                 var newIndex = tray.fileObjects.IndexOf(this);
 
                 if (newIndex == indexLast) return;
@@ -159,23 +159,21 @@ internal class TrayFile : UIObject
 
                 for (int i = start; i < end; i++)
                 {
-                    tray.fileObjects[i].isSelected = true;
+                    tray.fileObjects[i].IsSelected = true;
                 }
             }
             else
             {
-                lastSelected = this;
+                LastSelected = this;
             }
         }
     }
 
-    private bool wasSelected;
-
     public override void OnMouseUp()
     {
-        if (isSelected && wasSelected)
+        if (IsSelected && wasSelected)
         {
-            isSelected = false;
+            IsSelected = false;
         }
         else
         {
@@ -188,7 +186,7 @@ internal class TrayFile : UIObject
         if (!IsHovering && !(KeyHandler.keyDown.Contains(Keys.LControlKey) || KeyHandler.keyDown.Contains(Keys.RControlKey)
                 || KeyHandler.keyDown.Contains(Keys.LShiftKey) || KeyHandler.keyDown.Contains(Keys.RShiftKey)))
         {
-            isSelected = false;
+            IsSelected = false;
         }
     }
 
@@ -196,26 +194,22 @@ internal class TrayFile : UIObject
     {
         var paint = GetPaint();
 
-        if (isSelected)
+        if (IsSelected)
         {
-            //var rect = SKRect.Create(Position.X - 15, Position.Y, Size.X + 30, Size.Y);
-            //var rRect = new SKRoundRect(rect, roundRadius);
-
-            var textR = SKRect.Create(fileTitle.Position.X, fileTitle.Position.Y + 1.5f,
+            SKRect textR = SKRect.Create(fileTitle.Position.X, fileTitle.Position.Y + 1.5f,
                 fileTitle.Size.X, fileTitle.Size.Y);
             textR.Inflate(-2.5f, 0);
-            var roundTextRect = new SKRoundRect(textR, 5f);
+            SKRoundRect roundTextRect = new(textR, 5f);
 
-            var thumbnailR = SKRect.Create(fileIconImage.Position.X, fileIconImage.Position.Y,
+            SKRect thumbnailR = SKRect.Create(fileIconImage.Position.X, fileIconImage.Position.Y,
                 fileIconImage.Size.X, fileIconImage.Size.Y + 5);
-            var roundThumbnailRect = new SKRoundRect(thumbnailR, 2.5f);
+            SKRoundRect roundThumbnailRect = new(thumbnailR, 2.5f);
             roundThumbnailRect.Inflate(5f, 5f);
 
-            var path = new SKPath();
+            SKPath path = new();
             path.AddRoundRect(roundTextRect);
             path.AddRoundRect(roundThumbnailRect);
 
-            //canvas.DrawRoundRect(roundTextRect, paint);
             canvas.DrawPath(path, paint);
         }
     }
