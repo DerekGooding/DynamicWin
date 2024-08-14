@@ -5,7 +5,7 @@ namespace DynamicWin.UI.UIElements.Custom;
 
 internal class DWTextGroup : UIObject
 {
-    private readonly List<DWText> textPieces = new List<DWText>();
+    private readonly List<DWText> textPieces = [];
 
     public float textSize = 24;
 
@@ -41,7 +41,7 @@ internal class DWTextGroup : UIObject
     {
         if (this.text == text) return;
 
-        List<int> sameCharacters = new List<int>();
+        List<int> sameCharacters = [];
         for (int i = 0; i < this.text.Length; i++)
         {
             if (this.text.Length <= i || text.Length <= i) continue;

@@ -4,18 +4,23 @@ using System.IO;
 
 namespace DynamicWin.Utils;
 
-public class Theme
+public static class Theme
 {
-    public static Theme Instance { get; private set; }
-
-    public Theme()
+    public struct ThemeHolder
     {
-        Instance = this;
-
-        UpdateTheme();
+        public string TextMain;
+        public string TextSecond;
+        public string TextThird;
+        public string Primary;
+        public string Secondary;
+        public string IslandColor;
+        public string Success;
+        public string Error;
+        public string IconColor;
+        public string WidgetBackground;
     }
 
-    public void ApplyTheme(ThemeHolder theme)
+    public static void ApplyTheme(ThemeHolder theme)
     {
         TextMain = GetColor(theme.TextMain);
         TextSecond = GetColor(theme.TextSecond);
@@ -29,12 +34,9 @@ public class Theme
         WidgetBackground = GetColor(theme.WidgetBackground);
     }
 
-    public Col GetColor(string hex)
-    {
-        return Col.FromHex(hex);
-    }
+    public static Col GetColor(string hex) => Col.FromHex(hex);
 
-    public void UpdateTheme(bool refreshRenderer = false)
+    public static void UpdateTheme(bool refreshRenderer = false)
     {
         var darkTheme = new ThemeHolder
         {
@@ -140,12 +142,7 @@ public class Theme
             MainForm.Instance.AddRenderer();
     }
 
-    private ThemeHolder GetTheme(string json)
-    {
-        var customTheme = new ThemeHolder();
-        customTheme = JsonConvert.DeserializeObject<ThemeHolder>(json);
-        return customTheme;
-    }
+    private static ThemeHolder GetTheme(string json) => JsonConvert.DeserializeObject<ThemeHolder>(json);
 
     public static Col TextMain { get; set; }
     public static Col TextSecond { get; set; }
@@ -157,18 +154,4 @@ public class Theme
     public static Col Error { get; set; }
     public static Col IconColor { get; set; }
     public static Col WidgetBackground { get; set; }
-}
-
-public struct ThemeHolder
-{
-    public string TextMain;
-    public string TextSecond;
-    public string TextThird;
-    public string Primary;
-    public string Secondary;
-    public string IslandColor;
-    public string Success;
-    public string Error;
-    public string IconColor;
-    public string WidgetBackground;
 }

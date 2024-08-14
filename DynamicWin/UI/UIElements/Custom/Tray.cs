@@ -49,7 +49,7 @@ internal class Tray : UIObject
             MenuItem copySelected = new MenuItem() { Header = "Copy Selected File" + ((selectedFiles.Count > 1) ? $"s" : "") };
             copySelected.Click += (x, y) =>
             {
-                StringCollection paths = new StringCollection();
+                StringCollection paths = [];
                 selectedFiles.ForEach((f) => paths.Add(f.FileName));
                 Clipboard.SetFileDropList(paths);
             };
@@ -158,7 +158,7 @@ internal class Tray : UIObject
         {
             isDragging = true;
 
-            List<string> draggedFiles = new List<string>();
+            List<string> draggedFiles = [];
             fileObjects.ForEach((f) =>
             {
                 if (f.IsSelected)
@@ -172,7 +172,7 @@ internal class Tray : UIObject
 
             MainForm.Instance.StartDrag(draggedFiles.ToArray(), () =>
             {
-                List<TrayFile> toRemove = new List<TrayFile>();
+                List<TrayFile> toRemove = [];
                 fileObjects.ForEach((f) =>
                 {
                     if (draggedFiles.Contains(f.FileName))
@@ -238,10 +238,10 @@ internal class Tray : UIObject
         removedFiles.ForEach((file) => file.DrawCall(canvas));
     }
 
-    public List<TrayFile> fileObjects = new List<TrayFile>();
-    public List<TrayFile> selectedFiles = new List<TrayFile>();
+    public List<TrayFile> fileObjects = [];
+    public List<TrayFile> selectedFiles = [];
 
-    public List<TrayFile> removedFiles = new List<TrayFile>();
+    public List<TrayFile> removedFiles = [];
 
     private void RemoveFileObject(TrayFile file)
     {
@@ -255,7 +255,7 @@ internal class Tray : UIObject
 
     private void AddFileObjects()
     {
-        List<TrayFile> filesToRemove = new List<TrayFile>();
+        List<TrayFile> filesToRemove = [];
         fileObjects.ForEach(filesToRemove.Add);
 
         cachedTrayFiles ??= [];

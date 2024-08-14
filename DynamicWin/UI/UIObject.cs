@@ -32,7 +32,7 @@ public class UIObject
     public float blurAmount;
     public float roundRadius;
     public bool maskInToIsland = true;
-    public List<UIObject> LocalObjects { get; } = new List<UIObject>();
+    public List<UIObject> LocalObjects { get; } = [];
 
     private bool isEnabled = true;
     public bool IsEnabled { get => isEnabled; set => SetActive(value); }

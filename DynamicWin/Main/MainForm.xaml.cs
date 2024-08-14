@@ -82,8 +82,8 @@ public partial class MainForm : Window
         isDragging = true;
         e.Effects = DragDropEffects.Copy;
 
-        if (!(MenuManager.Instance.ActiveMenu is DropFileMenu)
-            && !(MenuManager.Instance.ActiveMenu is ConfigureShortcutMenu))
+        if (MenuManager.Instance.ActiveMenu is not DropFileMenu
+            && MenuManager.Instance.ActiveMenu is not ConfigureShortcutMenu)
         {
             MenuManager.OpenMenu(new DropFileMenu());
         }
@@ -107,8 +107,7 @@ public partial class MainForm : Window
 
         Array.ForEach(files, file => System.Diagnostics.Debug.WriteLine(file));
 
-        if (files == null) return;
-        else if (files.Length <= 0) return;
+        if (files == null || files.Length == 0) return;
 
         try
         {

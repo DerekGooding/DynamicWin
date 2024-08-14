@@ -35,7 +35,7 @@ public class KeyHandler
     private delegate IntPtr LowLevelKeyboardProc(
         int nCode, IntPtr wParam, IntPtr lParam);
 
-    public static List<Keys> keyDown = new List<Keys>();
+    public static List<Keys> keyDown = [];
     public static Action<Keys, KeyModifier> onKeyDown;
 
     private static IntPtr HookCallback(

@@ -16,7 +16,7 @@ public class TimerOverMenu : BaseMenu
     {
         var objects = base.InitializeMenu(island);
 
-        overText = new DWText(island, "Timer Over!", new Utils.Vec2(0, 0), UIAlignment.Center)
+        overText = new DWText(island, "Timer Over!", new Vec2(0, 0), UIAlignment.Center)
         {
             TextSize = 20,
             Font = Resources.Res.InterBold
@@ -34,10 +34,7 @@ public class TimerOverMenu : BaseMenu
         return objects;
     }
 
-    public override void OnDeload()
-    {
-        player.Stop();
-    }
+    public override void OnDeload() => player.Stop();
 
     private float sinCycle = -0.65f;
     private readonly float speed = 3.5f;

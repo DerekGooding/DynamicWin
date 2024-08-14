@@ -16,46 +16,46 @@ public partial class DynamicWinMain : Application
     [STAThread]
     public static void Main()
     {
-        DynamicWinMain m = new DynamicWinMain();
+        DynamicWinMain m = new();
         m.Run();
     }
 
-    public static string Version => "1.0.2" + "r";
+    public static string Version => "1.0.2r";
 
-    private void AddToStartup()
-    {
-        try
-        {
-            // Set the registry key
-            const string appName = "DynamicWin";
-            string appPath = Process.GetCurrentProcess().MainModule.FileName;
+    //private void AddToStartup()
+    //{
+    //    try
+    //    {
+    //        // Set the registry key
+    //        const string appName = "DynamicWin";
+    //        string appPath = Process.GetCurrentProcess().MainModule.FileName;
 
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
-            if (key.GetValue(appName) == null)
-            {
-                key.SetValue(appName, appPath);
-            }
-        }
-        catch (Exception ex)
-        {
-            // Handle exceptions here
-            MessageBox.Show($"Failed to add application to startup: {ex.Message}");
-        }
-    }
+    //        RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
+    //        if (key.GetValue(appName) == null)
+    //        {
+    //            key.SetValue(appName, appPath);
+    //        }
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        // Handle exceptions here
+    //        MessageBox.Show($"Failed to add application to startup: {ex.Message}");
+    //    }
+    //}
 
-    private void SetHighPriority()
-    {
-        try
-        {
-            Process currentProcess = Process.GetCurrentProcess();
-            currentProcess.PriorityClass = ProcessPriorityClass.RealTime;
-        }
-        catch (Exception ex)
-        {
-            // Handle exceptions here
-            MessageBox.Show($"Failed to set process priority: {ex.Message}");
-        }
-    }
+    //private void SetHighPriority()
+    //{
+    //    try
+    //    {
+    //        Process currentProcess = Process.GetCurrentProcess();
+    //        currentProcess.PriorityClass = ProcessPriorityClass.RealTime;
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        // Handle exceptions here
+    //        MessageBox.Show($"Failed to set process priority: {ex.Message}");
+    //    }
+    //}
 
     private Mutex mutex;
 
@@ -71,12 +71,12 @@ public partial class DynamicWinMain : Application
 
         if (!result)
         {
-            ErrorForm errorForm = new ErrorForm();
+            ErrorForm errorForm = new();
             errorForm.Show();
             return;
         }
 
-        AddToStartup();
+        //AddToStartup();
         //SetHighPriority();
 
         var devEnum = new MMDeviceEnumerator();
@@ -87,13 +87,13 @@ public partial class DynamicWinMain : Application
 
         Res.Load();
         KeyHandler.Start();
-        new Theme();
+        Theme.UpdateTheme();
 
-        new HardwareMonitor();
+        HardwareMonitor.Initialize();
 
         Settings.InitializeSettings();
 
-        MainForm mainForm = new MainForm();
+        MainForm mainForm = new();
         mainForm.Show();
     }
 

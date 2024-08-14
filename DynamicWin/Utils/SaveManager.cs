@@ -3,9 +3,9 @@ using System.IO;
 
 namespace DynamicWin.Utils;
 
-internal class SaveManager
+internal static class SaveManager
 {
-    public static Dictionary<string, object> SaveData { get; set; } = new Dictionary<string, object>();
+    public static Dictionary<string, object> SaveData { get; set; } = [];
 
     public static string SavePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DynamicWin");
     private static readonly string fileName = "Settings.json";
@@ -30,7 +30,7 @@ internal class SaveManager
         var json = File.ReadAllText(fullPath);
         cachedJsonSave = json;
 
-        SaveData = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+        SaveData = JsonConvert.DeserializeObject<Dictionary<string, object>>(json) ?? [];
     }
 
     public static void SaveAll()
@@ -60,7 +60,7 @@ internal class SaveManager
             SaveData.Remove(key);
     }
 
-    public static object Get(string key)
+    public static object? Get(string key)
     {
         if (Contains(key))
             return SaveData[key];
@@ -68,16 +68,13 @@ internal class SaveManager
             return default;
     }
 
-    public static T Get<T>(string key)
+    public static T? Get<T>(string key)
     {
         if (Contains(key))
             return JsonConvert.DeserializeObject<T>(cachedJsonSave);
         else
-            return default(T);
+            return default;
     }
 
-    public static bool Contains(string key)
-    {
-        return SaveData.ContainsKey(key);
-    }
+    public static bool Contains(string key) => SaveData.ContainsKey(key);
 }

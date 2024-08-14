@@ -72,7 +72,7 @@ public class MenuManager
         overlayThread.Start();
     }
 
-    private readonly List<BaseMenu> menuLoadQueue = new List<BaseMenu>();
+    private readonly List<BaseMenu> menuLoadQueue = [];
 
     private Animator menuAnimatorIn;
     private Animator menuAnimatorOut;
@@ -85,8 +85,8 @@ public class MenuManager
 
     private void SetActiveMenu(BaseMenu newActiveMenu)
     {
-        if (menuAnimatorIn != null && menuAnimatorIn.IsRunning) return;
-        if (menuAnimatorOut != null && menuAnimatorOut.IsRunning) return;
+        if (menuAnimatorIn?.IsRunning == true) return;
+        if (menuAnimatorOut?.IsRunning == true) return;
 
         onMenuChange?.Invoke(activeMenu, newActiveMenu);
 
@@ -94,7 +94,7 @@ public class MenuManager
 
         const int length = 250;
 
-        List<UIObject> currentObjects = new List<UIObject>(activeMenu.UiObjects);
+        List<UIObject> currentObjects = new(activeMenu.UiObjects);
 
         {
             menuAnimatorOut = new Animator(length, 1);
@@ -199,7 +199,10 @@ public class MenuManager
                 menuLoadQueue.Remove(queueObj);
                 return;
             }
-            else OpenMenu(queueObj);
+            else
+            {
+                OpenMenu(queueObj);
+            }
 
             menuLoadQueue.Remove(queueObj);
         }
@@ -210,7 +213,10 @@ public class MenuManager
 
     public void QueueOpenMenu(BaseMenu menu)
     {
-        if (menuAnimatorIn == null && menuAnimatorOut == null) OpenMenu(menu);
+        if (menuAnimatorIn == null && menuAnimatorOut == null)
+        {
+            OpenMenu(menu);
+        }
         else
         {
             menuLoadQueue.Add(menu);

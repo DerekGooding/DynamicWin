@@ -2,17 +2,14 @@
 
 namespace DynamicWin.Utils;
 
-internal class HardwareMonitor
+internal static class HardwareMonitor
 {
-    private readonly System.Timers.Timer timer;
+    private static System.Timers.Timer timer;
 
     public static string usageString = " ";
 
-    public static HardwareMonitor? instance;
-
-    public HardwareMonitor()
+    public static void Initialize()
     {
-        instance = this;
         computer = new Computer()
         {
             IsMemoryEnabled = true,
@@ -29,11 +26,11 @@ internal class HardwareMonitor
         timer.Start();
     }
 
-    private readonly Computer computer;
-    private float lastCpu;
-    private string lastRam = string.Empty;
+    private static Computer? computer;
+    private static float lastCpu;
+    private static string lastRam = string.Empty;
 
-    private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    private static void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
     {
         foreach (var hardware in computer.Hardware)
         {
@@ -78,5 +75,5 @@ internal class HardwareMonitor
         computer.Close();
     }
 
-    public static void Stop() => instance?.computer.Close();
+    public static void Stop() => computer?.Close();
 }

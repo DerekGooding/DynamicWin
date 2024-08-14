@@ -28,7 +28,9 @@ public class SettingsMenu : BaseMenu
         Settings.AntiAliasing = antiAliasing.IsChecked;
 
         if (changedTheme)
-            Theme.Instance.UpdateTheme(true);
+        {
+            Theme.UpdateTheme(true);
+        }
         else
         {
             Res.HomeMenu = new HomeMenu();
@@ -208,11 +210,11 @@ public class SettingsMenu : BaseMenu
                         optionItem.Anchor.X = 0;
                     }
 
-                    if (optionItem is DWText)
+                    if (optionItem is DWText dWText)
                     {
-                        ((DWText)optionItem).Color = Theme.TextThird;
-                        ((DWText)optionItem).Font = Res.InterRegular;
-                        ((DWText)optionItem).TextSize = 13;
+                        dWText.Color = Theme.TextThird;
+                        dWText.Font = Res.InterRegular;
+                        dWText.TextSize = 13;
                     }
                     else if (optionItem is Checkbox)
                     {
@@ -318,7 +320,7 @@ public class SettingsMenu : BaseMenu
 
     private void LoadCustomOptions()
     {
-        customOptions = new List<IRegisterableSetting>();
+        customOptions = [];
 
         var registerableSettings = AppDomain.CurrentDomain.GetAssemblies()
         .SelectMany(s => s.GetTypes())
@@ -384,13 +386,13 @@ internal class BigWidgetAdder : UIObject
     {
         base.Update(deltaTime);
 
-        int line = (int)(Math.Floor(displays.Count / maxE));
+        int line = (int)Math.Floor(displays.Count / maxE);
 
-        addNew.LocalPosition.Y = Mathf.Lerp(addNew.LocalPosition.Y, -line * 45 - 45, 15f * deltaTime);
+        addNew.LocalPosition.Y = Mathf.Lerp(addNew.LocalPosition.Y, (-line * 45) - 45, 15f * deltaTime);
         addNew.LocalPosition.X = Mathf.Lerp(addNew.LocalPosition.X, isDisplayEven() ? Size.X / 2f : Size.X / 1.3333333f, 15f * deltaTime);
         addNew.Size.X = Mathf.Lerp(addNew.Size.X, isDisplayEven() ? Size.X : Size.X / 2, 15f * deltaTime);
 
-        var lines2 = (int)Math.Max(1, displays.Count / maxE + 1);
+        var lines2 = (int)Math.Max(1, (displays.Count / maxE) + 1);
         Size.Y = Mathf.Lerp(Size.Y, lines2 * 45, 15f * RendererMain.Instance.DeltaTime);
     }
 
@@ -399,7 +401,7 @@ internal class BigWidgetAdder : UIObject
         return displays.Count % 2 == 0;
     }
 
-    private readonly List<BigWidgetAdderDisplay> displays = new List<BigWidgetAdderDisplay>();
+    private readonly List<BigWidgetAdderDisplay> displays = [];
     private readonly float maxE = 2;
 
     private void UpdateWidgetDisplay()
@@ -407,7 +409,7 @@ internal class BigWidgetAdder : UIObject
         displays.ForEach(DestroyLocalObject);
         displays.Clear();
 
-        Dictionary<string, IRegisterableWidget> bigWidgets = new Dictionary<string, IRegisterableWidget>();
+        Dictionary<string, IRegisterableWidget> bigWidgets = [];
 
         foreach (var widget in Res.availableBigWidgets)
         {
@@ -421,7 +423,7 @@ internal class BigWidgetAdder : UIObject
         {
             if (!bigWidgets.ContainsKey(bigWidget)) continue;
 
-            var widget = bigWidgets[bigWidget.ToString()];
+            var widget = bigWidgets[bigWidget];
 
             var display = new BigWidgetAdderDisplay(this, widget.WidgetName, UIAlignment.BottomLeft);
 
@@ -451,8 +453,8 @@ internal class BigWidgetAdder : UIObject
 
             int line = (int)(c / maxE);
 
-            display.LocalPosition.X = (c % 2) * Size.X / 2;
-            display.LocalPosition.Y -= 45 + line * 45;
+            display.LocalPosition.X = c % 2 * Size.X / 2;
+            display.LocalPosition.Y -= 45 + (line * 45);
 
             displays.Add(display);
             AddLocalObject(display);
@@ -557,7 +559,7 @@ internal class BigWidgetAdderDisplay : UIObject
     {
         int canvasRestore = canvas.Save();
 
-        var p = Position + Size / 2;
+        var p = Position + (Size / 2);
         canvas.Scale(this.s, this.s, p.X, p.Y);
 
         var paint = GetPaint();
@@ -590,13 +592,13 @@ internal class BigWidgetAdderDisplay : UIObject
     {
         var ctx = new System.Windows.Controls.ContextMenu();
 
-        MenuItem remove = new MenuItem() { Header = "Remove" };
+        MenuItem remove = new() { Header = "Remove" };
         remove.Click += (x, y) => onEditRemoveWidget?.Invoke();
 
-        MenuItem pL = new MenuItem() { Header = "<- Push Left" };
+        MenuItem pL = new() { Header = "<- Push Left" };
         pL.Click += (x, y) => onEditMoveWidgetLeft?.Invoke();
 
-        MenuItem pR = new MenuItem() { Header = "Push Right ->" };
+        MenuItem pR = new() { Header = "Push Right ->" };
         pR.Click += (x, y) => onEditMoveWidgetRight?.Invoke();
 
         ctx.Items.Add(remove);
@@ -625,9 +627,9 @@ internal class SmallWidgetAdder : UIObject
 
     private readonly UIObject container;
 
-    public List<SmallWidgetBase> smallLeftWidgets = new List<SmallWidgetBase>();
-    public List<SmallWidgetBase> smallRightWidgets = new List<SmallWidgetBase>();
-    public List<SmallWidgetBase> smallCenterWidgets = new List<SmallWidgetBase>();
+    public List<SmallWidgetBase> smallLeftWidgets = [];
+    public List<SmallWidgetBase> smallRightWidgets = [];
+    public List<SmallWidgetBase> smallCenterWidgets = [];
 
     private void UpdateWidgetDisplay()
     {
@@ -639,7 +641,7 @@ internal class SmallWidgetAdder : UIObject
         smallLeftWidgets.Clear();
         smallCenterWidgets.Clear();
 
-        Dictionary<string, IRegisterableWidget> smallWidgets = new Dictionary<string, IRegisterableWidget>();
+        Dictionary<string, IRegisterableWidget> smallWidgets = [];
 
         foreach (var widget in Res.availableSmallWidgets)
         {
@@ -651,7 +653,7 @@ internal class SmallWidgetAdder : UIObject
         {
             if (!smallWidgets.ContainsKey(smallWidget)) continue;
 
-            var widget = smallWidgets[smallWidget.ToString()];
+            var widget = smallWidgets[smallWidget];
 
             var instance = (SmallWidgetBase)widget.CreateWidgetInstance(container, Vec2.zero, UIAlignment.Center);
             instance.isEditMode = true;
@@ -687,7 +689,7 @@ internal class SmallWidgetAdder : UIObject
         {
             if (!smallWidgets.ContainsKey(smallWidget)) continue;
 
-            var widget = smallWidgets[smallWidget.ToString()];
+            var widget = smallWidgets[smallWidget];
 
             var instance = (SmallWidgetBase)widget.CreateWidgetInstance(container, Vec2.zero, UIAlignment.MiddleLeft);
             instance.isEditMode = true;
@@ -723,7 +725,7 @@ internal class SmallWidgetAdder : UIObject
         {
             if (!smallWidgets.ContainsKey(smallWidget)) continue;
 
-            var widget = smallWidgets[smallWidget.ToString()];
+            var widget = smallWidgets[smallWidget];
 
             var instance = (SmallWidgetBase)widget.CreateWidgetInstance(container, Vec2.zero, UIAlignment.MiddleRight);
             instance.isEditMode = true;
@@ -801,7 +803,7 @@ internal class SmallWidgetAdder : UIObject
 
             foreach (var smallCenter in smallCenterWidgets)
             {
-                smallCenter.LocalPosition.X -= centerStackPos / 2 + smallWidgetsSpacing;
+                smallCenter.LocalPosition.X -= (centerStackPos / 2) + smallWidgetsSpacing;
             }
         }
 
@@ -812,7 +814,7 @@ internal class SmallWidgetAdder : UIObject
         smallRightWidgets.ForEach(x => sizeTogether += x.GetWidgetSize().X);
         smallCenterWidgets.ForEach(x => sizeTogether += x.GetWidgetSize().X);
 
-        sizeTogether += smallWidgetsSpacing * (smallCenterWidgets.Count + smallLeftWidgets.Count + smallRightWidgets.Count + 0.25f) + middleWidgetsSpacing;
+        sizeTogether += (smallWidgetsSpacing * (smallCenterWidgets.Count + smallLeftWidgets.Count + smallRightWidgets.Count + 0.25f)) + middleWidgetsSpacing;
 
         size.X = (float)Math.Max(size.X, sizeTogether);
     }
@@ -822,15 +824,18 @@ internal class SmallWidgetAdder : UIObject
         var ctx = new System.Windows.Controls.ContextMenu();
         bool anyWidgetsLeft = false;
 
-        MenuItem left = new MenuItem() { Header = "Left" };
-        MenuItem middle = new MenuItem() { Header = "Middle" };
-        MenuItem right = new MenuItem() { Header = "Right" };
+        MenuItem left = new() { Header = "Left" };
+        MenuItem middle = new() { Header = "Middle" };
+        MenuItem right = new() { Header = "Right" };
 
         foreach (var availableWidget in Res.availableSmallWidgets)
         {
             if (Settings.smallWidgetsRight.Contains(availableWidget.GetType().FullName) ||
                 Settings.smallWidgetsLeft.Contains(availableWidget.GetType().FullName) ||
-                Settings.smallWidgetsMiddle.Contains(availableWidget.GetType().FullName)) continue;
+                Settings.smallWidgetsMiddle.Contains(availableWidget.GetType().FullName))
+            {
+                continue;
+            }
 
             anyWidgetsLeft = true;
 
@@ -936,7 +941,7 @@ public class MultiSelectionButton : UIObject
         for (int i = 0; i < options.Length; i++)
         {
             var lambdaIndex = i; // Either I'm going insane or I don't understand lambdas, but it seems like only the pointer given in to the OnClick() method. This is why this line is needed!
-            var action = () => OnClick(lambdaIndex); // For some it just outputs the length of options if there is no seperate variable for it.
+            void action() => OnClick(lambdaIndex); // For some it just outputs the length of options if there is no seperate variable for it.
 
             if (counter >= maxInOneRow)
             {
@@ -956,7 +961,7 @@ public class MultiSelectionButton : UIObject
             counter++;
         }
 
-        Size.Y = Size.Y + yPos;
+        Size.Y += yPos;
 
         SelectedIndex = 0;
     }

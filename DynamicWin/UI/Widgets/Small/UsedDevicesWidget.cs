@@ -110,39 +110,25 @@ internal class LoudnessMeter : DWProgressBar
     }
 
     public static float GetMicrophoneLoudness()
-    {
-        return (float)Math.Sqrt(DynamicWinMain.defaultMicrophone.AudioMeterInformation.MasterPeakValue + 0.001);
-    }
+        => (float)Math.Sqrt(DynamicWinMain.defaultMicrophone.AudioMeterInformation.MasterPeakValue + 0.001);
 }
 
-public class UsedDevicesWidget : SmallWidgetBase
+public class UsedDevicesWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : SmallWidgetBase(parent, position, alignment)
 {
-    public UsedDevicesWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, alignment)
-    {
-    }
-
-    public override void OnDestroy()
-    {
-        base.OnDestroy();
-    }
-
     readonly float camDotSize = 2.5f;
-    float camDotSizeCurrent = 0f;
-    float camDotPositionX = 0f;
+    float camDotSizeCurrent;
+    float camDotPositionX;
 
     readonly float micDotSize = 2.5f;
-    float micDotSizeCurrent = 0f;
-    float micDotPositionX = 0f;
+    float micDotSizeCurrent;
+    float micDotPositionX;
 
-    readonly float seperation = 6.5f;
+    readonly float separation = 6.5f;
 
-    protected override float GetWidgetWidth()
-    {
-        return camDotSizeCurrent * 4 + micDotSizeCurrent * 4;
-    }
+    protected override float GetWidgetWidth() => (camDotSizeCurrent * 4) + (micDotSizeCurrent * 4);
 
     float sinCycleCamera = 1f;
-    float sinCycleMicrophone = 0f;
+    float sinCycleMicrophone;
 
     readonly float sinSpeed = 2.75f;
 
@@ -153,22 +139,22 @@ public class UsedDevicesWidget : SmallWidgetBase
         sinCycleCamera += sinSpeed * deltaTime;
         sinCycleMicrophone += sinSpeed * deltaTime;
 
-        bool isCamActive = DeviceUsageChecker.IsWebcamInUse();
-        bool isMicActive = DeviceUsageChecker.IsMicrophoneInUse();
+        const bool isCamActive = false; //DeviceUsageChecker.IsWebcamInUse();
+        const bool isMicActive = false; //DeviceUsageChecker.IsMicrophoneInUse();
 
         camDotSizeCurrent = Mathf.Lerp(camDotSizeCurrent, isCamActive ? camDotSize : 0f, 5f * deltaTime);
         micDotSizeCurrent = Mathf.Lerp(micDotSizeCurrent, isMicActive ? micDotSize : 0f, 5f * deltaTime);
 
-        if (isCamActive && isMicActive)
-        {
-            camDotPositionX = Mathf.Lerp(camDotPositionX, seperation, 5f * deltaTime);
-            micDotPositionX = Mathf.Lerp(micDotPositionX, -seperation, 5f * deltaTime);
-        }
-        else
-        {
+        //if (isCamActive && isMicActive)
+        //{
+        //    camDotPositionX = Mathf.Lerp(camDotPositionX, separation, 5f * deltaTime);
+        //    micDotPositionX = Mathf.Lerp(micDotPositionX, -separation, 5f * deltaTime);
+        //}
+        //else
+        //{
             camDotPositionX = Mathf.Lerp(camDotPositionX, 0, 5f * deltaTime);
             micDotPositionX = Mathf.Lerp(micDotPositionX, 0, 5f * deltaTime);
-        }
+        //}
 
         isMicrophoneIndicatorShowing = LoudnessMeter.GetMicrophoneLoudness() > RegisterUsedDevicesOptions.saveData.indicatorThreshold;
     }

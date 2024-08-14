@@ -10,11 +10,11 @@ namespace DynamicWin.UI.Menu.Menus;
 
 public class HomeMenu : BaseMenu
 {
-    public List<SmallWidgetBase> smallLeftWidgets = new List<SmallWidgetBase>();
-    public List<SmallWidgetBase> smallRightWidgets = new List<SmallWidgetBase>();
-    public List<SmallWidgetBase> smallCenterWidgets = new List<SmallWidgetBase>();
+    public List<SmallWidgetBase> smallLeftWidgets = [];
+    public List<SmallWidgetBase> smallRightWidgets = [];
+    public List<SmallWidgetBase> smallCenterWidgets = [];
 
-    public List<WidgetBase> bigWidgets = new List<WidgetBase>();
+    public List<WidgetBase> bigWidgets = [];
 
     private float songSizeAddition = 0f;
     private float songLocalPosXAddition = 0f;
@@ -97,7 +97,7 @@ public class HomeMenu : BaseMenu
     private UIObject smallWidgetsContainer;
     private UIObject bigWidgetsContainer;
 
-    private readonly List<UIObject> bigMenuItems = new List<UIObject>();
+    private readonly List<UIObject> bigMenuItems = [];
 
     private UIObject topContainer;
 
@@ -167,8 +167,8 @@ public class HomeMenu : BaseMenu
 
         // Get all widgets
 
-        Dictionary<string, IRegisterableWidget> smallWidgets = new Dictionary<string, IRegisterableWidget>();
-        Dictionary<string, IRegisterableWidget> widgets = new Dictionary<string, IRegisterableWidget>();
+        Dictionary<string, IRegisterableWidget> smallWidgets = [];
+        Dictionary<string, IRegisterableWidget> widgets = [];
 
         foreach (var widget in Res.availableSmallWidgets)
         {
@@ -368,7 +368,7 @@ public class HomeMenu : BaseMenu
             bigWidgetsContainer.Size = bigContainerSize;
 
             { // Big Widgets
-                List<WidgetBase> widgetsInOneLine = new List<WidgetBase>();
+                List<WidgetBase> widgetsInOneLine = [];
 
                 float lastBiggestY = 0f;
 

@@ -30,18 +30,18 @@ public static class Settings
         {
             if (SaveManager.Contains("settings"))
             {
-                IslandMode = ((long)SaveManager.Get("settings.islandmode") == 0) ? IslandObject.IslandMode.Island : IslandObject.IslandMode.Notch;
+                IslandMode = ((long?)SaveManager.Get("settings.islandmode") == 0) ? IslandObject.IslandMode.Island : IslandObject.IslandMode.Notch;
 
-                AllowBlur = (bool)SaveManager.Get("settings.allowblur");
-                AllowAnimation = (bool)SaveManager.Get("settings.allowanimtion");
-                AntiAliasing = (bool)SaveManager.Get("settings.antialiasing");
+                AllowBlur = (bool?)SaveManager.Get("settings.allowblur") ?? false;
+                AllowAnimation = (bool?)SaveManager.Get("settings.allowanimtion") ?? false;
+                AntiAliasing = (bool?)SaveManager.Get("settings.antialiasing") ?? false;
 
-                Theme = (int)(long)SaveManager.Get("settings.theme");
+                Theme = (int?)(long?)SaveManager.Get("settings.theme") ?? 0;
 
-                Settings.smallWidgetsLeft = new List<string>();
-                Settings.smallWidgetsRight = new List<string>();
-                Settings.smallWidgetsMiddle = new List<string>();
-                Settings.bigWidgets = new List<string>();
+                Settings.smallWidgetsLeft = [];
+                Settings.smallWidgetsRight = [];
+                Settings.smallWidgetsMiddle = [];
+                Settings.bigWidgets = [];
 
                 var smallWidgetsLeft = (JArray)SaveManager.Get("settings.smallwidgetsleft");
                 var smallWidgetsRight = (JArray)SaveManager.Get("settings.smallwidgetsright");
@@ -59,10 +59,10 @@ public static class Settings
             }
             else
             {
-                smallWidgetsLeft = new List<string>();
-                smallWidgetsRight = new List<string>();
-                smallWidgetsMiddle = new List<string>();
-                bigWidgets = new List<string>();
+                smallWidgetsLeft = [];
+                smallWidgetsRight = [];
+                smallWidgetsMiddle = [];
+                bigWidgets = [];
 
                 smallWidgetsRight.Add("DynamicWin.UI.Widgets.Small.RegisterUsedDevicesWidget");
                 smallWidgetsLeft.Add("DynamicWin.UI.Widgets.Small.RegisterTimeWidget");
@@ -87,7 +87,7 @@ public static class Settings
         }
     }
 
-    private static void AfterSettingsLoaded() => Utils.Theme.Instance.UpdateTheme();
+    private static void AfterSettingsLoaded() => Utils.Theme.UpdateTheme();
 
     public static void Save()
     {
