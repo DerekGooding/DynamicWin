@@ -1,4 +1,5 @@
-﻿using DynamicWin.UI.UIElements;
+﻿using DynamicWin.Main;
+using DynamicWin.UI.UIElements;
 using DynamicWin.Utils;
 
 namespace DynamicWin.UI.Widgets.Small;
@@ -9,7 +10,7 @@ public class TimeWidget : SmallWidgetBase
 
     public TimeWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, alignment)
     {
-        timeText = new DWText(this, GetTime(), Vec2.zero, UIAlignment.Center)
+        timeText = new DWText(this, Time, Vec2.zero, UIAlignment.Center)
         {
             TextSize = 14
         };
@@ -20,8 +21,8 @@ public class TimeWidget : SmallWidgetBase
     {
         base.Update(deltaTime);
 
-        timeText.Text = GetTime();
+        timeText.Text = Time;
     }
 
-    private string GetTime() => DateTime.Now.ToString("HH:mm");
+    private static string Time => Settings.MilitaryTime ? DateTime.Now.ToString("HH:mm") : DateTime.Now.ToString("hh:mm tt");
 }

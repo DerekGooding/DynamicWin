@@ -23,6 +23,7 @@ public class SettingsMenu : BaseMenu
         Settings.AllowBlur = allowBlur.IsChecked;
         Settings.AllowAnimation = allowAnimation.IsChecked;
         Settings.AntiAliasing = antiAliasing.IsChecked;
+        Settings.MilitaryTime = militaryTime.IsChecked;
 
         if (changedTheme)
         {
@@ -45,6 +46,7 @@ public class SettingsMenu : BaseMenu
     private Checkbox allowBlur;
     private Checkbox allowAnimation;
     private Checkbox antiAliasing;
+    private Checkbox militaryTime;
 
     public override List<UIObject> InitializeMenu(IslandObject island)
     {
@@ -103,6 +105,13 @@ public class SettingsMenu : BaseMenu
         };
         antiAliasing.Anchor.X = 0;
         objects.Add(antiAliasing);
+
+        militaryTime = new Checkbox(island, "24 Hour Clock", new Vec2(25, 0), new Vec2(25, 25), () => { }, UIAlignment.TopLeft)
+        {
+            IsChecked = Settings.MilitaryTime
+        };
+        militaryTime.Anchor.X = 0;
+        objects.Add(militaryTime);
 
         {
             var themeTitle = new DWText(island, "Themes", new Vec2(25, 0), UIAlignment.TopLeft)

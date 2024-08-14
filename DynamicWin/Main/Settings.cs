@@ -14,6 +14,7 @@ public static class Settings
     public static bool AllowBlur { get; set; }
     public static bool AllowAnimation { get; set; }
     public static bool AntiAliasing { get; set; }
+    public static bool MilitaryTime { get; set; }
 
     public static int Theme
     {
@@ -45,6 +46,7 @@ public static class Settings
                 AllowBlur = (bool?)SaveManager.Get("settings.allowblur") ?? false;
                 AllowAnimation = (bool?)SaveManager.Get("settings.allowanimtion") ?? false;
                 AntiAliasing = (bool?)SaveManager.Get("settings.antialiasing") ?? false;
+                MilitaryTime = (bool?)SaveManager.Get("settings.militarytime") ?? true;
 
                 Theme = (int?)(long?)SaveManager.Get("settings.theme") ?? 0;
 
@@ -106,6 +108,7 @@ public static class Settings
         SaveManager.Add("settings.allowblur", AllowBlur);
         SaveManager.Add("settings.allowanimtion", AllowAnimation);
         SaveManager.Add("settings.antialiasing", AntiAliasing);
+        SaveManager.Add("settings.militarytime", MilitaryTime);
 
         SaveManager.Add("settings.theme", Theme);
 
