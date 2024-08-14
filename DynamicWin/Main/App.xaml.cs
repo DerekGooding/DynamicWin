@@ -1,7 +1,6 @@
 ﻿using DynamicWin.Main;
 using DynamicWin.Resources;
 using DynamicWin.Utils;
-using Microsoft.Win32;
 using NAudio.CoreAudioApi;
 using System.Diagnostics;
 using System.Windows;

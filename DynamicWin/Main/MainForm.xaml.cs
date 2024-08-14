@@ -56,7 +56,7 @@ public partial class MainForm : Window
         }
     }
 
-    public bool isDragging = false;
+    public bool isDragging;
 
     public void OnScroll(object? sender, System.Windows.Input.MouseWheelEventArgs e)
     {

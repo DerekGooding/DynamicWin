@@ -83,9 +83,9 @@ public class WindowsThumbnailProvider
         AccessDenied = unchecked((int)0x80030005)
     }
 
-    [ComImportAttribute()]
-    [GuidAttribute("bcc18b79-ba16-442f-80c4-8a59c30c463b")]
-    [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
+    [ComImport()]
+    [Guid("bcc18b79-ba16-442f-80c4-8a59c30c463b")]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IShellItemImageFactory
     {
         [PreserveSig]
@@ -132,12 +132,9 @@ public class WindowsThumbnailProvider
 
     public static Bitmap GetBitmapFromHBitmap(IntPtr nativeHBitmap)
     {
-        Bitmap bmp = Bitmap.FromHbitmap(nativeHBitmap);
+        Bitmap bmp = Image.FromHbitmap(nativeHBitmap);
 
-        if (Bitmap.GetPixelFormatSize(bmp.PixelFormat) < 32)
-            return bmp;
-
-        return CreateAlphaBitmap(bmp, PixelFormat.Format32bppArgb);
+        return Image.GetPixelFormatSize(bmp.PixelFormat) < 32 ? bmp : CreateAlphaBitmap(bmp, PixelFormat.Format32bppArgb);
     }
 
     public static Bitmap CreateAlphaBitmap(Bitmap srcBitmap, PixelFormat targetPixelFormat)
@@ -148,7 +145,7 @@ public class WindowsThumbnailProvider
 
         BitmapData srcData = srcBitmap.LockBits(bmpBounds, ImageLockMode.ReadOnly, srcBitmap.PixelFormat);
 
-        bool isAlplaBitmap = false;
+        bool isAlphaBitmap = false;
 
         try
         {
@@ -161,7 +158,7 @@ public class WindowsThumbnailProvider
 
                     if (pixelColor.A > 0 & pixelColor.A < 255)
                     {
-                        isAlplaBitmap = true;
+                        isAlphaBitmap = true;
                     }
 
                     result.SetPixel(x, y, pixelColor);
@@ -173,25 +170,18 @@ public class WindowsThumbnailProvider
             srcBitmap.UnlockBits(srcData);
         }
 
-        if (isAlplaBitmap)
-        {
-            return result;
-        }
-        else
-        {
-            return srcBitmap;
-        }
+        return isAlphaBitmap ? result : srcBitmap;
     }
 
     private static IntPtr GetHBitmap(string fileName, int width, int height, ThumbnailOptions options)
     {
-        Guid shellItem2Guid = new Guid(IShellItem2Guid);
+        Guid shellItem2Guid = new(IShellItem2Guid);
         int retCode = SHCreateItemFromParsingName(fileName, IntPtr.Zero, ref shellItem2Guid, out IShellItem nativeShellItem);
 
         if (retCode != 0)
             throw Marshal.GetExceptionForHR(retCode);
 
-        NativeSize nativeSize = new NativeSize
+        NativeSize nativeSize = new()
         {
             Width = width,
             Height = height
