@@ -12,10 +12,8 @@ class RegisterUsedDevicesWidget : IRegisterableWidget
     public bool IsSmallWidget => true;
     public string WidgetName => "Used Devices";
 
-    public WidgetBase CreateWidgetInstance(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter)
-    {
-        return new UsedDevicesWidget(parent, position, alignment);
-    }
+    public WidgetBase CreateWidgetInstance(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) 
+        => new UsedDevicesWidget(parent, position, alignment);
 }
 
 class RegisterUsedDevicesOptions : IRegisterableSetting
@@ -32,22 +30,11 @@ class RegisterUsedDevicesOptions : IRegisterableSetting
         public float indicatorThreshold;
     }
 
-    public void LoadSettings()
-    {
-        if (SaveManager.Contains(SettingID))
-        {
-            saveData = JsonConvert.DeserializeObject<UsedDevicesOptionsSave>((string)SaveManager.Get(SettingID));
-        }
-        else
-        {
-            saveData = new UsedDevicesOptionsSave() { indicatorThreshold = 0.5f };
-        }
-    }
+    public void LoadSettings() => saveData = SaveManager.Contains(SettingID)
+            ? JsonConvert.DeserializeObject<UsedDevicesOptionsSave>((string)SaveManager.Get(SettingID))
+            : new UsedDevicesOptionsSave() { indicatorThreshold = 0.5f };
 
-    public void SaveSettings()
-    {
-        SaveManager.Add(SettingID, JsonConvert.SerializeObject(saveData));
-    }
+    public void SaveSettings() => SaveManager.Add(SettingID, JsonConvert.SerializeObject(saveData));
 
     public List<UIObject> SettingsObjects()
     {
@@ -93,7 +80,7 @@ internal class LoudnessMeter : DWProgressBar
 {
     public LoudnessMeter(UIObject? parent, Vec2 position, Vec2 size, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, size, alignment)
     {
-        this.vaueSmoothing = 25f;
+        vaueSmoothing = 25f;
     }
 
     public override void Update(float deltaTime)
@@ -110,7 +97,7 @@ internal class LoudnessMeter : DWProgressBar
     }
 
     public static float GetMicrophoneLoudness()
-        => (float)Math.Sqrt(DynamicWinMain.DefaultMicrophone.AudioMeterInformation.MasterPeakValue + 0.001);
+        => DynamicWinMain.DefaultMicrophone == null ? 0.0f : (float)Math.Sqrt(DynamicWinMain.DefaultMicrophone.AudioMeterInformation.MasterPeakValue + 0.001);
 }
 
 public class UsedDevicesWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : SmallWidgetBase(parent, position, alignment)
@@ -145,16 +132,8 @@ public class UsedDevicesWidget(UIObject? parent, Vec2 position, UIAlignment alig
         camDotSizeCurrent = Mathf.Lerp(camDotSizeCurrent, isCamActive ? camDotSize : 0f, 5f * deltaTime);
         micDotSizeCurrent = Mathf.Lerp(micDotSizeCurrent, isMicActive ? micDotSize : 0f, 5f * deltaTime);
 
-        //if (isCamActive && isMicActive)
-        //{
-        //    camDotPositionX = Mathf.Lerp(camDotPositionX, separation, 5f * deltaTime);
-        //    micDotPositionX = Mathf.Lerp(micDotPositionX, -separation, 5f * deltaTime);
-        //}
-        //else
-        //{
-            camDotPositionX = Mathf.Lerp(camDotPositionX, 0, 5f * deltaTime);
-            micDotPositionX = Mathf.Lerp(micDotPositionX, 0, 5f * deltaTime);
-        //}
+        camDotPositionX = Mathf.Lerp(camDotPositionX, 0, 5f * deltaTime);
+        micDotPositionX = Mathf.Lerp(micDotPositionX, 0, 5f * deltaTime);
 
         isMicrophoneIndicatorShowing = LoudnessMeter.GetMicrophoneLoudness() > RegisterUsedDevicesOptions.saveData.indicatorThreshold;
     }
