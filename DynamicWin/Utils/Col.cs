@@ -3,20 +3,12 @@ using System.Globalization;
 
 namespace DynamicWin.Utils;
 
-public class Col
+public class Col(float r, float g, float b, float a = 1f)
 {
-    public float r, g, b, a;
+    public float r = r, g = g, b = b, a = a;
 
-    public static Col White => new Col(1, 1, 1);
-    public static Col Transparent => new Col(0, 0, 0, 0);
-
-    public Col(float r, float g, float b, float a = 1f)
-    {
-        this.r = r;
-        this.g = g;
-        this.b = b;
-        this.a = a;
-    }
+    public static Col White => new(1, 1, 1);
+    public static Col Transparent => new(0, 0, 0, 0);
 
     public Col Override(float r = -1, float g = -1, float b = -1, float a = -1)
     {
@@ -33,57 +25,36 @@ public class Col
         return new Col(red, green, blue, alpha);
     }
 
-    public static Col Lerp(Col a, Col b, float t)
-    {
-        return new Col(
+    public static Col Lerp(Col a, Col b, float t) => new(
             Mathf.Lerp(a.r, b.r, t),
             Mathf.Lerp(a.g, b.g, t),
             Mathf.Lerp(a.b, b.b, t),
             Mathf.Lerp(a.a, b.a, t)
-            ); ;
-    }
+            );
 
-    public SkiaSharp.SKColor Value()
-    {
-        return new SkiaSharp.SKColor(
+    public SkiaSharp.SKColor Value() => new(
             (byte)(r * 255),
             (byte)(g * 255),
             (byte)(b * 255),
             (byte)(a * 255));
-    }
 
-    public Color ValueSystem()
-    {
-        return Color.FromArgb(
+    public Color ValueSystem() => Color.FromArgb(
             (byte)(a * 255),
             (byte)(r * 255),
             (byte)(g * 255),
             (byte)(b * 255));
-    }
 
-    public System.Windows.Media.Color ValueSystemMedia()
-    {
-        return System.Windows.Media.Color.FromArgb(
+    public System.Windows.Media.Color ValueSystemMedia() => System.Windows.Media.Color.FromArgb(
             (byte)(a * 255),
             (byte)(r * 255),
             (byte)(g * 255),
             (byte)(b * 255));
-    }
 
-    public Col Inverted()
-    {
-        return new Col(1f - r, 1f - g, 1f - g, a);
-    }
+    public Col Inverted() => new(1f - r, 1f - g, 1f - g, a);
 
-    public static Col operator *(Col a, float b)
-    {
-        return new Col(a.r * b, a.g * b, a.b * b);
-    }
+    public static Col operator *(Col a, float b) => new(a.r * b, a.g * b, a.b * b);
 
-    public static Col operator *(Col a, Col b)
-    {
-        return new Col(a.r * b.r, a.g * b.g, a.b * b.b, a.a * b.a);
-    }
+    public static Col operator *(Col a, Col b) => new(a.r * b.r, a.g * b.g, a.b * b.b, a.a * b.a);
 
     public static Col FromHex(string hex)
     {

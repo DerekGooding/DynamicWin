@@ -123,9 +123,9 @@ public class MediaWidget : WidgetBase
 
         if (cycle % 32 == 0)
         {
-            isSpotifyAvaliable = IsSpotifyAvailable();
+            isSpotifyAvailable = IsSpotifyAvailable();
 
-            if (isSpotifyAvaliable)
+            if (isSpotifyAvailable)
             {
                 GetSpotifyTrackInfo(out string titleString, out string artistString, out string error);
 
@@ -149,20 +149,20 @@ public class MediaWidget : WidgetBase
         next.normalColor = Theme.IconColor * audioVisualizer.GetActionCol().Override(a: 0.2f);
         playPause.normalColor = Theme.IconColor * audioVisualizer.GetActionCol().Override(a: 0.2f);
 
-        if (!isSpotifyAvaliable)
+        if (!isSpotifyAvailable)
             smoothedAmp = Math.Max(Mathf.Lerp(smoothedAmp, audioVisualizer.AverageAmplitude, smoothing * deltaTime), audioVisualizer.AverageAmplitude);
         else
             smoothedAmp = Math.Max(Mathf.Lerp(smoothedAmp, audioVisualizer.AverageAmplitude, smoothing * deltaTime), audioVisualizer.AverageAmplitude);
 
         if (smoothedAmp < 0.005f) smoothedAmp = 0f;
 
-        spotifyBlur = Mathf.Lerp(spotifyBlur, isSpotifyAvaliable ? 0f : 25f, 10f * deltaTime);
+        spotifyBlur = Mathf.Lerp(spotifyBlur, isSpotifyAvailable ? 0f : 25f, 10f * deltaTime);
 
-        noMediaPlaying.SetActive(smoothedAmp.Equals(0f) && !isSpotifyAvaliable);
-        title.SetActive(isSpotifyAvaliable);
-        artist.SetActive(isSpotifyAvaliable);
-        audioVisualizerBig.SetActive(isSpotifyAvaliable);
-        audioVisualizer.SetActive(!isSpotifyAvaliable);
+        noMediaPlaying.SetActive(smoothedAmp.Equals(0f) && !isSpotifyAvailable);
+        title.SetActive(isSpotifyAvailable);
+        artist.SetActive(isSpotifyAvailable);
+        audioVisualizerBig.SetActive(isSpotifyAvailable);
+        audioVisualizer.SetActive(!isSpotifyAvailable);
 
         audioVisualizerBig.UpdateCall(deltaTime);
     }
@@ -173,7 +173,7 @@ public class MediaWidget : WidgetBase
     }
 
     float spotifyBlur = 0f;
-    bool isSpotifyAvaliable = false;
+    bool isSpotifyAvailable = false;
     readonly Col spotifyCol = Col.FromHex("#1cb351");
 
     public override void DrawWidget(SKCanvas canvas)
@@ -192,7 +192,7 @@ public class MediaWidget : WidgetBase
 
         canvas.RestoreToCount(saveCanvas);
 
-        if (isSpotifyAvaliable || spotifyBlur <= 24f)
+        if (isSpotifyAvailable || spotifyBlur <= 24f)
         {
             paint.Color = spotifyCol.Override(a: Color.a * (1f - (spotifyBlur / 25f))).Value();
 
@@ -201,8 +201,8 @@ public class MediaWidget : WidgetBase
             var r = GetRect();
 
             const int inward = 5;
-            var w = 25 + (spotifyBlur * (isSpotifyAvaliable ? 2.5f : -0.15f));
-            var h = 25 + (spotifyBlur * (isSpotifyAvaliable ? 2.5f : -0.15f));
+            var w = 25 + (spotifyBlur * (isSpotifyAvailable ? 2.5f : -0.15f));
+            var h = 25 + (spotifyBlur * (isSpotifyAvailable ? 2.5f : -0.15f));
             var x = Position.X + r.Width - (w / 2) - inward;
             var y = Position.Y - (h / 2) + inward;
 
@@ -236,7 +236,7 @@ public class MediaWidget : WidgetBase
         }
     }
 
-    public static void GetSpotifyTrackInfo(out string title, out string artist, out string error)
+    public static void GetSpotifyTrackInfo(out string? title, out string? artist, out string? error)
     {
         var proc = Process.GetProcessesByName("Spotify").FirstOrDefault(p => !string.IsNullOrWhiteSpace(p.MainWindowTitle));
 

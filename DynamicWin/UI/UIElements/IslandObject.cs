@@ -11,8 +11,8 @@ public class IslandObject : UIObject
 
     public SecondOrder scaleSecondOrder;
 
-    public Vec2 secondOrderValuesExpand = new Vec2(3f, 0.55f);
-    public Vec2 secondOrderValuesContract = new Vec2(3f, 0.9f);
+    public Vec2 secondOrderValuesExpand = new(3f, 0.55f);
+    public Vec2 secondOrderValuesContract = new(3f, 0.9f);
 
     public bool hidden = false;
 
@@ -104,35 +104,35 @@ public class IslandObject : UIObject
         {
             var path = new SKPath();
 
-            var awidth = (float)(Math.Max(Size.Magnitude / 16, 25));
-            var aheight = (float)(Math.Max(Size.Y / 4, 15)) + (LocalPosition.Y - topOffset);
+            var aWidth = (float)(Math.Max(Size.Magnitude / 16, 25));
+            var aHeight = (float)(Math.Max(Size.Y / 4, 15)) + (LocalPosition.Y - topOffset);
             const int y = 5;
 
             { // Left notch curve
-                var x = Position.X - awidth;
+                var x = Position.X - aWidth;
 
-                path.MoveTo(x - awidth, y);
+                path.MoveTo(x - aWidth, y);
                 path.CubicTo(
                     x + 0, y,
-                    x + awidth, y,
-                    x + awidth, y + aheight);
-                path.LineTo(x + awidth, y);
+                    x + aWidth, y,
+                    x + aWidth, y + aHeight);
+                path.LineTo(x + aWidth, y);
                 path.LineTo(x + 0, y);
             }
 
             { // Right notch curve
-                var x = Position.X + Size.X + awidth;
+                var x = Position.X + Size.X + aWidth;
 
-                path.MoveTo(x + awidth, y);
+                path.MoveTo(x + aWidth, y);
                 path.CubicTo(
                     x - 0, y,
-                    x - awidth, y,
-                    x - awidth, y + aheight);
-                path.LineTo(x - awidth, y);
+                    x - aWidth, y,
+                    x - aWidth, y + aHeight);
+                path.LineTo(x - aWidth, y);
                 path.LineTo(x - 0, y);
             }
 
-            var r = SKRect.Create(Position.X, 0, Size.X, (Position.Y - topOffset) + topOffset + Size.Y / 2);
+            var r = SKRect.Create(Position.X, 0, Size.X, (Position.Y - topOffset) + topOffset + (Size.Y / 2));
             path.AddRect(r);
 
             canvas.DrawPath(path, paint);

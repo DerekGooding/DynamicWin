@@ -923,7 +923,7 @@ public class MultiSelectionButton : UIObject
 
     public Action<int> onClick;
 
-    private int selectedIndex = 0;
+    private int selectedIndex;
     public int SelectedIndex { get => selectedIndex; set => SetSelected(value); }
 
     public MultiSelectionButton(UIObject? parent, string[] options, Vec2 position, Vec2 size, UIAlignment alignment = UIAlignment.TopCenter, int maxInOneRow = 4) : base(parent, position, size, alignment)

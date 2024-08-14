@@ -5,53 +5,36 @@ namespace DynamicWin.UI.Menu;
 
 public class MenuManager
 {
-    private BaseMenu activeMenu;
-    public BaseMenu ActiveMenu => activeMenu;
+    public BaseMenu ActiveMenu { get; private set; }
 
-    private static MenuManager instance;
-    public static MenuManager Instance => instance;
+    public static MenuManager Instance { get; private set; }
 
     public Action<BaseMenu, BaseMenu> onMenuChange;
     public Action<BaseMenu> onMenuChangeEnd;
 
-    public MenuManager()
-    {
-        instance = this;
-    }
+    public MenuManager() => Instance = this;
 
     public void Init()
     {
         Resources.Res.CreateStaticMenus();
-        activeMenu = Resources.Res.HomeMenu;
+        ActiveMenu = Resources.Res.HomeMenu;
     }
 
-    public static void OpenMenu(BaseMenu newActiveMenu)
-    {
-        Instance.Open(newActiveMenu);
-    }
+    public static void OpenMenu(BaseMenu newActiveMenu) => Instance.Open(newActiveMenu);
 
-    private void Open(BaseMenu newActiveMenu)
-    {
-        SetActiveMenu(newActiveMenu);
-    }
+    private void Open(BaseMenu newActiveMenu) => SetActiveMenu(newActiveMenu);
 
-    public static void OpenOverlayMenu(BaseMenu newActiveMenu, float time = 5f)
-    {
-        Instance.OpenOverlay(newActiveMenu, time);
-    }
+    public static void OpenOverlayMenu(BaseMenu newActiveMenu, float time = 5f) => Instance.OpenOverlay(newActiveMenu, time);
 
     private static Thread overlayThread;
 
-    public static void CloseOverlay()
-    {
-        overlayThread.Interrupt();
-    }
+    public static void CloseOverlay() => overlayThread.Interrupt();
 
     private void OpenOverlay(BaseMenu newActiveMenu, float time)
     {
         overlayThread = new Thread(() =>
         {
-            BaseMenu lastMenu = activeMenu;
+            BaseMenu lastMenu = ActiveMenu;
 
             QueueOpenMenu(newActiveMenu);
             int timeMillis = (int)(time * 1000);
@@ -74,8 +57,8 @@ public class MenuManager
 
     private readonly List<BaseMenu> menuLoadQueue = [];
 
-    private Animator menuAnimatorIn;
-    private Animator menuAnimatorOut;
+    private Animator? menuAnimatorIn;
+    private Animator? menuAnimatorOut;
 
     public void Update(float deltaTime)
     {
@@ -88,18 +71,18 @@ public class MenuManager
         if (menuAnimatorIn?.IsRunning == true) return;
         if (menuAnimatorOut?.IsRunning == true) return;
 
-        onMenuChange?.Invoke(activeMenu, newActiveMenu);
+        onMenuChange?.Invoke(ActiveMenu, newActiveMenu);
 
         float yOffset = RendererMain.Instance.MainIsland.Size.Y * 0.75f;
 
         const int length = 250;
 
-        List<UIObject> currentObjects = new(activeMenu.UiObjects);
+        List<UIObject> currentObjects = new(ActiveMenu.UiObjects);
 
         {
             menuAnimatorOut = new Animator(length, 1);
 
-            currentObjects = new List<UIObject>(activeMenu.UiObjects);
+            currentObjects = new List<UIObject>(ActiveMenu.UiObjects);
 
             menuAnimatorOut.onAnimationUpdate += (t) =>
             {
@@ -118,7 +101,7 @@ public class MenuManager
 
             menuAnimatorOut.onAnimationEnd += () =>
             {
-                activeMenu = newActiveMenu;
+                ActiveMenu = newActiveMenu;
 
                 RendererMain.Instance.renderOffset.Y = 0;
                 LoadMenuEnd();
@@ -127,7 +110,7 @@ public class MenuManager
             };
         }
 
-        if (activeMenu != null)
+        if (ActiveMenu != null)
         {
             menuAnimatorIn = new Animator(length, 1);
 
@@ -155,12 +138,12 @@ public class MenuManager
 
             menuAnimatorIn.onAnimationEnd += () =>
             {
-                activeMenu?.OnUnload();
-                activeMenu = newActiveMenu;
+                ActiveMenu?.OnUnload();
+                ActiveMenu = newActiveMenu;
 
                 RendererMain.Instance.renderOffset.Y = -yOffset;
 
-                currentObjects = new List<UIObject>(activeMenu.UiObjects);
+                currentObjects = new List<UIObject>(ActiveMenu.UiObjects);
                 currentObjects.ForEach(obj =>
                 {
                     if (obj != null)
@@ -175,7 +158,7 @@ public class MenuManager
                     return;
                 }
 
-                activeMenu.UiObjects.Remove(menuAnimatorIn);
+                ActiveMenu.UiObjects.Remove(menuAnimatorIn);
 
                 menuAnimatorOut.Start();
             };
@@ -188,13 +171,13 @@ public class MenuManager
 
     private void LoadMenuEnd()
     {
-        onMenuChangeEnd?.Invoke(activeMenu);
+        onMenuChangeEnd?.Invoke(ActiveMenu);
 
         if (menuLoadQueue.Count != 0)
         {
             var queueObj = menuLoadQueue[0];
 
-            if (queueObj == activeMenu)
+            if (queueObj == ActiveMenu)
             {
                 menuLoadQueue.Remove(queueObj);
                 return;
