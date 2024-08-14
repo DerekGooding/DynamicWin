@@ -15,14 +15,14 @@ internal class VolumeAdjustMenu : BaseMenu
 
     private double GetVolumePercent()
     {
-        var volume = DynamicWinMain.defaultDevice.AudioEndpointVolume;
+        var volume = DynamicWinMain._defaultDevice.AudioEndpointVolume;
 
         return volume.MasterVolumeLevelScalar * 100;
     }
 
     private bool IsMuted()
     {
-        return DynamicWinMain.defaultDevice.AudioEndpointVolume.Mute;
+        return DynamicWinMain._defaultDevice.AudioEndpointVolume.Mute;
     }
 
     private DWImage volumeImage;

@@ -9,8 +9,8 @@ namespace DynamicWin;
 
 public partial class DynamicWinMain : Application
 {
-    public static MMDevice defaultDevice;
-    public static MMDevice defaultMicrophone;
+    private static MMDevice? _defaultDevice;
+    private static MMDevice? _defaultMicrophone;
 
     [STAThread]
     public static void Main()
@@ -56,7 +56,7 @@ public partial class DynamicWinMain : Application
     //    }
     //}
 
-    private Mutex mutex;
+    private Mutex? mutex;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -79,10 +79,11 @@ public partial class DynamicWinMain : Application
         //SetHighPriority();
 
         var devEnum = new MMDeviceEnumerator();
-        defaultDevice = devEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-        defaultMicrophone = devEnum.GetDefaultAudioEndpoint(DataFlow.Capture, Role.Multimedia);
+        _defaultDevice = devEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+        _defaultMicrophone = devEnum.GetDefaultAudioEndpoint(DataFlow.Capture, Role.Multimedia);
 
         SaveManager.LoadData();
+        Settings.InitializeSettings();
 
         Res.Load();
         KeyHandler.Start();
@@ -90,10 +91,7 @@ public partial class DynamicWinMain : Application
 
         HardwareMonitor.Initialize();
 
-        Settings.InitializeSettings();
-
-        MainForm mainForm = new();
-        mainForm.Show();
+        new MainForm().Show();
     }
 
     protected override void OnExit(ExitEventArgs e)
@@ -118,11 +116,6 @@ public partial class DynamicWinMain : Application
 
     public static long CurrentTimeMillis() => (long)(DateTime.UtcNow - DateTime.UnixEpoch).TotalMilliseconds;
 
-    public static long NanoTime()
-    {
-        long nano = 10000L * Stopwatch.GetTimestamp();
-        nano /= TimeSpan.TicksPerMillisecond;
-        nano *= 100L;
-        return nano;
-    }
+    public static long NanoTime() => (long)(Stopwatch.GetTimestamp() * 10000000.0 / Stopwatch.Frequency);
+
 }

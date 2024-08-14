@@ -110,7 +110,7 @@ internal class LoudnessMeter : DWProgressBar
     }
 
     public static float GetMicrophoneLoudness()
-        => (float)Math.Sqrt(DynamicWinMain.defaultMicrophone.AudioMeterInformation.MasterPeakValue + 0.001);
+        => (float)Math.Sqrt(DynamicWinMain._defaultMicrophone.AudioMeterInformation.MasterPeakValue + 0.001);
 }
 
 public class UsedDevicesWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : SmallWidgetBase(parent, position, alignment)
