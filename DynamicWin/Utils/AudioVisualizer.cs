@@ -9,7 +9,7 @@ public class AudioVisualizer : UIObject
     private readonly int fftLength;
     private readonly float[] fftValues;
     private readonly WasapiLoopbackCapture capture;
-    private readonly object fftLock = new object();
+    private readonly object fftLock = new();
 
     private readonly float[] barHeight;
     public float barUpSmoothing = 100f;
@@ -17,20 +17,26 @@ public class AudioVisualizer : UIObject
 
     public float divisor = 1f;
 
-    private readonly bool avAmpsMode = false;
+    private readonly bool avAmpsMode;
 
-    public AudioVisualizer(UIObject? parent, Vec2 position, Vec2 size, UIAlignment alignment = UIAlignment.TopCenter, int length = 16, int averageAmpsSize = 0, Col Primary = null, Col Secondary = null) : base(parent, position, size, alignment)
+    public AudioVisualizer(
+        UIObject? parent,
+        Vec2 position,
+        Vec2 size,
+        UIAlignment alignment = UIAlignment.TopCenter,
+        int length = 16,
+        int averageAmpsSize = 0,
+        Col? Primary = null,
+        Col? Secondary = null) : base(parent, position, size, alignment)
     {
-        this.fftLength = length;
+        fftLength = length;
         roundRadius = 5;
 
         // Init audio
         // Audio Capture
 
-        if (Primary == null) this.Primary = Theme.Primary;
-        else this.Primary = Primary;
-        if (Secondary == null) this.Secondary = Theme.Secondary.Override(a: 0.5f);
-        else this.Secondary = Secondary;
+        this.Primary = Primary ?? Theme.Primary;
+        this.Secondary = Secondary ?? Theme.Secondary.Override(a: 0.5f);
 
         if (averageAmpsSize != 0)
         {
@@ -62,7 +68,7 @@ public class AudioVisualizer : UIObject
         }
     }
 
-    private float updateTick = 0;
+    private float updateTick;
 
     public override void Update(float deltaTime)
     {
@@ -171,7 +177,7 @@ public class AudioVisualizer : UIObject
         }
     }
 
-    private int BitReverse(int n, int bits)
+    private static int BitReverse(int n, int bits)
     {
         int reversedN = n;
         int count = bits - 1;
@@ -189,7 +195,7 @@ public class AudioVisualizer : UIObject
 
     public int averageAmpModeRectSize = 24;
 
-    private float averageAmplitude = 0f;
+    private float averageAmplitude;
     private readonly float[] averageAmps;
     private readonly float[] smoothAverageAmps;
     public float AverageAmplitude => averageAmplitude;
@@ -197,17 +203,9 @@ public class AudioVisualizer : UIObject
     public Col Primary;
     public Col Secondary;
 
-    public Col GetActionCol()
-    {
-        Col pCol = Col.Lerp(Secondary, Primary, averageAmplitude * 2);
-        return pCol;
-    }
+    public Col GetActionCol() => Col.Lerp(Secondary, Primary, averageAmplitude * 2);
 
-    public Col GetInverseActionCol()
-    {
-        Col pCol = Col.Lerp(Primary, Secondary, averageAmplitude * 2);
-        return pCol;
-    }
+    public Col GetInverseActionCol() => Col.Lerp(Primary, Secondary, averageAmplitude * 2);
 
     public override void Draw(SKCanvas canvas)
     {

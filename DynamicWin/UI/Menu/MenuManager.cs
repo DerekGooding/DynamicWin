@@ -86,7 +86,7 @@ public class MenuManager
 
             menuAnimatorOut.onAnimationUpdate += (t) =>
             {
-                float tEased = Easings.EaseOutCubic(t);
+                float tEased = Easing.EaseOutCubic(t);
 
                 currentObjects.ForEach(obj =>
                 {
@@ -116,7 +116,7 @@ public class MenuManager
 
             menuAnimatorIn.onAnimationUpdate += (t) =>
             {
-                float tEased = Easings.EaseInCubic(t);
+                float tEased = Easing.EaseInCubic(t);
 
                 currentObjects.ForEach(obj =>
                 {

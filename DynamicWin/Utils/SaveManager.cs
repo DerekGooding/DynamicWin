@@ -8,7 +8,7 @@ internal static class SaveManager
     public static Dictionary<string, object> SaveData { get; set; } = [];
 
     public static string SavePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DynamicWin");
-    private static readonly string fileName = "Settings.json";
+    private const string fileName = "Settings.json";
 
     private static string cachedJsonSave = "";
 
@@ -60,21 +60,9 @@ internal static class SaveManager
             SaveData.Remove(key);
     }
 
-    public static object? Get(string key)
-    {
-        if (Contains(key))
-            return SaveData[key];
-        else
-            return default;
-    }
+    public static object? Get(string key) => Contains(key) ? SaveData[key] : default;
 
-    public static T? Get<T>(string key)
-    {
-        if (Contains(key))
-            return JsonConvert.DeserializeObject<T>(cachedJsonSave);
-        else
-            return default;
-    }
+    public static T? Get<T>(string key) => Contains(key) ? JsonConvert.DeserializeObject<T>(cachedJsonSave) : default;
 
     public static bool Contains(string key) => SaveData.ContainsKey(key);
 }

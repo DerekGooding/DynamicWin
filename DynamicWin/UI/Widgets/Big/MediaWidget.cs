@@ -38,7 +38,7 @@ public class MediaWidget : WidgetBase
     {
         InitMediaPlayer();
 
-        playPause = new DWImageButton(this, Resources.Res.PlayPause, new Vec2(0, 25), new Vec2(30, 30), controller.PlayPause, alignment: UIAlignment.Center)
+        playPause = new DWImageButton(this, Resources.Res.PlayPause, new Vec2(0, 25), new Vec2(30, 30), MediaController.PlayPause, alignment: UIAlignment.Center)
         {
             roundRadius = 25,
             normalColor = Col.Transparent,
@@ -49,7 +49,7 @@ public class MediaWidget : WidgetBase
         };
         AddLocalObject(playPause);
 
-        next = new DWImageButton(this, Resources.Res.Next, new Vec2(50, 25), new Vec2(30, 30), controller.Next, alignment: UIAlignment.Center)
+        next = new DWImageButton(this, Resources.Res.Next, new Vec2(50, 25), new Vec2(30, 30), MediaController.Next, alignment: UIAlignment.Center)
         {
             roundRadius = 25,
             normalColor = Col.Transparent,
@@ -60,7 +60,7 @@ public class MediaWidget : WidgetBase
         };
         AddLocalObject(next);
 
-        prev = new DWImageButton(this, Resources.Res.Previous, new Vec2(-50, 25), new Vec2(30, 30), controller.Previous, alignment: UIAlignment.Center)
+        prev = new DWImageButton(this, Resources.Res.Previous, new Vec2(-50, 25), new Vec2(30, 30), MediaController.Previous, alignment: UIAlignment.Center)
         {
             roundRadius = 25,
             normalColor = Col.Transparent,
@@ -127,7 +127,7 @@ public class MediaWidget : WidgetBase
 
             if (isSpotifyAvailable)
             {
-                GetSpotifyTrackInfo(out string titleString, out string artistString, out string error);
+                GetSpotifyTrackInfo(out string? titleString, out string? artistString, out string? error);
 
                 if (string.IsNullOrEmpty(error))
                 {
@@ -172,8 +172,8 @@ public class MediaWidget : WidgetBase
         controller = new MediaController();
     }
 
-    float spotifyBlur = 0f;
-    bool isSpotifyAvailable = false;
+    float spotifyBlur;
+    bool isSpotifyAvailable;
     readonly Col spotifyCol = Col.FromHex("#1cb351");
 
     public override void DrawWidget(SKCanvas canvas)

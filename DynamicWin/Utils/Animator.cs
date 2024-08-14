@@ -39,7 +39,7 @@ public class Animator : UIObject
         elapsed = 0;
     }
 
-    private float elapsed = 0;
+    private float elapsed;
 
     public override void Update(float deltaTime)
     {
@@ -59,11 +59,11 @@ public class Animator : UIObject
         onAnimationUpdate?.Invoke(progress);
     }
 
-    public void Stop(bool trigggerStopEvent = true)
+    public void Stop(bool triggerStopEvent = true)
     {
         isRunning = false;
 
-        if (trigggerStopEvent)
+        if (triggerStopEvent)
             onAnimationEnd?.Invoke();
     }
 }

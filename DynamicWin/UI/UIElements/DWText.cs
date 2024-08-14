@@ -73,7 +73,7 @@ public class DWText : UIObject
         {
             if (x <= 0.5f)
             {
-                float t = Easings.EaseInQuint(x * 2);
+                float t = Easing.EaseInQuint(x * 2);
 
                 TextSize = Mathf.Lerp(ogTextSize, ogTextSize * 1.5f, t);
                 localBlurAmount = Mathf.Lerp(0, 10, t);
@@ -83,7 +83,7 @@ public class DWText : UIObject
             {
                 this.text = text;
 
-                float t = Easings.EaseOutQuint((x - 0.5f) * 2);
+                float t = Easing.EaseOutQuint((x - 0.5f) * 2);
 
                 TextSize = Mathf.Lerp(ogTextSize / 2.5f, ogTextSize, t);
                 localBlurAmount = Mathf.Lerp(10, 0, t);

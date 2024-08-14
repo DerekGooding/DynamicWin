@@ -96,7 +96,7 @@ public static class Theme
             }
         }
 
-        var customTheme = new ThemeHolder();
+        ThemeHolder customTheme = new();
 
         try
         {
@@ -123,7 +123,7 @@ public static class Theme
                 json = defaultTheme;
             }
 
-            System.Diagnostics.Debug.WriteLine("Loaded theme: " + json);
+            System.Diagnostics.Debug.WriteLine($"Loaded theme: {json}");
 
             customTheme = GetTheme(json);
         }

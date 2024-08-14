@@ -19,7 +19,7 @@ public enum ThumbnailOptions
     InCacheOnly = 0x10,
 }
 
-public class WindowsThumbnailProvider
+public static class WindowsThumbnailProvider
 {
     private const string IShellItem2Guid = "7E9FB0D3-919F-4307-AB2E-9B1860310C93";
 
@@ -139,9 +139,9 @@ public class WindowsThumbnailProvider
 
     public static Bitmap CreateAlphaBitmap(Bitmap srcBitmap, PixelFormat targetPixelFormat)
     {
-        Bitmap result = new Bitmap(srcBitmap.Width, srcBitmap.Height, targetPixelFormat);
+        Bitmap result = new(srcBitmap.Width, srcBitmap.Height, targetPixelFormat);
 
-        Rectangle bmpBounds = new Rectangle(0, 0, srcBitmap.Width, srcBitmap.Height);
+        Rectangle bmpBounds = new(0, 0, srcBitmap.Width, srcBitmap.Height);
 
         BitmapData srcData = srcBitmap.LockBits(bmpBounds, ImageLockMode.ReadOnly, srcBitmap.PixelFormat);
 

@@ -407,14 +407,14 @@ public class UIObject
 
             if (isEnabled)
             {
-                var tEased = Easings.EaseOutCubic(t);
+                var tEased = Easing.EaseOutCubic(t);
 
                 localBlurAmount = Mathf.Lerp(blurSizeOnDisable, 0, tEased);
                 Alpha = Mathf.Lerp(0, 1, tEased);
             }
             else
             {
-                var tEased = Easings.EaseOutCubic(t);
+                var tEased = Easing.EaseOutCubic(t);
 
                 localBlurAmount = Mathf.Lerp(0, blurSizeOnDisable, tEased);
                 Alpha = Mathf.Lerp(1, 0, tEased);

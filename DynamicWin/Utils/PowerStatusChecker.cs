@@ -3,7 +3,7 @@ using System.Text;
 
 namespace DynamicWin.Utils;
 
-public class PowerStatusChecker
+public partial class PowerStatusChecker
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct SYSTEM_POWER_STATUS
@@ -15,68 +15,45 @@ public class PowerStatusChecker
         public uint BatteryLifeTime;
         public uint BatteryFullLifeTime;
 
-        public string GetACLineStatusString()
+        public readonly string GetACLineStatusString => ACLineStatus switch
         {
-            return ACLineStatus switch
-            {
-                0 => "Offline",
-                1 => "Online",
-                _ => "Unknown",
-            };
-        }
+            0 => "Offline",
+            1 => "Online",
+            _ => "Unknown",
+        };
 
-        public string GetBatteryFlagString()
+        public readonly string GetBatteryFlagString => BatteryFlag switch
         {
-            return BatteryFlag switch
-            {
-                1 => "High, more than 66 percent",
-                2 => "Low, less than 33 percent",
-                4 => "Critical, less than five percent",
-                8 => "Charging",
-                128 => "No system battery",
-                _ => "Unknown",
-            };
-        }
+            1 => "High, more than 66 percent",
+            2 => "Low, less than 33 percent",
+            4 => "Critical, less than five percent",
+            8 => "Charging",
+            128 => "No system battery",
+            _ => "Unknown",
+        };
 
-        public string GetBatteryLifePercent()
-        {
-            return BatteryLifePercent == 255 ? "Unknown" : BatteryLifePercent + "%";
-        }
+        public readonly string GetBatteryLifePercent => BatteryLifePercent == 255 ? "Unknown" : BatteryLifePercent + "%";
 
-        public string GetBatteryLifeTime()
-        {
-            return BatteryLifeTime == uint.MaxValue ? "Unknown" : BatteryLifeTime + " seconds";
-        }
+        public readonly string GetBatteryLifeTime => BatteryLifeTime == uint.MaxValue ? "Unknown" : BatteryLifeTime + " seconds";
 
-        public string GetBatteryFullLifeTime()
-        {
-            return BatteryFullLifeTime == uint.MaxValue ? "Unknown" : BatteryFullLifeTime + " seconds";
-        }
+        public readonly string GetBatteryFullLifeTime => BatteryFullLifeTime == uint.MaxValue ? "Unknown" : BatteryFullLifeTime + " seconds";
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("ACLineStatus: " + GetACLineStatusString());
-            sb.AppendLine("Battery Flag: " + GetBatteryFlagString());
-            sb.AppendLine("Battery Life: " + GetBatteryLifePercent());
-            sb.AppendLine("Battery Left: " + GetBatteryLifeTime());
-            sb.AppendLine("Battery Full: " + GetBatteryFullLifeTime());
+            StringBuilder sb = new();
+            sb.AppendLine($"ACLineStatus: {GetACLineStatusString}");
+            sb.AppendLine($"Battery Flag: {GetBatteryFlagString}");
+            sb.AppendLine($"Battery Life: {GetBatteryLifePercent}");
+            sb.AppendLine($"Battery Left: {GetBatteryLifeTime}");
+            sb.AppendLine($"Battery Full: {GetBatteryFullLifeTime}");
             return sb.ToString();
         }
     }
 
-    [DllImport("kernel32.dll")]
-    private static extern bool GetSystemPowerStatus(out SYSTEM_POWER_STATUS lpSystemPowerStatus);
+    [LibraryImport("kernel32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool GetSystemPowerStatus(out SYSTEM_POWER_STATUS lpSystemPowerStatus);
 
     public static SYSTEM_POWER_STATUS GetPowerStatus()
-    {
-        if (GetSystemPowerStatus(out SYSTEM_POWER_STATUS status))
-        {
-            return status;
-        }
-        else
-        {
-            throw new Exception("Unable to get power status.");
-        }
-    }
+        => GetSystemPowerStatus(out SYSTEM_POWER_STATUS status) ? status : throw new Exception("Unable to get power status.");
 }
