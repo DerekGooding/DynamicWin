@@ -9,10 +9,7 @@ public class DropFileMenu : BaseMenu
 {
     private static DropFileMenu instance;
 
-    public override Vec2 IslandSize()
-    {
-        return new Vec2(450, 200);
-    }
+    public override Vec2 IslandSize() => new(450, 200);
 
     public static void Drop(DragEventArgs e)
     {
@@ -28,10 +25,7 @@ public class DropFileMenu : BaseMenu
         }
     }
 
-    public DropFileMenu()
-    {
-        instance = this;
-    }
+    public DropFileMenu() => instance = this;
 
     public override List<UIObject> InitializeMenu(IslandObject island)
     {

@@ -22,10 +22,7 @@ internal class BrightnessAdjustMenu : BaseMenu
         timerUntilClose = 0f;
     }
 
-    public static void PressBK()
-    {
-        instance.islandScale = 1.025f;
-    }
+    public static void PressBK() => instance.islandScale = 1.025f;
 
     public override List<UIObject> InitializeMenu(IslandObject island)
     {
@@ -42,7 +39,7 @@ internal class BrightnessAdjustMenu : BaseMenu
         return objects;
     }
 
-    public static float? timerUntilClose = 0f;
+    public static float? timerUntilClose;
 
     public override void Update()
     {
@@ -54,34 +51,25 @@ internal class BrightnessAdjustMenu : BaseMenu
 
         timerUntilClose += RendererMain.Instance.DeltaTime;
 
-        this.brightness.value = WindowsSettingsBrightnessController.Get() / 100f;
+        brightness.value = WindowsSettingsBrightnessController.Get() / 100f;
 
         var volXOffset = KeyHandler.keyDown.Contains(System.Windows.Forms.Keys.VolumeUp) ? 2f :
             KeyHandler.keyDown.Contains(System.Windows.Forms.Keys.VolumeDown) ? -2f : 0;
 
-        this.brightness.LocalPosition.X = Mathf.Lerp(this.brightness.LocalPosition.X, volXOffset,
-            (Math.Abs(volXOffset) > Math.Abs(this.brightness.LocalPosition.X) ? 4.5f : 2.5f) * RendererMain.Instance.DeltaTime);
+        brightness.LocalPosition.X = Mathf.Lerp(brightness.LocalPosition.X, volXOffset,
+            (Math.Abs(volXOffset) > Math.Abs(brightness.LocalPosition.X) ? 4.5f : 2.5f) * RendererMain.Instance.DeltaTime);
     }
 
-    public override Vec2 IslandSize()
-    {
-        return new Vec2(250, 35) * islandScale;
-    }
+    public override Vec2 IslandSize() => new Vec2(250, 35) * islandScale;
 
-    public override Vec2 IslandSizeBig()
-    {
-        return base.IslandSizeBig() * 1.05f;
-    }
+    public override Vec2 IslandSizeBig() => base.IslandSizeBig() * 1.05f;
 
-    internal static int GetBrightness()
-    {
-        return WindowsSettingsBrightnessController.Get();
-    }
+    internal static int GetBrightness() => WindowsSettingsBrightnessController.Get();
 }
 
 internal static class WindowsSettingsBrightnessController
 {
-    private static bool notSupported = false;
+    private static bool notSupported;
 
     public static int Get()
     {
@@ -90,12 +78,12 @@ internal static class WindowsSettingsBrightnessController
 
         try
         {
-            using var mclass = new ManagementClass("WmiMonitorBrightness")
+            using var myClass = new ManagementClass("WmiMonitorBrightness")
             {
                 Scope = new ManagementScope(@"\\.\root\wmi")
             };
-            using var instances = mclass.GetInstances();
-            foreach (ManagementObject instance in instances)
+            using var instances = myClass.GetInstances();
+            foreach (ManagementObject instance in instances.Cast<ManagementObject>())
             {
                 return (byte)instance.GetPropertyValue("CurrentBrightness");
             }
@@ -118,7 +106,7 @@ internal static class WindowsSettingsBrightnessController
             };
             using var instances = myClass.GetInstances();
             var args = new object[] { 1, brightness };
-            foreach (ManagementObject instance in instances)
+            foreach (ManagementObject instance in instances.Cast<ManagementObject>())
             {
                 instance.InvokeMethod("WmiSetBrightness", args);
             }

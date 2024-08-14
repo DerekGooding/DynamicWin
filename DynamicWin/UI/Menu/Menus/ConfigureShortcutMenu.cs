@@ -15,18 +15,15 @@ internal class ConfigureShortcutMenu : BaseMenu
 
     private static ConfigureShortcutMenu instance;
 
-    public static void DropData(System.Windows.DragEventArgs e)
-    {
-        instance.PDropData(e);
-    }
+    public static void DropData(DragEventArgs e) => instance.PDropData(e);
 
-    private void PDropData(System.Windows.DragEventArgs e)
+    private void PDropData(DragEventArgs e)
     {
         if (e == null) return;
 
         string[] fileList = (string[])e.Data.GetData(DataFormats.FileDrop, false);
 
-        if (fileList != null && fileList.Length > 0)
+        if (fileList?.Length > 0)
         {
             var name = Path.GetFileNameWithoutExtension(fileList[0]) + " ";
 
@@ -47,8 +44,8 @@ internal class ConfigureShortcutMenu : BaseMenu
     public ConfigureShortcutMenu(ShortcutButton shortcutButton)
     {
         instance = this;
-        this._shortcutButtonToConfigure = shortcutButton;
-        this.save = shortcutButton.savedShortcut;
+        _shortcutButtonToConfigure = shortcutButton;
+        save = shortcutButton.savedShortcut;
     }
 
     private DropFileElement dropFileElement;
@@ -59,7 +56,7 @@ internal class ConfigureShortcutMenu : BaseMenu
     {
         var objects = base.InitializeMenu(island);
 
-        DWTextButton saveAndBack = new DWTextButton(island, "Save & Back", new Utils.Vec2(0, -30), new Utils.Vec2(IslandSize().X - 30, 30), () =>
+        DWTextButton saveAndBack = new DWTextButton(island, "Save & Back", new Vec2(0, -30), new Vec2(IslandSize().X - 30, 30), () =>
         {
             _shortcutButtonToConfigure.SetShortcut(save);
             MenuManager.OpenMenu(Res.HomeMenu);
@@ -111,8 +108,5 @@ internal class ConfigureShortcutMenu : BaseMenu
         }
     }
 
-    public override Vec2 IslandSize()
-    {
-        return new Vec2(600, 200);
-    }
+    public override Vec2 IslandSize() => new Vec2(600, 200);
 }

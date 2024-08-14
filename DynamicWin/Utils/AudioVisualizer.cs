@@ -42,7 +42,7 @@ public class AudioVisualizer : UIObject
         fftValues = new float[length];
         barHeight = new float[length];
 
-        capture = new WasapiLoopbackCapture(DynamicWinMain._defaultDevice);
+        capture = new WasapiLoopbackCapture(DynamicWinMain.DefaultDevice);
         capture.DataAvailable += OnDataAvailable;
         capture.StartRecording();
     }

@@ -67,15 +67,9 @@ public class TimerOverMenu : BaseMenu
             MenuManager.CloseOverlay();
     }
 
-    public override Vec2 IslandSize()
-    {
-        return new Vec2(250, 65) * islandSizeMulti;
-    }
+    public override Vec2 IslandSize() => new Vec2(250, 65) * islandSizeMulti;
 
-    public override Vec2 IslandSizeBig()
-    {
-        return base.IslandSizeBig();
-    }
+    public override Vec2 IslandSizeBig() => base.IslandSizeBig();
 }
 
 internal class DWWave : UIObject
@@ -86,7 +80,7 @@ internal class DWWave : UIObject
         roundRadius = parent.roundRadius;
     }
 
-    public float waveSize = 0;
+    public float waveSize;
     public float waveGrowSpeed = 65f;
 
     public override void Update(float deltaTime)

@@ -7,23 +7,20 @@ using System.Runtime.InteropServices;
 
 namespace DynamicWin.UI.Menu.Menus;
 
-internal class VolumeAdjustMenu : BaseMenu
+internal partial class VolumeAdjustMenu : BaseMenu
 {
     // P/Invoke to call the Windows API function
-    [DllImport("winmm.dll", CharSet = CharSet.Auto)]
-    private static extern int waveOutGetVolume(IntPtr hwo, out uint dwVolume);
+    [LibraryImport("winmm.dll")]
+    private static partial int waveOutGetVolume(IntPtr hwo, out uint dwVolume);
 
-    private double GetVolumePercent()
+    private static double GetVolumePercent()
     {
-        var volume = DynamicWinMain._defaultDevice.AudioEndpointVolume;
+        var volume = DynamicWinMain.DefaultDevice.AudioEndpointVolume;
 
         return volume.MasterVolumeLevelScalar * 100;
     }
 
-    private bool IsMuted()
-    {
-        return DynamicWinMain._defaultDevice.AudioEndpointVolume.Mute;
-    }
+    private static bool IsMuted() => DynamicWinMain.DefaultDevice.AudioEndpointVolume.Mute;
 
     private DWImage volumeImage;
     private UIObject mutedBg;
@@ -79,17 +76,10 @@ internal class VolumeAdjustMenu : BaseMenu
     private float timer;
     private readonly float shakeSpeed = 35;
 
-    private float Func(float x)
-    {
-        //double result = -Math.Pow(x, 3f) + (-Math.Pow(x - 1, 6f * 4)) + 1;
-        //double result = -Math.Pow((x / 0.5) - 1, 2) + 1;
-        double result = 1f - (x < 0.5 ? 2 * x * x : 1 - Math.Pow(-2 * x + 2, 2) / 2);
+    private static float Func(float x) => (float)(double)(1f - (x < 0.5 ? 2 * x * x : 1 - (Math.Pow((-2 * x) + 2, 2) / 2)));
 
-        return (float)result;
-    }
-
-    private float seconds = 0f;
-    private bool mute = false;
+    private float seconds;
+    private bool mute;
 
     public override void Update()
     {
@@ -157,13 +147,7 @@ internal class VolumeAdjustMenu : BaseMenu
             (Math.Abs(volXOffset) > Math.Abs(this.volume.LocalPosition.X) ? 4.5f : 2.5f) * RendererMain.Instance.DeltaTime);
     }
 
-    public override Vec2 IslandSize()
-    {
-        return new Vec2(250, 35) * islandScale;
-    }
+    public override Vec2 IslandSize() => new Vec2(250, 35) * islandScale;
 
-    public override Vec2 IslandSizeBig()
-    {
-        return base.IslandSizeBig() * 1.05f;
-    }
+    public override Vec2 IslandSizeBig() => base.IslandSizeBig() * 1.05f;
 }

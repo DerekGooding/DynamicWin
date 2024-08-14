@@ -9,8 +9,8 @@ namespace DynamicWin;
 
 public partial class DynamicWinMain : Application
 {
-    private static MMDevice? _defaultDevice;
-    private static MMDevice? _defaultMicrophone;
+    public static MMDevice DefaultDevice;
+    public static MMDevice DefaultMicrophone;
 
     [STAThread]
     public static void Main()
@@ -56,7 +56,7 @@ public partial class DynamicWinMain : Application
     //    }
     //}
 
-    private Mutex? mutex;
+    private Mutex mutex;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -79,8 +79,8 @@ public partial class DynamicWinMain : Application
         //SetHighPriority();
 
         var devEnum = new MMDeviceEnumerator();
-        _defaultDevice = devEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-        _defaultMicrophone = devEnum.GetDefaultAudioEndpoint(DataFlow.Capture, Role.Multimedia);
+        DefaultDevice = devEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+        DefaultMicrophone = devEnum.GetDefaultAudioEndpoint(DataFlow.Capture, Role.Multimedia);
 
         SaveManager.LoadData();
         Settings.InitializeSettings();

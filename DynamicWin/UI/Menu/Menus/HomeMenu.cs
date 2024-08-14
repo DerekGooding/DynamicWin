@@ -37,14 +37,14 @@ public class HomeMenu : BaseMenu
 
     public override Vec2 IslandSize()
     {
-        Vec2 size = new Vec2(200, 35);
+        Vec2 size = new(200, 35);
 
         float sizeTogether = 0f;
         smallLeftWidgets.ForEach(x => sizeTogether += x.GetWidgetSize().X);
         smallRightWidgets.ForEach(x => sizeTogether += x.GetWidgetSize().X);
         smallCenterWidgets.ForEach(x => sizeTogether += x.GetWidgetSize().X);
 
-        sizeTogether += smallWidgetsSpacing * (smallCenterWidgets.Count + smallLeftWidgets.Count + smallRightWidgets.Count + 0.25f) + middleWidgetsSpacing;
+        sizeTogether += (smallWidgetsSpacing * (smallCenterWidgets.Count + smallLeftWidgets.Count + smallRightWidgets.Count + 0.25f)) + middleWidgetsSpacing;
 
         size.X = (float)Math.Max(size.X, sizeTogether) + songSizeAddition;
 
@@ -61,7 +61,7 @@ public class HomeMenu : BaseMenu
 
             for (int i = 0; i < bigWidgets.Count; i++)
             {
-                sizeTogether += bigWidgets[i].GetWidgetSize().X + bigWidgetsSpacing * 2;
+                sizeTogether += bigWidgets[i].GetWidgetSize().X + (bigWidgetsSpacing * 2);
                 if (i % maxBigWidgetInOneRow == 1)
                 {
                     sizeTogetherBiggest = (float)Math.Max(sizeTogetherBiggest, sizeTogether);
@@ -122,7 +122,7 @@ public class HomeMenu : BaseMenu
         };
         bigMenuItems.Add(topContainer);
 
-        widgetButton = new DWTextImageButton(topContainer, Resources.Res.Widgets, "Widgets", new Vec2(75 / 2 + 5, 0), new Vec2(75, 20), () => isWidgetMode = true,
+        widgetButton = new DWTextImageButton(topContainer, Resources.Res.Widgets, "Widgets", new Vec2((75 / 2) + 5, 0), new Vec2(75, 20), () => isWidgetMode = true,
         UIAlignment.MiddleLeft)
         {
             normalColor = Col.Transparent,
@@ -263,23 +263,31 @@ public class HomeMenu : BaseMenu
     public float smallWidgetsSpacing = 10;
     public float middleWidgetsSpacing = 35;
 
-    private bool wasHovering = false;
+    private bool wasHovering;
 
     private readonly float sCD = 35;
     private readonly float bCD = 50;
 
     public bool isWidgetMode = true;
-    private bool wasWidgetMode = false;
+    private bool wasWidgetMode;
 
     public override void Update()
     {
-        tray.Size = new Vec2(IslandSizeBig().X - bCD, RendererMain.Instance.MainIsland.Size.Y - bCD - topSpacing - topContainer.Size.Y / 2);
+        tray.Size = new Vec2(IslandSizeBig().X - bCD, RendererMain.Instance.MainIsland.Size.Y - bCD - topSpacing - (topContainer.Size.Y / 2));
         tray.SetActive(!(isWidgetMode || !RendererMain.Instance.MainIsland.IsHovering));
 
-        widgetButton.normalColor = Col.Lerp(widgetButton.normalColor, isWidgetMode ? Col.White.Override(a: 0.075f) : Col.Transparent, 15f * RendererMain.Instance.DeltaTime);
-        trayButton.normalColor = Col.Lerp(trayButton.normalColor, (!isWidgetMode) ? Col.White.Override(a: 0.075f) : Col.Transparent, 15f * RendererMain.Instance.DeltaTime);
-        widgetButton.hoverColor = Col.Lerp(widgetButton.hoverColor, isWidgetMode ? Col.White.Override(a: 0.075f) : Col.Transparent, 15f * RendererMain.Instance.DeltaTime);
-        trayButton.hoverColor = Col.Lerp(trayButton.hoverColor, (!isWidgetMode) ? Col.White.Override(a: 0.075f) : Col.Transparent, 15f * RendererMain.Instance.DeltaTime);
+        widgetButton.normalColor = Col.Lerp(widgetButton.normalColor, isWidgetMode
+            ? Col.White.Override(a: 0.075f)
+            : Col.Transparent, 15f * RendererMain.Instance.DeltaTime);
+        trayButton.normalColor = Col.Lerp(trayButton.normalColor, (!isWidgetMode)
+            ? Col.White.Override(a: 0.075f)
+            : Col.Transparent, 15f * RendererMain.Instance.DeltaTime);
+        widgetButton.hoverColor = Col.Lerp(widgetButton.hoverColor, isWidgetMode
+            ? Col.White.Override(a: 0.075f)
+            : Col.Transparent, 15f * RendererMain.Instance.DeltaTime);
+        trayButton.hoverColor = Col.Lerp(trayButton.hoverColor, (!isWidgetMode)
+            ? Col.White.Override(a: 0.075f)
+            : Col.Transparent, 15f * RendererMain.Instance.DeltaTime);
 
         RendererMain.Instance.MainIsland.LocalPosition.X = Mathf.Lerp(RendererMain.Instance.MainIsland.LocalPosition.X,
             songLocalPosXAddition, 2f * RendererMain.Instance.DeltaTime);
@@ -343,7 +351,7 @@ public class HomeMenu : BaseMenu
 
                 foreach (var smallCenter in smallCenterWidgets)
                 {
-                    smallCenter.LocalPosition.X -= centerStackPos / 2 + smallWidgetsSpacing;
+                    smallCenter.LocalPosition.X -= (centerStackPos / 2) + smallWidgetsSpacing;
                 }
             }
 
@@ -429,11 +437,11 @@ public class HomeMenu : BaseMenu
         {
             fullWidth += widgets[i].GetWidgetSize().X;
 
-            widgets[i].LocalPosition.X = stackedXPosition + widgets[i].GetWidgetSize().X / 2 - container.Size.X / 2;
+            widgets[i].LocalPosition.X = stackedXPosition + (widgets[i].GetWidgetSize().X / 2) - (container.Size.X / 2);
             stackedXPosition += widgets[i].GetWidgetSize().X + spacing;
         }
 
-        float offset = fullWidth / 2 - container.Size.X / 2 + bigWidgetsSpacing / 2;
+        float offset = (fullWidth / 2) - (container.Size.X / 2) + (bigWidgetsSpacing / 2);
 
         for (int i = 0; i < widgets.Count; i++)
         {
