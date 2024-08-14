@@ -15,12 +15,17 @@ public static class Settings
     public static bool AllowAnimation { get; set; }
     public static bool AntiAliasing { get; set; }
 
-    public static int Theme { get; set; }
+    public static int Theme
+    {
+        get { return theme; }
+        set { theme = value; Utils.Theme.UpdateTheme(); }
+    }
 
     public static List<string> smallWidgetsLeft;
     public static List<string> smallWidgetsRight;
     public static List<string> smallWidgetsMiddle;
     public static List<string> bigWidgets;
+    private static int theme;
 
     //public static ThemeHolder CustomTheme { get => customTheme; set => customTheme = value; }
 

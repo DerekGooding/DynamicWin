@@ -6,6 +6,38 @@ namespace DynamicWin.Utils;
 
 public static class Theme
 {
+    static ThemeHolder darkTheme = new()
+    {
+        IslandColor = "#000000",
+        TextMain = "#ffffff",
+        TextSecond = "#a6a6a6",
+        TextThird = "#595959",
+        Primary = "#6988b7",
+        Secondary = "#061122",
+        Success = "#bad844",
+        Error = "#d84444",
+        IconColor = "#ffffff",
+        WidgetBackground = "#11ffffff"
+    };
+
+    static ThemeHolder lightTheme = new()
+    {
+        IslandColor = "#ffffff",
+        TextMain = "#000000",
+        TextSecond = "#333333",
+        TextThird = "#666666",
+        Primary = "#7a9fd6",
+        Secondary = "#c1d7f7",
+        Success = "#99d844",
+        Error = "#ff6666",
+        IconColor = "#000000",
+        WidgetBackground = "#11000000"
+    };
+
+    static ThemeHolder candyTheme = GetTheme("{\r\n  \"IslandColor\": \"#f7cac9\",\r\n  \"TextMain\": \"#ff6f61\",\r\n  \"TextSecond\": \"#d66853\",\r\n  \"TextThird\": \"#b94a45\",\r\n  \"Primary\": \"#ff6f61\",\r\n  \"Secondary\": \"#f7cac9\",\r\n  \"Success\": \"#88b04b\",\r\n  \"Error\": \"#c0392b\",\r\n  \"IconColor\": \"#ff6f61\",\r\n  \"WidgetBackground\": \"#88ffebee\"\r\n}\r\n");
+    static ThemeHolder forestDawnTheme = GetTheme("{\r\n  \"IslandColor\": \"#1c1c1c\",\r\n  \"TextMain\": \"#8e44ad\",\r\n  \"TextSecond\": \"#9b59b6\",\r\n  \"TextThird\": \"#6c3483\",\r\n  \"Primary\": \"#8e44ad\",\r\n  \"Secondary\": \"#34495e\",\r\n  \"Success\": \"#27ae60\",\r\n  \"Error\": \"#e74c3c\",\r\n  \"IconColor\": \"#8e44ad\",\r\n  \"WidgetBackground\": \"#2c3e50\"\r\n}\r\n");
+    static ThemeHolder sunsetGlow = GetTheme("{\r\n  \"IslandColor\": \"#2c3e50\",\r\n  \"TextMain\": \"#f39c12\",\r\n  \"TextSecond\": \"#e67e22\",\r\n  \"TextThird\": \"#d35400\",\r\n  \"Primary\": \"#e74c3c\",\r\n  \"Secondary\": \"#c0392b\",\r\n  \"Success\": \"#27ae60\",\r\n  \"Error\": \"#c0392b\",\r\n  \"IconColor\": \"#f39c12\",\r\n  \"WidgetBackground\": \"#22ecf0f1\"\r\n}\r\n");
+
     public struct ThemeHolder
     {
         public string TextMain;
@@ -38,38 +70,6 @@ public static class Theme
 
     public static void UpdateTheme(bool refreshRenderer = false)
     {
-        var darkTheme = new ThemeHolder
-        {
-            IslandColor = "#000000",
-            TextMain = "#ffffff",
-            TextSecond = "#a6a6a6",
-            TextThird = "#595959",
-            Primary = "#6988b7",
-            Secondary = "#061122",
-            Success = "#bad844",
-            Error = "#d84444",
-            IconColor = "#ffffff",
-            WidgetBackground = "#11ffffff"
-        };
-
-        var lightTheme = new ThemeHolder
-        {
-            IslandColor = "#ffffff",
-            TextMain = "#000000",
-            TextSecond = "#333333",
-            TextThird = "#666666",
-            Primary = "#7a9fd6",
-            Secondary = "#c1d7f7",
-            Success = "#99d844",
-            Error = "#ff6666",
-            IconColor = "#000000",
-            WidgetBackground = "#11000000"
-        };
-
-        var candyTheme = GetTheme("{\r\n  \"IslandColor\": \"#f7cac9\",\r\n  \"TextMain\": \"#ff6f61\",\r\n  \"TextSecond\": \"#d66853\",\r\n  \"TextThird\": \"#b94a45\",\r\n  \"Primary\": \"#ff6f61\",\r\n  \"Secondary\": \"#f7cac9\",\r\n  \"Success\": \"#88b04b\",\r\n  \"Error\": \"#c0392b\",\r\n  \"IconColor\": \"#ff6f61\",\r\n  \"WidgetBackground\": \"#88ffebee\"\r\n}\r\n");
-        var forestDawnTheme = GetTheme("{\r\n  \"IslandColor\": \"#1c1c1c\",\r\n  \"TextMain\": \"#8e44ad\",\r\n  \"TextSecond\": \"#9b59b6\",\r\n  \"TextThird\": \"#6c3483\",\r\n  \"Primary\": \"#8e44ad\",\r\n  \"Secondary\": \"#34495e\",\r\n  \"Success\": \"#27ae60\",\r\n  \"Error\": \"#e74c3c\",\r\n  \"IconColor\": \"#8e44ad\",\r\n  \"WidgetBackground\": \"#2c3e50\"\r\n}\r\n");
-        var sunsetGlow = GetTheme("{\r\n  \"IslandColor\": \"#2c3e50\",\r\n  \"TextMain\": \"#f39c12\",\r\n  \"TextSecond\": \"#e67e22\",\r\n  \"TextThird\": \"#d35400\",\r\n  \"Primary\": \"#e74c3c\",\r\n  \"Secondary\": \"#c0392b\",\r\n  \"Success\": \"#27ae60\",\r\n  \"Error\": \"#c0392b\",\r\n  \"IconColor\": \"#f39c12\",\r\n  \"WidgetBackground\": \"#22ecf0f1\"\r\n}\r\n");
-
         if (Settings.Theme != -1)
         {
             switch (Settings.Theme)
