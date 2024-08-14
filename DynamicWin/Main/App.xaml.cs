@@ -108,9 +108,7 @@ public partial class DynamicWinMain : Application
     }
 
     private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-    {
-        MessageBox.Show($"Unhandled exception: {e.ExceptionObject}");
-    }
+        => MessageBox.Show($"Unhandled exception: {e.ExceptionObject}");
 
     private void Dispatcher_UnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
     {
@@ -118,9 +116,7 @@ public partial class DynamicWinMain : Application
         e.Handled = true; // Prevent the application from terminating
     }
 
-    private static readonly DateTime Jan1st1970 = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
-    public static long CurrentTimeMillis() => (long)(DateTime.UtcNow - Jan1st1970).TotalMilliseconds;
+    public static long CurrentTimeMillis() => (long)(DateTime.UtcNow - DateTime.UnixEpoch).TotalMilliseconds;
 
     public static long NanoTime()
     {
