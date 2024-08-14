@@ -17,8 +17,13 @@ public static class Settings
 
     public static int Theme
     {
-        get { return theme; }
-        set { theme = value; Utils.Theme.UpdateTheme(); }
+        get => theme;
+        set
+        {
+            if(theme == value) return;
+            theme = value;
+            Utils.Theme.UpdateTheme();
+        }
     }
 
     public static List<string> smallWidgetsLeft;
@@ -84,7 +89,7 @@ public static class Settings
             }
 
             // This must be run after loading all settings
-            AfterSettingsLoaded();
+            //AfterSettingsLoaded();
         }
         catch
         {
@@ -92,7 +97,7 @@ public static class Settings
         }
     }
 
-    private static void AfterSettingsLoaded() => Utils.Theme.UpdateTheme();
+    //private static void AfterSettingsLoaded() => Utils.Theme.UpdateTheme();
 
     public static void Save()
     {

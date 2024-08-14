@@ -9,8 +9,8 @@ namespace DynamicWin;
 
 public partial class DynamicWinMain : Application
 {
-    public static MMDevice DefaultDevice;
-    public static MMDevice DefaultMicrophone;
+    public static MMDevice? DefaultDevice;
+    public static MMDevice? DefaultMicrophone;
 
     [STAThread]
     public static void Main()
@@ -79,15 +79,16 @@ public partial class DynamicWinMain : Application
         //SetHighPriority();
 
         var devEnum = new MMDeviceEnumerator();
-        DefaultDevice = devEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-        DefaultMicrophone = devEnum.GetDefaultAudioEndpoint(DataFlow.Capture, Role.Multimedia);
+        if(devEnum.HasDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia))
+            DefaultDevice = devEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+        if (devEnum.HasDefaultAudioEndpoint(DataFlow.Capture, Role.Multimedia))
+            DefaultMicrophone = devEnum.GetDefaultAudioEndpoint(DataFlow.Capture, Role.Multimedia);
 
         SaveManager.LoadData();
         Settings.InitializeSettings();
 
         Res.Load();
         KeyHandler.Start();
-        Theme.UpdateTheme();
 
         HardwareMonitor.Initialize();
 

@@ -107,32 +107,29 @@ public static class Theme
 
     public static Col GetColor(string hex) => Col.FromHex(hex);
 
-    public static void UpdateTheme(bool refreshRenderer = false)
+    public static void UpdateTheme()
     {
-        if (Settings.Theme != -1)
+        switch (Settings.Theme)
         {
-            switch (Settings.Theme)
-            {
-                case 0:
-                    ApplyTheme(darkTheme);
-                    break;
+            case 0:
+                ApplyTheme(darkTheme);
+                return;
 
-                case 1:
-                    ApplyTheme(lightTheme);
-                    break;
+            case 1:
+                ApplyTheme(lightTheme);
+                return;
 
-                case 2:
-                    ApplyTheme(candyTheme);
-                    break;
+            case 2:
+                ApplyTheme(candyTheme);
+                return;
 
-                case 3:
-                    ApplyTheme(forestDawnTheme);
-                    break;
+            case 3:
+                ApplyTheme(forestDawnTheme);
+                return;
 
-                case 4:
-                    ApplyTheme(sunsetGlow);
-                    break;
-            }
+            case 4:
+                ApplyTheme(sunsetGlow);
+                return;
         }
 
         ThemeHolder customTheme = new();
@@ -164,21 +161,13 @@ public static class Theme
 
             System.Diagnostics.Debug.WriteLine($"Loaded theme: {json}");
 
-            customTheme = GetTheme(json);
+            ApplyTheme(GetTheme(json));
         }
         catch
         {
             System.Diagnostics.Debug.WriteLine("Couldn't load custom theme.");
-            customTheme = darkTheme;
+            ApplyTheme(darkTheme);
         }
-
-        if (Settings.Theme == -1)
-        {
-            ApplyTheme(customTheme);
-        }
-
-        if (refreshRenderer)
-            MainForm.Instance.AddRenderer();
     }
 
     private static ThemeHolder GetTheme(string json) => JsonConvert.DeserializeObject<ThemeHolder>(json);

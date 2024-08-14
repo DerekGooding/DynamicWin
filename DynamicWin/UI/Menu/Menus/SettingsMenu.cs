@@ -29,7 +29,7 @@ public class SettingsMenu : BaseMenu
 
         if (changedTheme)
         {
-            Theme.UpdateTheme(true);
+            MainForm.Instance.AddRenderer();
         }
         else
         {
