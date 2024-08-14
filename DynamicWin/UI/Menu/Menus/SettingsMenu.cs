@@ -204,7 +204,7 @@ public class SettingsMenu : BaseMenu
                 {
                     optionItem.Parent = island;
 
-                    if (optionItem.alignment == UIAlignment.TopLeft)
+                    if (optionItem.Alignment == UIAlignment.TopLeft)
                     {
                         optionItem.Position = new Vec2(25, 0);
                         optionItem.Anchor.X = 0;
@@ -926,10 +926,16 @@ public class MultiSelectionButton : UIObject
     private int selectedIndex;
     public int SelectedIndex { get => selectedIndex; set => SetSelected(value); }
 
-    public MultiSelectionButton(UIObject? parent, string[] options, Vec2 position, Vec2 size, UIAlignment alignment = UIAlignment.TopCenter, int maxInOneRow = 4) : base(parent, position, size, alignment)
+    public MultiSelectionButton(
+        UIObject? parent,
+        string[] options,
+        Vec2 position,
+        Vec2 size,
+        UIAlignment alignment = UIAlignment.TopCenter,
+        int maxInOneRow = 4) : base(parent, position, size, alignment)
     {
         this.options = options;
-        this.buttons = new DWTextButton[options.Length];
+        buttons = new DWTextButton[options.Length];
 
         float xPos = 0;
         float yPos = 0;

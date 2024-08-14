@@ -11,7 +11,7 @@ public class DWTextImageButton : DWButton
     public float textSizeSmoothSpeed = 15f;
     public float imageScale = 0.85f;
 
-    public DWImage Image { get; private set; }
+    public DWImage Image { get; }
 
     public DWTextImageButton(UIObject? parent, SKBitmap image, string buttonText, Vec2 position, Vec2 size, Action clickCallback, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, size, clickCallback, alignment)
     {

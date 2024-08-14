@@ -7,7 +7,7 @@ public class DWText : UIObject
 {
     private string text = "";
     public string Text
-    { get { return text; } set { SetText(value); } }
+    { get => text; set => SetText(value); }
     public float TextSize { get; set; } = 24;
 
     private Vec2 textBounds;

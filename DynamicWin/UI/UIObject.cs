@@ -11,11 +11,11 @@ public class UIObject
 {
     public UIObject? Parent { get; set; }
 
-    private Vec2 position = Vec2.zero;
+    private Vec2 _position = Vec2.zero;
     private Col color = Col.White;
 
-    public Vec2 RawPosition => position;
-    public Vec2 Position { get => GetPosition() + LocalPosition; set => position = value; }
+    public Vec2 RawPosition => _position;
+    public Vec2 Position { get => GetPosition() + LocalPosition; set => _position = value; }
     public Vec2 LocalPosition { get; set; } = Vec2.zero;
     public Vec2 Anchor { get; set; } = new Vec2(0.5f, 0.5f);
     public Vec2 Size { get; set; } = Vec2.one;
@@ -26,7 +26,7 @@ public class UIObject
     public bool IsHovering { get; private set; }
     public bool IsMouseDown { get; private set; }
 
-    public UIAlignment alignment = UIAlignment.TopCenter;
+    public UIAlignment Alignment = UIAlignment.TopCenter;
 
     protected float localBlurAmount;
     public float blurAmount;
@@ -58,15 +58,18 @@ public class UIObject
 
     public UIObject(UIObject? parent, Vec2 position, Vec2 size, UIAlignment alignment = UIAlignment.TopCenter)
     {
-        this.Parent = parent;
-        this.position = position;
-        this.Size = size;
-        this.alignment = alignment;
+        Parent = parent;
+        _position = position;
+        Size = size;
+        Alignment = alignment;
 
-        this.contextMenu = CreateContextMenu();
+        contextMenu = CreateContextMenu();
 
-        RendererMain.Instance.ContextMenuOpening += CtxOpen;
-        RendererMain.Instance.ContextMenuClosing += CtxClose;
+        if (RendererMain.Instance != null)
+        {
+            RendererMain.Instance.ContextMenuOpening += CtxOpen;
+            RendererMain.Instance.ContextMenuClosing += CtxClose;
+        }
     }
 
     private void CtxOpen(object sender, RoutedEventArgs e)
@@ -81,7 +84,7 @@ public class UIObject
     {
         parent ??= Parent;
         Size ??= this.Size;
-        if (alignment == UIAlignment.None) alignment = this.alignment;
+        if (alignment == UIAlignment.None) alignment = Alignment;
 
         if (parent == null)
         {
@@ -179,43 +182,43 @@ public class UIObject
         if (Parent == null)
         {
             Vec2 screenDim = RendererMain.ScreenDimensions;
-            switch (alignment)
+            switch (Alignment)
             {
                 case UIAlignment.TopLeft:
-                    return new Vec2(position.X - (Size.X * Anchor.X),
-                        position.Y - (Size.Y * Anchor.Y));
+                    return new Vec2(_position.X - (Size.X * Anchor.X),
+                        _position.Y - (Size.Y * Anchor.Y));
 
                 case UIAlignment.TopCenter:
-                    return new Vec2(position.X + (screenDim.X / 2) - (Size.X * Anchor.X),
-                        position.Y - (Size.Y * Anchor.Y));
+                    return new Vec2(_position.X + (screenDim.X / 2) - (Size.X * Anchor.X),
+                        _position.Y - (Size.Y * Anchor.Y));
 
                 case UIAlignment.TopRight:
-                    return new Vec2(position.X + screenDim.X - (Size.X * Anchor.X),
-                        position.Y - (Size.Y * Anchor.Y));
+                    return new Vec2(_position.X + screenDim.X - (Size.X * Anchor.X),
+                        _position.Y - (Size.Y * Anchor.Y));
 
                 case UIAlignment.MiddleLeft:
-                    return new Vec2(position.X - (Size.X * Anchor.X),
-                        position.Y + (screenDim.Y / 2) - (Size.Y * Anchor.Y));
+                    return new Vec2(_position.X - (Size.X * Anchor.X),
+                        _position.Y + (screenDim.Y / 2) - (Size.Y * Anchor.Y));
 
                 case UIAlignment.Center:
-                    return new Vec2(position.X + (screenDim.X / 2) - (Size.X * Anchor.X),
-                        position.Y + (screenDim.Y / 2) - (Size.Y * Anchor.Y));
+                    return new Vec2(_position.X + (screenDim.X / 2) - (Size.X * Anchor.X),
+                        _position.Y + (screenDim.Y / 2) - (Size.Y * Anchor.Y));
 
                 case UIAlignment.MiddleRight:
-                    return new Vec2(position.X + screenDim.X - (Size.X * Anchor.X),
-                        position.Y + (screenDim.Y / 2) - (Size.Y * Anchor.Y));
+                    return new Vec2(_position.X + screenDim.X - (Size.X * Anchor.X),
+                        _position.Y + (screenDim.Y / 2) - (Size.Y * Anchor.Y));
 
                 case UIAlignment.BottomLeft:
-                    return new Vec2(position.X - (Size.X * Anchor.X),
-                        position.Y + screenDim.Y - (Size.Y * Anchor.Y));
+                    return new Vec2(_position.X - (Size.X * Anchor.X),
+                        _position.Y + screenDim.Y - (Size.Y * Anchor.Y));
 
                 case UIAlignment.BottomCenter:
-                    return new Vec2(position.X + (screenDim.X / 2) - (Size.X * Anchor.X),
-                        position.Y + screenDim.Y - (Size.Y * Anchor.Y));
+                    return new Vec2(_position.X + (screenDim.X / 2) - (Size.X * Anchor.X),
+                        _position.Y + screenDim.Y - (Size.Y * Anchor.Y));
 
                 case UIAlignment.BottomRight:
-                    return new Vec2(position.X + screenDim.X - (Size.X * Anchor.X),
-                        position.Y + screenDim.Y - (Size.Y * Anchor.Y));
+                    return new Vec2(_position.X + screenDim.X - (Size.X * Anchor.X),
+                        _position.Y + screenDim.Y - (Size.Y * Anchor.Y));
             }
         }
         else
@@ -223,43 +226,43 @@ public class UIObject
             Vec2 parentDim = Parent.Size;
             Vec2 parentPos = Parent.Position;
 
-            switch (alignment)
+            switch (Alignment)
             {
                 case UIAlignment.TopLeft:
-                    return new Vec2(parentPos.X + position.X - (Size.X * Anchor.X),
-                        parentPos.Y + position.Y - (Size.Y * Anchor.Y));
+                    return new Vec2(parentPos.X + _position.X - (Size.X * Anchor.X),
+                        parentPos.Y + _position.Y - (Size.Y * Anchor.Y));
 
                 case UIAlignment.TopCenter:
-                    return new Vec2(parentPos.X + position.X + (parentDim.X / 2) - (Size.X * Anchor.X),
-                        parentPos.Y + position.Y - (Size.Y * Anchor.Y));
+                    return new Vec2(parentPos.X + _position.X + (parentDim.X / 2) - (Size.X * Anchor.X),
+                        parentPos.Y + _position.Y - (Size.Y * Anchor.Y));
 
                 case UIAlignment.TopRight:
-                    return new Vec2(parentPos.X + position.X + parentDim.X - (Size.X * Anchor.X),
-                        parentPos.Y + position.Y - (Size.Y * Anchor.Y));
+                    return new Vec2(parentPos.X + _position.X + parentDim.X - (Size.X * Anchor.X),
+                        parentPos.Y + _position.Y - (Size.Y * Anchor.Y));
 
                 case UIAlignment.MiddleLeft:
-                    return new Vec2(parentPos.X + position.X - (Size.X * Anchor.X),
-                        parentPos.Y + position.Y + (parentDim.Y / 2) - (Size.Y * Anchor.Y));
+                    return new Vec2(parentPos.X + _position.X - (Size.X * Anchor.X),
+                        parentPos.Y + _position.Y + (parentDim.Y / 2) - (Size.Y * Anchor.Y));
 
                 case UIAlignment.Center:
-                    return new Vec2(parentPos.X + position.X + (parentDim.X / 2) - (Size.X * Anchor.X),
-                        parentPos.Y + position.Y + (parentDim.Y / 2) - (Size.Y * Anchor.Y));
+                    return new Vec2(parentPos.X + _position.X + (parentDim.X / 2) - (Size.X * Anchor.X),
+                        parentPos.Y + _position.Y + (parentDim.Y / 2) - (Size.Y * Anchor.Y));
 
                 case UIAlignment.MiddleRight:
-                    return new Vec2(parentPos.X + position.X + parentDim.X - (Size.X * Anchor.X),
-                        parentPos.Y + position.Y + (parentDim.Y / 2) - (Size.Y * Anchor.Y));
+                    return new Vec2(parentPos.X + _position.X + parentDim.X - (Size.X * Anchor.X),
+                        parentPos.Y + _position.Y + (parentDim.Y / 2) - (Size.Y * Anchor.Y));
 
                 case UIAlignment.BottomLeft:
-                    return new Vec2(parentPos.X + position.X - (Size.X * Anchor.X),
-                        parentPos.Y + position.Y + parentDim.Y - (Size.Y * Anchor.Y));
+                    return new Vec2(parentPos.X + _position.X - (Size.X * Anchor.X),
+                        parentPos.Y + _position.Y + parentDim.Y - (Size.Y * Anchor.Y));
 
                 case UIAlignment.BottomCenter:
-                    return new Vec2(parentPos.X + position.X + (parentDim.X / 2) - (Size.X * Anchor.X),
-                        parentPos.Y + position.Y + parentDim.Y - (Size.Y * Anchor.Y));
+                    return new Vec2(parentPos.X + _position.X + (parentDim.X / 2) - (Size.X * Anchor.X),
+                        parentPos.Y + _position.Y + parentDim.Y - (Size.Y * Anchor.Y));
 
                 case UIAlignment.BottomRight:
-                    return new Vec2(parentPos.X + position.X + parentDim.X - (Size.X * Anchor.X),
-                        parentPos.Y + position.Y + parentDim.Y - (Size.Y * Anchor.Y));
+                    return new Vec2(parentPos.X + _position.X + parentDim.X - (Size.X * Anchor.X),
+                        parentPos.Y + _position.Y + parentDim.Y - (Size.Y * Anchor.Y));
             }
         }
 
@@ -354,7 +357,7 @@ public class UIObject
         var paint = new SKPaint
         {
             Style = SKPaintStyle.Fill,
-            Color = this.Color.Value(),
+            Color = Color.Value(),
             IsAntialias = Settings.AntiAliasing,
             IsDither = true,
             SubpixelText = false,
@@ -390,7 +393,7 @@ public class UIObject
 
     public void SilentSetActive(bool isEnabled) => this.isEnabled = isEnabled;
 
-    Animator toggleAnimation;
+    Animator? toggleAnimation;
 
     public void SetActive(bool isEnabled)
     {

@@ -247,8 +247,8 @@ internal class Tray : UIObject
     {
         removedFiles.Add(file);
 
-        if (fileObjects.Contains(file)) fileObjects.Remove(file);
-        if (selectedFiles.Contains(file)) selectedFiles.Remove(file);
+        fileObjects.Remove(file);
+        selectedFiles.Remove(file);
 
         file.SetActive(false);
     }
@@ -263,7 +263,7 @@ internal class Tray : UIObject
         foreach (var x in cachedTrayFiles)
         {
             bool hasFileAlready = false;
-            TrayFile fileAlreadyExists = null;
+            TrayFile? fileAlreadyExists = null;
             fileObjects.ForEach((y) => { if (y.FileName.Equals(x)) { hasFileAlready = true; fileAlreadyExists = y; } });
 
             if (fileAlreadyExists != null)
@@ -277,17 +277,9 @@ internal class Tray : UIObject
             };
 
             fileObjects.Add(f);
-            //AddLocalObject(f);
         }
 
-        filesToRemove.ForEach((f) =>
-        {
-            if (f != null)
-            {
-                //DestroyLocalObject(f);
-                fileObjects.Remove(f);
-            }
-        });
+        filesToRemove.ForEach((f) => fileObjects.Remove(f));
     }
 
     public static string[]? GetFiles()
