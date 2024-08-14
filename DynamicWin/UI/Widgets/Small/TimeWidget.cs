@@ -24,5 +24,7 @@ public class TimeWidget : SmallWidgetBase
         timeText.Text = Time;
     }
 
+    protected override float GetWidgetWidth() => Settings.MilitaryTime ? 35 : 50;
+
     private static string Time => Settings.MilitaryTime ? DateTime.Now.ToString("HH:mm") : DateTime.Now.ToString("hh:mm tt");
 }
