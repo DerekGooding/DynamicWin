@@ -6,7 +6,7 @@ namespace DynamicWin.Utils;
 
 public static class Theme
 {
-    static ThemeHolder darkTheme = new()
+    private static ThemeHolder darkTheme = new()
     {
         IslandColor = "#000000",
         TextMain = "#ffffff",
@@ -20,7 +20,7 @@ public static class Theme
         WidgetBackground = "#11ffffff"
     };
 
-    static ThemeHolder lightTheme = new()
+    private static ThemeHolder lightTheme = new()
     {
         IslandColor = "#ffffff",
         TextMain = "#000000",
@@ -34,9 +34,48 @@ public static class Theme
         WidgetBackground = "#11000000"
     };
 
-    static ThemeHolder candyTheme = GetTheme("{\r\n  \"IslandColor\": \"#f7cac9\",\r\n  \"TextMain\": \"#ff6f61\",\r\n  \"TextSecond\": \"#d66853\",\r\n  \"TextThird\": \"#b94a45\",\r\n  \"Primary\": \"#ff6f61\",\r\n  \"Secondary\": \"#f7cac9\",\r\n  \"Success\": \"#88b04b\",\r\n  \"Error\": \"#c0392b\",\r\n  \"IconColor\": \"#ff6f61\",\r\n  \"WidgetBackground\": \"#88ffebee\"\r\n}\r\n");
-    static ThemeHolder forestDawnTheme = GetTheme("{\r\n  \"IslandColor\": \"#1c1c1c\",\r\n  \"TextMain\": \"#8e44ad\",\r\n  \"TextSecond\": \"#9b59b6\",\r\n  \"TextThird\": \"#6c3483\",\r\n  \"Primary\": \"#8e44ad\",\r\n  \"Secondary\": \"#34495e\",\r\n  \"Success\": \"#27ae60\",\r\n  \"Error\": \"#e74c3c\",\r\n  \"IconColor\": \"#8e44ad\",\r\n  \"WidgetBackground\": \"#2c3e50\"\r\n}\r\n");
-    static ThemeHolder sunsetGlow = GetTheme("{\r\n  \"IslandColor\": \"#2c3e50\",\r\n  \"TextMain\": \"#f39c12\",\r\n  \"TextSecond\": \"#e67e22\",\r\n  \"TextThird\": \"#d35400\",\r\n  \"Primary\": \"#e74c3c\",\r\n  \"Secondary\": \"#c0392b\",\r\n  \"Success\": \"#27ae60\",\r\n  \"Error\": \"#c0392b\",\r\n  \"IconColor\": \"#f39c12\",\r\n  \"WidgetBackground\": \"#22ecf0f1\"\r\n}\r\n");
+    private static ThemeHolder candyTheme = GetTheme("""
+        {
+          "IslandColor": "#f7cac9",
+          "TextMain": "#ff6f61",
+          "TextSecond": "#d66853",
+          "TextThird": "#b94a45",
+          "Primary": "#ff6f61",
+          "Secondary": "#f7cac9",
+          "Success": "#88b04b",
+          "Error": "#c0392b",
+          "IconColor": "#ff6f61",
+          "WidgetBackground": "#88ffebee"
+        }
+        """);
+    private static ThemeHolder forestDawnTheme = GetTheme("""
+        {
+          "IslandColor": "#1c1c1c",
+          "TextMain": "#8e44ad",
+          "TextSecond": "#9b59b6",
+          "TextThird": "#6c3483",
+          "Primary": "#8e44ad",
+          "Secondary": "#34495e",
+          "Success": "#27ae60",
+          "Error": "#e74c3c",
+          "IconColor": "#8e44ad",
+          "WidgetBackground": "#2c3e50"
+        }
+        """);
+    private static ThemeHolder sunsetGlow = GetTheme("""
+        {
+          "IslandColor": "#2c3e50",
+          "TextMain": "#f39c12",
+          "TextSecond": "#e67e22",
+          "TextThird": "#d35400",
+          "Primary": "#e74c3c",
+          "Secondary": "#c0392b",
+          "Success": "#27ae60",
+          "Error": "#c0392b",
+          "IconColor": "#f39c12",
+          "WidgetBackground": "#22ecf0f1"
+        }
+        """);
 
     public struct ThemeHolder
     {
