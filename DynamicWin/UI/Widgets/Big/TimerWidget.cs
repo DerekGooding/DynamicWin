@@ -7,20 +7,11 @@ using SkiaSharp;
 
 namespace DynamicWin.UI.Widgets.Big;
 
-internal class RegisterTimerWidget : IRegisterableWidget
-{
-    public bool IsSmallWidget => false;
-    public string WidgetName => "Timer";
-
-    public WidgetBase CreateWidgetInstance(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter)
-        => new TimerWidget(parent, position, alignment);
-}
-
 public class TimerWidget : WidgetBase
 {
     private readonly DWText timerText;
 
-    private System.Timers.Timer timer;
+    private System.Timers.Timer? timer;
 
     private readonly DWImageButton startStopButton;
 
@@ -33,8 +24,7 @@ public class TimerWidget : WidgetBase
 
     public static TimerWidget? Instance;
 
-    public int CurrentTime
-    { get { if (isTimerRunning) return initialSecondsSet - elapsedSeconds; else return -1; } }
+    public int CurrentTime => IsTimerRunning ? initialSecondsSet - elapsedSeconds : -1;
 
     public TimerWidget(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, alignment)
     {
@@ -113,8 +103,7 @@ public class TimerWidget : WidgetBase
         }
     }
 
-    private static bool isTimerRunning;
-    public bool IsTimerRunning => isTimerRunning;
+    public bool IsTimerRunning { get; set; }
 
     private static int initialSecondsSet;
 
@@ -134,30 +123,31 @@ public class TimerWidget : WidgetBase
 
     public void ToggleTimer()
     {
-        if (isTimerRunning) StopTimer();
+        if (IsTimerRunning) StopTimer();
         else StartTimer();
     }
 
     public void StopTimer()
     {
-        Instance?.timer.Stop();
-        isTimerRunning = false;
+        Instance?.timer?.Stop();
+        IsTimerRunning = false;
     }
 
     private void TimerEnd()
     {
         StopTimer();
-        RendererMain.Instance.MainIsland.hidden = false;
+        if(RendererMain.Instance != null)
+            RendererMain.Instance.MainIsland.hidden = false;
 
         MenuManager.OpenOverlayMenu(new TimerOverMenu(), 15f);
     }
 
-    private static int elapsedSeconds = 0;
+    private static int elapsedSeconds;
 
     public void StartTimer()
     {
         Instance = this;
-        isTimerRunning = true;
+        IsTimerRunning = true;
         elapsedSeconds = 0;
 
         timer = new System.Timers.Timer(1000);
@@ -177,7 +167,7 @@ public class TimerWidget : WidgetBase
     {
         base.Update(deltaTime);
 
-        timerText.TextSize = Mathf.Lerp(timerText.TextSize, isTimerRunning ? 29 : 25, 10f * deltaTime);
+        timerText.TextSize = Mathf.Lerp(timerText.TextSize, IsTimerRunning ? 29 : 25, 10f * deltaTime);
 
         const float tOff = -5f;
         const float mul = 0.365f;
@@ -196,22 +186,22 @@ public class TimerWidget : WidgetBase
         secondLess.LocalPosition.X = tOff + s + m + h;
         secondMore.LocalPosition.X = tOff + s + m + h;
 
-        hourLess.SetActive(!isTimerRunning);
-        hourMore.SetActive(!isTimerRunning);
-        minuteLess.SetActive(!isTimerRunning);
-        minuteMore.SetActive(!isTimerRunning);
-        secondLess.SetActive(!isTimerRunning);
-        secondMore.SetActive(!isTimerRunning);
+        hourLess.SetActive(!IsTimerRunning);
+        hourMore.SetActive(!IsTimerRunning);
+        minuteLess.SetActive(!IsTimerRunning);
+        minuteMore.SetActive(!IsTimerRunning);
+        secondLess.SetActive(!IsTimerRunning);
+        secondMore.SetActive(!IsTimerRunning);
 
-        if (isTimerRunning) startStopButton.Image.Image = Resources.Res.Stop;
+        if (IsTimerRunning) startStopButton.Image.Image = Resources.Res.Stop;
         else startStopButton.Image.Image = Resources.Res.Play;
 
         TimeSpan ts = TimeSpan.FromSeconds(initialSecondsSet - elapsedSeconds);
 
         string answer = string.Format("{0:D2}:{1:D2}:{2:D2}",
-                        isTimerRunning ? ts.Hours : t.Hours,
-                        isTimerRunning ? ts.Minutes : t.Minutes,
-                        isTimerRunning ? ts.Seconds : t.Seconds);
+                        IsTimerRunning ? ts.Hours : t.Hours,
+                        IsTimerRunning ? ts.Minutes : t.Minutes,
+                        IsTimerRunning ? ts.Seconds : t.Seconds);
 
         timerText.SilentSetText(answer);
     }

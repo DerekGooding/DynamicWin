@@ -3,18 +3,6 @@ using DynamicWin.Utils;
 
 namespace DynamicWin.UI.Widgets.Small;
 
-internal class RegisterTimeWidget : IRegisterableWidget
-{
-    public bool IsSmallWidget => true;
-
-    public string WidgetName => "Time Display";
-
-    public WidgetBase CreateWidgetInstance(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter)
-    {
-        return new TimeWidget(parent, position, alignment);
-    }
-}
-
 public class TimeWidget : SmallWidgetBase
 {
     private readonly DWText timeText;
@@ -35,8 +23,5 @@ public class TimeWidget : SmallWidgetBase
         timeText.Text = GetTime();
     }
 
-    private string GetTime()
-    {
-        return DateTime.Now.ToString("HH:mm");
-    }
+    private string GetTime() => DateTime.Now.ToString("HH:mm");
 }

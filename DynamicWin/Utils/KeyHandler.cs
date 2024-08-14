@@ -61,7 +61,7 @@ public partial class KeyHandler
     [return: MarshalAs(UnmanagedType.Bool)]
     private static partial bool UnhookWindowsHookEx(IntPtr hhk);
 
-    [LibraryImport("user32.dll", EntryPoint = "CallNextHookExW", SetLastError = true)]
+    [LibraryImport("user32.dll", SetLastError = true)]
     private static partial IntPtr CallNextHookEx(IntPtr hhk, int nCode,
         IntPtr wParam, IntPtr lParam);
 

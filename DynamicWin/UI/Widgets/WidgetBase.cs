@@ -12,6 +12,12 @@ public class WidgetBase : UIObject
     protected bool isSmallWidget;
     public bool IsSmallWidget => isSmallWidget;
 
+    public Action onEditRemoveWidget = () => {};
+    public Action onEditMoveWidgetLeft = () => { };
+    public Action onEditMoveWidgetRight = () => { };
+
+    private float hoverProgress;
+
     //DWText widgetName;
 
     public WidgetBase(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter) : base(parent, position, Vec2.zero, alignment)
@@ -22,12 +28,6 @@ public class WidgetBase : UIObject
         objs.ForEach(AddLocalObject);
 
         roundRadius = 15f;
-
-        /*widgetName = new DWText(this, GetWidgetName(), Vec2.zero, UIAlignment.Center)
-        {
-            Font = Res.InterBold,
-            textSize = 20
-        };*/
     }
 
     public Vec2 GetWidgetSize() => new(GetWidgetWidth(), GetWidgetHeight());
@@ -37,10 +37,6 @@ public class WidgetBase : UIObject
     protected virtual float GetWidgetWidth() => 200;
 
     public static List<UIObject> InitializeWidget => [];
-
-    public Action onEditRemoveWidget;
-    public Action onEditMoveWidgetLeft;
-    public Action onEditMoveWidgetRight;
 
     public override ContextMenu? GetContextMenu()
     {
@@ -64,8 +60,6 @@ public class WidgetBase : UIObject
         return ctx;
     }
 
-    private float hoverProgress;
-
     public override void Draw(SKCanvas canvas)
     {
         Size = GetWidgetSize();
@@ -88,31 +82,7 @@ public class WidgetBase : UIObject
             canvas.RestoreToCount(sc);
         }
 
-        /*if (!isEditMode || isSmallWidget)
-        {
-            drawLocalObjects = true; */
         DrawWidget(canvas);
-        /*            }
-                    else
-                    {
-                        widgetName.blurAmount = GetBlur();
-                        widgetName.DrawCall(canvas);
-                        drawLocalObjects = false;
-                    }*/
-
-        /*if (!IsSmallWidget)
-        {
-            var bPaint = GetPaint();
-            bPaint.ImageFilter = SKImageFilter.CreateBlur(100, 100);
-            bPaint.BlendMode = SKBlendMode.SrcOver;
-            bPaint.Color = Col.White.Override(a: 0.4f).Value();
-
-            int canvasSave = canvas.Save();
-            canvas.ClipRoundRect(GetRect(), antialias: true);
-            canvas.DrawCircle(RendererMain.CursorPosition.X + 12.5f, RendererMain.CursorPosition.Y + 20, 35, bPaint);
-
-            canvas.RestoreToCount(canvasSave);
-        }*/
 
         if (isEditMode)
         {
@@ -129,16 +99,11 @@ public class WidgetBase : UIObject
 
             int noClip = canvas.Save();
 
-            //if(!RendererMain.Instance.MainIsland.IsHovering)
-            //    canvas.ClipRect(clipRect, SKClipOperation.Difference);
-
             paint.Color = SKColors.DimGray;
             canvas.DrawRoundRect(bRoundRect, paint);
 
             canvas.RestoreToCount(noClip);
         }
-
-        //canvas.RestoreToCount(ogC);
     }
 
     public virtual void DrawWidget(SKCanvas canvas)

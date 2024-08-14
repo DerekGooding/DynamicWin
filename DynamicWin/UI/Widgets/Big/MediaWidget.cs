@@ -5,15 +5,6 @@ using System.Diagnostics;
 
 namespace DynamicWin.UI.Widgets.Big;
 
-class RegisterMediaWidget : IRegisterableWidget
-{
-    public bool IsSmallWidget => false;
-    public string WidgetName => "Media Playback Control";
-
-    public WidgetBase CreateWidgetInstance(UIObject? parent, Vec2 position, UIAlignment alignment = UIAlignment.TopCenter)
-        => new MediaWidget(parent, position, alignment);
-}
-
 public class MediaWidget : WidgetBase
 {
     MediaController controller;
@@ -167,10 +158,7 @@ public class MediaWidget : WidgetBase
         audioVisualizerBig.UpdateCall(deltaTime);
     }
 
-    private void InitMediaPlayer()
-    {
-        controller = new MediaController();
-    }
+    private void InitMediaPlayer() => controller = new MediaController();
 
     float spotifyBlur;
     bool isSpotifyAvailable;
