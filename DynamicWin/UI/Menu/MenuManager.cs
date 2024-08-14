@@ -155,7 +155,7 @@ public class MenuManager
 
             menuAnimatorIn.onAnimationEnd += () =>
             {
-                activeMenu?.OnDeload();
+                activeMenu?.OnUnload();
                 activeMenu = newActiveMenu;
 
                 RendererMain.Instance.renderOffset.Y = -yOffset;

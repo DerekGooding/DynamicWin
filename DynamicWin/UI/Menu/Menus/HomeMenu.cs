@@ -16,8 +16,8 @@ public class HomeMenu : BaseMenu
 
     public List<WidgetBase> bigWidgets = [];
 
-    private float songSizeAddition = 0f;
-    private float songLocalPosXAddition = 0f;
+    private float songSizeAddition;
+    private float songLocalPosXAddition;
 
     public void NextSong()
     {
@@ -53,7 +53,7 @@ public class HomeMenu : BaseMenu
 
     public override Vec2 IslandSizeBig()
     {
-        Vec2 size = new Vec2(275, 145);
+        Vec2 size = new(275, 145);
 
         {
             float sizeTogetherBiggest = 0f;
@@ -133,7 +133,7 @@ public class HomeMenu : BaseMenu
 
         bigMenuItems.Add(widgetButton);
 
-        trayButton = new DWTextImageButton(topContainer, Resources.Res.Tray, "Tray", new Vec2(110, 0), new Vec2(55, 20), () => isWidgetMode = false,
+        trayButton = new DWTextImageButton(topContainer, Res.Tray, "Tray", new Vec2(110, 0), new Vec2(55, 20), () => isWidgetMode = false,
         UIAlignment.MiddleLeft)
         {
             normalColor = Col.Transparent,
@@ -144,11 +144,7 @@ public class HomeMenu : BaseMenu
 
         bigMenuItems.Add(trayButton);
 
-        var settingsButton = new DWImageButton(topContainer, Resources.Res.Settings, new Vec2(-20f, 0), new Vec2(20, 20), () =>
-        {
-            //new SettingsWindow();
-            MenuManager.OpenMenu(new SettingsMenu());
-        },
+        var settingsButton = new DWImageButton(topContainer, Res.Settings, new Vec2(-20f, 0), new Vec2(20, 20), () => MenuManager.OpenMenu(new SettingsMenu()),
         UIAlignment.MiddleRight)
         {
             normalColor = Col.Transparent,
@@ -188,32 +184,32 @@ public class HomeMenu : BaseMenu
 
         foreach (var smallWidget in Settings.smallWidgetsMiddle)
         {
-            if (!smallWidgets.ContainsKey(smallWidget.ToString())) continue;
-            var widget = smallWidgets[smallWidget.ToString()];
+            if (!smallWidgets.ContainsKey(smallWidget)) continue;
+            var widget = smallWidgets[smallWidget];
 
             smallCenterWidgets.Add((SmallWidgetBase)widget.CreateWidgetInstance(smallWidgetsContainer, Vec2.zero, UIAlignment.Center));
         }
 
         foreach (var smallWidget in Settings.smallWidgetsLeft)
         {
-            if (!smallWidgets.ContainsKey(smallWidget.ToString())) continue;
-            var widget = smallWidgets[smallWidget.ToString()];
+            if (!smallWidgets.ContainsKey(smallWidget)) continue;
+            var widget = smallWidgets[smallWidget];
 
             smallLeftWidgets.Add((SmallWidgetBase)widget.CreateWidgetInstance(smallWidgetsContainer, Vec2.zero, UIAlignment.MiddleLeft));
         }
 
         foreach (var smallWidget in Settings.smallWidgetsRight)
         {
-            if (!smallWidgets.ContainsKey(smallWidget.ToString())) continue;
-            var widget = smallWidgets[smallWidget.ToString()];
+            if (!smallWidgets.ContainsKey(smallWidget)) continue;
+            var widget = smallWidgets[smallWidget];
 
             smallRightWidgets.Add((SmallWidgetBase)widget.CreateWidgetInstance(smallWidgetsContainer, Vec2.zero, UIAlignment.MiddleRight));
         }
 
         foreach (var bigWidget in Settings.bigWidgets)
         {
-            if (!widgets.ContainsKey(bigWidget.ToString())) continue;
-            var widget = widgets[bigWidget.ToString()];
+            if (!widgets.ContainsKey(bigWidget)) continue;
+            var widget = widgets[bigWidget];
 
             bigWidgets.Add(widget.CreateWidgetInstance(bigWidgetsContainer, Vec2.zero, UIAlignment.BottomCenter));
         }
@@ -298,9 +294,13 @@ public class HomeMenu : BaseMenu
                 previous.SetActive(false);
         }
         else if (songLocalPosXAddition > 15f)
+        {
             next.SetActive(true);
+        }
         else if (songLocalPosXAddition < -15f)
+        {
             previous.SetActive(true);
+        }
 
         if (!RendererMain.Instance.MainIsland.IsHovering)
         {

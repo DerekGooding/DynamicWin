@@ -34,7 +34,7 @@ public class TimerOverMenu : BaseMenu
         return objects;
     }
 
-    public override void OnDeload() => player.Stop();
+    public override void OnUnload() => player.Stop();
 
     private float sinCycle = -0.65f;
     private readonly float speed = 3.5f;

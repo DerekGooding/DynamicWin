@@ -22,7 +22,7 @@ public class BaseMenu : IDisposable
     public virtual void Update()
     { }
 
-    public virtual void OnDeload()
+    public virtual void OnUnload()
     { }
 
     public void Dispose()

@@ -23,8 +23,7 @@ public class RendererMain : SKElement, IDisposable
     public static Vec2 ScreenDimensions => new(MainForm.Instance.Width, MainForm.Instance.Height);
     public static Vec2 CursorPosition => new(Mouse.GetPosition(MainForm.Instance).X, Mouse.GetPosition(MainForm.Instance).Y);
 
-    private static RendererMain? instance;
-    public static RendererMain? Instance => instance;
+    public static RendererMain? Instance { get; private set; }
 
     public Vec2 renderOffset = Vec2.zero;
 
@@ -34,28 +33,10 @@ public class RendererMain : SKElement, IDisposable
     public RendererMain()
     {
         MenuManager m = new();
-
-        // Init control
-
-        instance = this;
+        Instance = this;
 
         MainIsland = new IslandObject();
         m.Init();
-
-        // Set up the timer
-        /*            timer = new System.Windows.Forms.Timer
-                    {
-                        Interval = 14
-                    };
-                    timer.Tick += (sender, args) => Update();
-                    timer.Tick += (sender, args) => Render();
-                    timer.Start();*/
-
-        /*timer = new DispatcherTimer();
-        timer.Tick += (sender, args) => Update();
-        timer.Tick += (sender, args) => Render();
-        timer.Interval = TimeSpan.FromMilliseconds(8);
-        timer.Start();*/
 
         MainForm.Instance.onMainFormRender += Update;
         MainForm.Instance.onMainFormRender += Render;
@@ -91,7 +72,7 @@ public class RendererMain : SKElement, IDisposable
             MainForm.Instance.MouseWheel -= MainForm.Instance.OnScroll;
         }
 
-        instance = null;
+        Instance = null;
     }
 
     private void OnKeyRegistered(Keys key, KeyModifier modifier)

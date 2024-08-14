@@ -19,7 +19,7 @@ public class SettingsMenu : BaseMenu
         MainForm.onScrollEvent += (MouseWheelEventArgs x) => yScrollOffset += x.Delta * 0.25f;
     }
 
-    private bool changedTheme = false;
+    private bool changedTheme;
 
     private void SaveAndBack()
     {
@@ -268,8 +268,8 @@ public class SettingsMenu : BaseMenu
     private SmallWidgetAdder smallWidgetAdder;
     private BigWidgetAdder bigWidgetAdder;
 
-    private float yScrollOffset = 0f;
-    private float ySmoothScroll = 0f;
+    private float yScrollOffset;
+    private float ySmoothScroll;
 
     public override void Update()
     {
@@ -311,16 +311,13 @@ public class SettingsMenu : BaseMenu
         return vec;
     }
 
-    public override Vec2 IslandSizeBig()
-    {
-        return IslandSize() + 5;
-    }
+    public override Vec2 IslandSizeBig() => IslandSize() + 5;
 
-    private static List<IRegisterableSetting> customOptions;
+    private static List<IRegisterableSetting> customOptions = [];
 
-    private void LoadCustomOptions()
+    private static void LoadCustomOptions()
     {
-        customOptions = [];
+        customOptions.Clear();
 
         var registerableSettings = AppDomain.CurrentDomain.GetAssemblies()
         .SelectMany(s => s.GetTypes())

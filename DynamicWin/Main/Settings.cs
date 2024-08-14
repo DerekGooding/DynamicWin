@@ -43,18 +43,18 @@ public static class Settings
                 Settings.smallWidgetsMiddle = [];
                 Settings.bigWidgets = [];
 
-                var smallWidgetsLeft = (JArray)SaveManager.Get("settings.smallwidgetsleft");
-                var smallWidgetsRight = (JArray)SaveManager.Get("settings.smallwidgetsright");
-                var smallWidgetsMiddle = (JArray)SaveManager.Get("settings.smallwidgetsmiddle");
-                var bigWidgets = (JArray)SaveManager.Get("settings.bigwidgets");
+                JArray smallWidgetsLeft = (JArray?)SaveManager.Get("settings.smallwidgetsleft") ?? [];
+                JArray smallWidgetsRight = (JArray?)SaveManager.Get("settings.smallwidgetsright") ?? [];
+                JArray smallWidgetsMiddle = (JArray?)SaveManager.Get("settings.smallwidgetsmiddle") ?? [];
+                JArray bigWidgets = (JArray?)SaveManager.Get("settings.bigwidgets") ?? [];
 
-                foreach (var x in smallWidgetsLeft)
+                foreach (JToken x in smallWidgetsLeft)
                     Settings.smallWidgetsLeft.Add(x.ToString());
-                foreach (var x in smallWidgetsRight)
+                foreach (JToken x in smallWidgetsRight)
                     Settings.smallWidgetsRight.Add(x.ToString());
-                foreach (var x in smallWidgetsMiddle)
+                foreach (JToken x in smallWidgetsMiddle)
                     Settings.smallWidgetsMiddle.Add(x.ToString());
-                foreach (var x in bigWidgets)
+                foreach (JToken x in bigWidgets)
                     Settings.bigWidgets.Add(x.ToString());
             }
             else
